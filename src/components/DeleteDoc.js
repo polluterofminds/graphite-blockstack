@@ -9,7 +9,6 @@ import {
   handlePendingSignIn,
   signUserOut
 } from "blockstack";
-import ReactQuill from 'react-quill';
 
 const blockstack = require("blockstack");
 
@@ -135,6 +134,9 @@ export default class DeleteDoc extends Component {
             <button className="btn red" onClick={this.handleDeleteItem}>
               Delete
             </button>
+            <a href="/"><button className="btn grey">
+              No, go back
+            </button></a>
             </div>
             <div className={loading}>
             <div className="preloader-wrapper small active">

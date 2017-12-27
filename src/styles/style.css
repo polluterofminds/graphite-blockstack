@@ -4,6 +4,14 @@ body {
   background-color: #C4C4C4;
 }
 
+.card.small {
+  height: 200px!important;
+}
+
+.main-container {
+  margin-bottom: 50px;
+}
+
 .indent {
   text-indent: 2em;
 }
@@ -108,6 +116,8 @@ nav ul a {
 }
 
 .docs {
+  width: 90%;
+  margin: auto;
   margin-top: 50px;
 }
 
@@ -158,12 +168,47 @@ nav ul a {
   margin: auto;
 }
 
+.doc-toolbar {
+  position: fixed;
+  top: 0px;
+  z-index: 100;
+  background: #fff;
+  height: 100px;
+  width: 100%;
+}
+
+.doc-toolbar-wrapper {
+  margin-left: 25px;
+  margin-right: 25px;
+}
+
+.wordcounter {
+  color: grey;
+}
+
+.toolbar {
+  position: fixed;
+  top: 0;
+}
+
+.toolbar-menu {
+  margin-left: 40px;
+}
+
+.brand-logo:hover {
+  cursor: pointer;
+}
+
 .inputs {
   width: 65%;
   margin: auto;
   margin-top: 60px;
   padding-top: 40px;
   padding-bottom: 40px;
+}
+
+.font-twelve textarea {
+  font-size: 12px;
 }
 
 .input-field {
@@ -216,5 +261,55 @@ input:focus {
   .collection-cards p {
     margin-top: 20px;
     /*padding-bottom: 20px;*/
+  }
+}
+
+@media screen and (max-width: 1400px) {
+  .card-action a {
+    font-size: 13px;
+  }
+
+  .delete-buton {
+    font-size: 17px;
+  }
+}
+
+@media print {
+  body {
+    margin-bottom: 25mm;
+    background: #fff
+  }
+  a:after {
+    content: none;
+  }
+
+  .docs {
+    margin-top: 0;
+    width: 100%;
+  }
+
+  .doc-card, .doc-margin {
+    padding: 0;
+  }
+  .btn, nav {
+    display: none;
+  }
+  .container {
+    width: 90%;
+  }
+  .card {
+    border: none;
+    box-shadow: none;
+  }
+  textarea {
+    border: none;
+  }
+  .print-title {
+    font-size: 20px!important;
+    border: none!important;
+  }
+
+  @page {
+  margin: 2cm;
   }
 }

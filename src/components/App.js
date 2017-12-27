@@ -8,6 +8,7 @@ import Doc from './Document';
 import TestDoc from './TestDoc';
 import SingleDoc from './SingleDoc';
 import DeleteDoc from './DeleteDoc';
+
 import {
   isSignInPending,
   isUserSignedIn,
@@ -36,14 +37,13 @@ export default class App extends Component {
     return (
       <div>
       <BrowserRouter>
-          <div>
+          <div className="main-container">
             <Header handleSignOut={ this.handleSignOut } handleSignIn={ this.handleSignIn } />
             <Route exact path="/" component={Main} />
             <Route exact path="/test" component={TestDoc} />
             <Route exact path="/new" component={Doc} />
             <Route exact path="/documents/:id" component={SingleDoc} />
             <Route exact path="/documents/delete/:id" component={DeleteDoc} />
-
           </div>
         </BrowserRouter>
       </div>

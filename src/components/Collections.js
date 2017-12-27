@@ -75,21 +75,19 @@ export default class Collections extends Component {
               return (
                 <div key={doc.id} className="col s6 m3">
 
-                  <div className="card renderedDocs">
+                  <div className="card small renderedDocs">
                   <Link to={'/documents/'+ doc.id} className="black-text">
                     <div className="center-align card-content">
                       <p><i className="large material-icons">short_text</i></p>
                     </div>
                     </Link>
                     <div className="card-action">
-                      <Link to={'/documents/'+ doc.id}><a className="black-text">{doc.title}</a></Link>
-                        <span className="right-align">
-                          <Link to={'/documents/delete/'+ doc.id}>
-                            <a className="modal-trigger delete-button">
-                              <i className="material-icons red-text">delete</i>
-                            </a>
-                          </Link>
-                        </span>
+                      <Link to={'/documents/'+ doc.id}><a className="black-text">{doc.title.length > 17 ? doc.title.substring(0,17)+"..." :  doc.title}</a></Link>
+                      <Link to={'/documents/delete/'+ doc.id}>
+
+                          <i className="modal-trigger material-icons red-text delete-button">delete</i>
+
+                      </Link>
                     </div>
                   </div>
                 </div>

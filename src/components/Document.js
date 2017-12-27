@@ -10,9 +10,9 @@ import {
   handlePendingSignIn,
   signUserOut
 } from "blockstack";
-import ReactQuill from 'react-quill';
 
 const blockstack = require("blockstack");
+const wordcount = require("wordcount");
 
 export default class Doc extends Component {
   constructor(props) {
@@ -70,18 +70,24 @@ export default class Doc extends Component {
     });
   }
   handleaddItem() {
-    const object = {};
-    object.title = this.state.textvalue;
-    object.content = this.state.test;
-    object.id = this.state.rando;
-    this.setState({ value: [...this.state.value, object] });
-    this.setState({ confirm: true, cancel: false });
-    // this.saveNewFile();
+    if(this.state.textvalue || this.state.test) {
+      const object = {};
+      object.title = this.state.textvalue;
+      object.content = this.state.test;
+      object.id = this.state.rando;
+      this.setState({ value: [...this.state.value, object] });
+      // this.setState({ confirm: true, cancel: false });
+      this.setState({ loading: "show" });
+      this.setState({ save: "hide"});
+      setTimeout(this.saveNewFile, 500)
+    } else {
+      location.href = '/';
+    }
   };
 
   saveNewFile() {
-    this.setState({ loading: "show" });
-    this.setState({ save: "hide"});
+    // this.setState({ loading: "show" });
+    // this.setState({ save: "hide"});
     blockstack.putFile("/newDoc.json", JSON.stringify(this.state), true)
       .then(() => {
         console.log(JSON.stringify(this.state));
@@ -122,57 +128,60 @@ export default class Doc extends Component {
       };
   }
 
-  renderButton() {
-    if(this.state.confirm === false && this.state.cancel == false) {
-      return(
-        <div>
-          <div className="card">
-          <div className="input-field">
-            <input type="text" placeholder="Title" onChange={this.handleTitleChange} />
-            <div className="doc-margin">
-              <textarea
-                type="text"
-                id="textarea1"
-                placeholder="Write something great"
-                className="materialize-textarea double-space"
-                onChange={this.handleChange}
-              />
+  render() {
+    const words = wordcount(this.state.test);
+    const loading = this.state.loading;
+    const save = this.state.save;
+
+    return (
+      <div>
+      <div className="navbar-fixed toolbar">
+        <nav className="toolbar-nav">
+          <div className="nav-wrapper">
+            <a onClick={this.handleaddItem} className="brand-logo"><i className="material-icons">arrow_back</i></a>
+            <div className={loading}>
+            <div className="preloader-wrapper small active">
+              <div className="spinner-layer spinner-green-only">
+                <div className="circle-clipper left">
+                  <div className="circle"></div>
+                </div><div className="gap-patch">
+                  <div className="circle"></div>
+                </div><div className="circle-clipper right">
+                  <div className="circle"></div>
+                </div>
+              </div>
             </div>
+            </div>
+            <ul className="left toolbar-menu">
+              <li><a href="sass.html">Toolbar</a></li>
+              <li><a href="badges.html">Toolbar</a></li>
+            </ul>
           </div>
-          </div>
-          <div>
-            <button className="btn black" onClick={this.handleaddItem}>
-              Next
-            </button>
+        </nav>
+      </div>
+        <div className="container docs">
+        <div className="card">
+        <div className="input-field">
+          <input type="text" placeholder="Title" onChange={this.handleTitleChange} />
+          <div className="doc-margin">
+            <textarea
+              type="text"
+              id="textarea1"
+              placeholder="Write something great"
+              className="materialize-textarea double-space"
+              onChange={this.handleChange}
+            />
+            <div className="right-align wordcounter">
+              <p>{words} words</p>
+            </div>
           </div>
         </div>
-
-
-
-      );
-    } else if (this.state.confirm === true) {
-      const loading = this.state.loading;
-      const save = this.state.save;
-      return(
-
+        </div>
         <div>
-          <div className="card preview">
-            <div className="doc-margin">
-            <strong><h5>{this.state.textvalue}</h5></strong>
-            <p className="double-space indent">{this.state.test.split('\n').map((item, key) => {
-                return <span className="span-indent"key={item}>{item}<br/></span>
-              })}
-            </p>
-            </div>
-          </div>
-          <div className="preview">
           <div className={save}>
-            <button className="btn grey" onClick={this.handleCancel}>
-              Cancel
-            </button>
-            <button className="btn orange" onClick={this.saveNewFile}>
-              Looks Good
-            </button>
+          <button className="btn black" onClick={this.handleaddItem}>
+            Save
+          </button>
           </div>
           <div className={loading}>
           <div className="preloader-wrapper small active">
@@ -187,63 +196,7 @@ export default class Doc extends Component {
             </div>
           </div>
           </div>
-          </div>
         </div>
-
-      );
-    } else if(this.state.confirm == false && this.state.cancel == true) {
-      const loading = this.state.loading;
-      const save = this.state.save;
-      return (
-        <div>
-          <div className="">
-            <div className="card">
-              <div className="double-space input-field">
-
-              <input type="text" value={this.state.textvalue} onChange={this.handleTitleChange} />
-              <div className="doc-margin">
-              <textarea
-                type="text"
-                id="textarea1"
-                className="materialize-textarea"
-                value={this.state.test}
-                onChange={this.handleChange}
-              />
-              </div>
-              <div className={save}>
-              <button className="btn black" onClick={this.handleaddItem}>
-                Update
-              </button>
-              </div>
-              <div className={loading}>
-              <div className="preloader-wrapper small active">
-                <div className="spinner-layer spinner-green-only">
-                  <div className="circle-clipper left">
-                    <div className="circle"></div>
-                  </div><div className="gap-patch">
-                    <div className="circle"></div>
-                  </div><div className="circle-clipper right">
-                    <div className="circle"></div>
-                  </div>
-                </div>
-              </div>
-              </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      );
-    }
-  }
-
-  render() {
-    console.log(this.state.cancel);
-    let value = this.state.value;
-    return (
-      <div>
-        <div className="container docs">
-          {this.renderButton()}
         </div>
 
       </div>

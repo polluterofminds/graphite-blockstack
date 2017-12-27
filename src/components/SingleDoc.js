@@ -9,8 +9,9 @@ import {
   handlePendingSignIn,
   signUserOut
 } from "blockstack";
-import ReactQuill from 'react-quill';
-
+import jsPDF from 'jsPDF';
+import html2canvas from 'html2canvas';
+const wordcount = require("wordcount");
 const blockstack = require("blockstack");
 
 export default class SingleDoc extends Component {
@@ -26,6 +27,7 @@ export default class SingleDoc extends Component {
     }
     this.handleaddItem = this.handleaddItem.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleTitleChange = this.handleTitleChange.bind(this);
     this.saveNewFile = this.saveNewFile.bind(this);
   }
 
@@ -118,7 +120,15 @@ export default class SingleDoc extends Component {
       };
   }
 
+  print(){
+    const curURL = window.location.href;
+    history.replaceState(history.state, '', '/');
+    window.print();
+    history.replaceState(history.state, '', curURL);
+  }
+
   render() {
+    const words = wordcount(this.state.test);
     const loading = this.state.loading;
     const save = this.state.save;
     return (
@@ -126,16 +136,24 @@ export default class SingleDoc extends Component {
         <div className="container docs">
           <div className="card doc-card">
             <div className="double-space doc-margin">
+            <span className="btn grey small"
+              onClick={this.print}>
+              PRINT
+              </span>
             <h5 className="align-left">
-            <input type="text" value={this.state.textvalue} onChange={this.handleTitleChange} />
+            <input className="print-title" type="text" value={this.state.textvalue} onChange={this.handleTitleChange} />
             </h5>
             <textarea
+              data-autoresize
               type="text"
               id="textarea1"
               className="materialize-textarea"
               value={this.state.test}
               onChange={this.handleChange}
             />
+            <div className="right-align wordcounter">
+              <p>{words} words</p>
+            </div>
             <div className={save}>
             <button className="btn black" onClick={this.handleaddItem}>
               Update
