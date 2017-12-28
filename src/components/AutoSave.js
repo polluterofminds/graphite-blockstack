@@ -23,7 +23,7 @@ export default class SingleDoc extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      autosave: [],
+      autosave: "",
       value: [],
       textvalue : "",
       test:"",
@@ -55,16 +55,24 @@ export default class SingleDoc extends Component {
         console.log("loaded");
      }).then(() =>{
        let value = this.state.value;
-       const thisDoc = value.find((doc) => { return doc.id == this.props.match.params.id});
-       let index = thisDoc && thisDoc.id;
-       function findObjectIndex(doc) {
-           return doc.id == index;
-       }
-       this.setState({ test: thisDoc && thisDoc.content, textvalue: thisDoc && thisDoc.title, index: value.findIndex(findObjectIndex) })
+       // const thisDoc = value.find((doc) => { return doc.id == this.props.match.params.id});
+       // let index = thisDoc && thisDoc.id;
+       // function findObjectIndex(doc) {
+       //     return doc.id == index;
+       // }
+       // this.setState({ test: thisDoc && thisDoc.content, textvalue: thisDoc && thisDoc.title, index: value.findIndex(findObjectIndex) })
      })
       .catch(error => {
         console.log(error);
       });
+      blockstack.getFile("autosave.json", true)
+        .then((fileContents) => {
+          let title = JSON.parse(fileContents || '{}').title;
+          let content = JSON.parse(fileContents || '{}').content;
+          let rando = this.props.match.params.id;
+          this.setState({ textvalue: title, test: content })
+      });
+
       this.printPreview = () => {
         if(this.state.printPreview == true) {
           this.setState({printPreview: false});
@@ -72,8 +80,6 @@ export default class SingleDoc extends Component {
           this.setState({printPreview: true});
         }
       }
-      this.autoSave();
-      this.refresh = setInterval(() => this.autoSave(), 4000);
     }
 
 
@@ -97,61 +103,22 @@ export default class SingleDoc extends Component {
     object.updated = month + "/" + day + "/" + year;
     object.words = wordcount(this.state.test);
     this.setState({ value: [...this.state.value, this.state.value.splice(this.state.index, 1, object)]})
+    console.log(this.state.value);
     this.setState({ loading: "show", save: "hide" });
     this.saveNewFile();
-    console.log(this.state);
   };
 
-  handleAutoAdd() {
-    const today = new Date();
-    const day = today.getDate();
-    const month = today.getMonth() + 1;
-    const year = today.getFullYear();
-    const object = {};
-    object.title = this.state.textvalue;
-    object.content = this.state.test;
-    object.id = parseInt(this.props.match.params.id);
-    object.updated = month + "/" + day + "/" + year;
-    object.words = wordcount(this.state.test);
-    this.setState({ value: [...this.state.value, this.state.value.splice(this.state.index, 1, object)]})
-    console.log(this.state);
-
-  };
-
-  loadFile() {
-    blockstack.getFile("documents.json", true)
-     .then((fileContents) => {
-        this.setState({ value: JSON.parse(fileContents || '{}').value })
-        console.log("Autoloaded");
-        console.log(JSON.stringify(this.state.value));
-     }).then(() =>{
-       let value = this.state.value;
-       const thisDoc = value.find((doc) => { return doc.id == this.props.match.params.id});
-       let index = thisDoc && thisDoc.id;
-       function findObjectIndex(doc) {
-           return doc.id == index;
-       }
-     })
-      .catch(error => {
-        console.log(error);
-      });
-  }
-
-  autoSave() {
-    console.log("Trying");
-    this.handleAutoAdd()
+  saveBlank(){
+    blockstack.putFile("autosave.json", JSON.stringify(this.state.autosave), true)
       .then(() => {
-      blockstack.putFile("documents.json", JSON.stringify(this.state), true)
-        .then(() => {
-          console.log("Autosaved");
-          this.loadFile();
-        })
-        .catch(e => {
-          console.log("e");
-          console.log(e);
-          alert(e.message);
-        });
-    })
+        console.log("It worked!");
+        location.href = '/';
+      })
+      .catch(e => {
+        console.log("e");
+        console.log(e);
+        alert(e.message);
+      });
   }
 
   saveNewFile() {
@@ -160,13 +127,14 @@ export default class SingleDoc extends Component {
     blockstack.putFile("documents.json", JSON.stringify(this.state), true)
       .then(() => {
         console.log(JSON.stringify(this.state));
-        this.setState({ loading: "hide" });
-        location.href = '/';
+        this.setState({autosave: ""});
+        this.saveBlank();
       })
       .catch(e => {
         console.log("e");
         console.log(e);
         alert(e.message);
+        // location.href = '/';
       });
   }
 
@@ -181,7 +149,6 @@ export default class SingleDoc extends Component {
     const words = wordcount(this.state.test);
     const loading = this.state.loading;
     const save = this.state.save;
-    console.log("Index = " + this.state.index);
 
     if(this.state.printPreview === true) {
       return (
@@ -207,7 +174,7 @@ export default class SingleDoc extends Component {
                 <ul className="left toolbar-menu">
                   <li><a onClick={this.printPreview}>Back to Editing</a></li>
                   <li><a onClick={this.print}><i className="material-icons">local_printshop</i></a></li>
-                  <li><a ><img className="wordlogo" src="http://www.free-icons-download.net/images/docx-file-icon-71578.png" /></a></li>
+                  <li><a href="badges.html">Toolbar</a></li>
                 </ul>
               </div>
             </div>
@@ -237,7 +204,7 @@ export default class SingleDoc extends Component {
         <div className="navbar-fixed toolbar">
           <nav className="toolbar-nav">
             <div className="nav-wrapper">
-              <a onClick={this.handleaddItem} className="brand-logo"><div className={save}><i className="material-icons">arrow_back</i></div></a>
+              <a onClick={this.handleaddItem} className="brand-logo"><div className={save}>Save Now</div></a>
               <div className={loading}>
               <div className="preloader-wrapper small active">
                 <div className="spinner-layer spinner-green-only">

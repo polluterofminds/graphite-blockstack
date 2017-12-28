@@ -22,6 +22,8 @@ export default class Doc extends Component {
       textvalue: "",
       test:"",
       rando: "",
+      updated: "",
+      words: "",
       confirm: false,
       loading: "hide",
       save: "",
@@ -44,7 +46,7 @@ export default class Doc extends Component {
   }
 
   componentDidMount() {
-    blockstack.getFile("/newDoc.json", true)
+    blockstack.getFile("documents.json", true)
      .then((fileContents) => {
         this.setState({ value: JSON.parse(fileContents || '{}').value })
         console.log("loaded");
@@ -53,15 +55,13 @@ export default class Doc extends Component {
         console.log(error);
       });
     this.enableTab('textarea1');
+    // this.autoSave();
+    // this.refresh = setInterval(() => this.autoSave(), 3000);
   }
 
   handleTitleChange(e) {
-    const rando = Math.floor((Math.random() * 2500) + 1);
     this.setState({
       textvalue: e.target.value
-    });
-    this.setState({
-      rando: rando
     });
   }
   handleChange(e) {
@@ -71,10 +71,17 @@ export default class Doc extends Component {
   }
   handleaddItem() {
     if(this.state.textvalue || this.state.test) {
+      const today = new Date();
+      const day = today.getDate();
+      const month = today.getMonth() + 1;
+      const year = today.getFullYear();
+      const rando = Math.floor((Math.random() * 2500) + 1);
       const object = {};
-      object.title = this.state.textvalue;
+      object.title = this.state.textvalue || "Untitled";
       object.content = this.state.test;
-      object.id = this.state.rando;
+      object.id = rando;
+      object.updated = month + "/" + day + "/" + year;
+      object.words = wordcount(this.state.test);
       this.setState({ value: [...this.state.value, object] });
       // this.setState({ confirm: true, cancel: false });
       this.setState({ loading: "show" });
@@ -85,14 +92,30 @@ export default class Doc extends Component {
     }
   };
 
+  autoSave() {
+    const object = {};
+    object.title = this.state.textvalue;
+    object.content = this.state.test;
+    object.id = parseInt(this.props.match.params.id);
+    this.setState({ value: object })
+    blockstack.putFile("/autosave.json", JSON.stringify(this.state), true)
+      .then(() => {
+        console.log("Saved behind the scenes" + JSON.stringify(this.state));
+      })
+      .catch(e => {
+        console.log("e");
+        console.log(e);
+        alert(e.message);
+      });
+  };
+
   saveNewFile() {
     // this.setState({ loading: "show" });
     // this.setState({ save: "hide"});
-    blockstack.putFile("/newDoc.json", JSON.stringify(this.state), true)
+    blockstack.putFile("documents.json", JSON.stringify(this.state), true)
       .then(() => {
         console.log(JSON.stringify(this.state));
         location.href = '/';
-        this.setState({ confirm: false });
       })
       .catch(e => {
         console.log("e");
@@ -103,6 +126,14 @@ export default class Doc extends Component {
   handleCancel() {
     this.setState({ confirm: false, cancel: true});
 
+  }
+
+  handleDoubleSpace() {
+    this.setState({ lineSpacing: "materialize-textarea double-space" });
+  }
+
+  handleSingleSpace() {
+    this.setState({ lineSpacing: "materialize-textarea single-space" });
   }
 
   enableTab(id) {
@@ -128,19 +159,27 @@ export default class Doc extends Component {
       };
   }
 
+  print(){
+    const curURL = window.location.href;
+    history.replaceState(history.state, '', '/');
+    window.print();
+    history.replaceState(history.state, '', curURL);
+  }
+
   render() {
     const words = wordcount(this.state.test);
     const loading = this.state.loading;
     const save = this.state.save;
+    const lineSpacing = this.state.lineSpacing;
 
     return (
       <div>
       <div className="navbar-fixed toolbar">
         <nav className="toolbar-nav">
           <div className="nav-wrapper">
-            <a onClick={this.handleaddItem} className="brand-logo"><i className="material-icons">arrow_back</i></a>
+            <a onClick={this.handleaddItem} className="brand-logo"><div className={save}><i className="material-icons">arrow_back</i></div></a>
             <div className={loading}>
-            <div className="preloader-wrapper small active">
+            <div className="preloader-wrapper loading-small active">
               <div className="spinner-layer spinner-green-only">
                 <div className="circle-clipper left">
                   <div className="circle"></div>
@@ -152,17 +191,23 @@ export default class Doc extends Component {
               </div>
             </div>
             </div>
-            <ul className="left toolbar-menu">
-              <li><a href="sass.html">Toolbar</a></li>
-              <li><a href="badges.html">Toolbar</a></li>
-            </ul>
+            <div className={save}>
+              <ul id="dropdown2" className="dropdown-content">
+                <li><a onClick={this.handleSingleSpace}>Single Space</a></li>
+                <li><a onClick={this.handleDoubleSpace}>Double Space</a></li>
+              </ul>
+              <ul className="left toolbar-menu">
+                <li><a onClick={this.print}><i className="material-icons">local_printshop</i></a></li>
+                <li><a className="dropdown-button" href="#!" data-activates="dropdown2">Formatting<i className="material-icons right">arrow_drop_down</i></a></li>
+              </ul>
+            </div>
           </div>
         </nav>
       </div>
         <div className="container docs">
         <div className="card">
         <div className="input-field">
-          <input type="text" placeholder="Title" onChange={this.handleTitleChange} />
+          <input className="print-title" type="text" placeholder="Title" onChange={this.handleTitleChange} />
           <div className="doc-margin">
             <textarea
               type="text"
@@ -172,7 +217,7 @@ export default class Doc extends Component {
               onChange={this.handleChange}
             />
             <div className="right-align wordcounter">
-              <p>{words} words</p>
+              <p className="wordcount">{words} words</p>
             </div>
           </div>
         </div>

@@ -8,7 +8,7 @@ import Doc from './Document';
 import TestDoc from './TestDoc';
 import SingleDoc from './SingleDoc';
 import DeleteDoc from './DeleteDoc';
-
+import AutoSave from './AutoSave';
 import {
   isSignInPending,
   isUserSignedIn,
@@ -44,6 +44,8 @@ export default class App extends Component {
             <Route exact path="/new" component={Doc} />
             <Route exact path="/documents/:id" component={SingleDoc} />
             <Route exact path="/documents/delete/:id" component={DeleteDoc} />
+            <Route exact path="/profile" component={Profile} />
+            <Route exact path="/recovery" component={AutoSave} />
           </div>
         </BrowserRouter>
       </div>

@@ -5,7 +5,7 @@ body {
 }
 
 .card.small {
-  height: 200px!important;
+  height: 250px!important;
 }
 
 .main-container {
@@ -93,6 +93,17 @@ nav ul a {
 
 /*main*/
 
+.recovery-message {
+  width: 100%;
+  margin: auto;
+  padding: 5px;
+  margin-bottom: 25px;
+  background: #f4ce42;
+}
+
+.warning {
+}
+
 .welcome {
   margin-top: 15%;
 }
@@ -125,12 +136,29 @@ nav ul a {
   margin-bottom: 35px;
 }
 
+.addDoc {
+  margin-top: 25px;
+}
+
+.addDoc:hover {
+  cursor: pointer;
+}
+
 .renderedDocs {
   color: #000;
 }
 
 .doc-title {
   text-transform: capitalize!important;
+}
+
+.muted {
+  color: grey;
+  font-size: 14px;
+}
+
+.muted p {
+  margin: 0;
 }
 
 .materialize-textarea, .materialize-textarea:focus {
@@ -151,6 +179,11 @@ nav ul a {
 }
 
 /*New item*/
+
+.loading-thing {
+  padding: 10px;
+  margin-left: 10px;
+}
 
 .add {
   margin-top: 140px;
@@ -192,7 +225,7 @@ nav ul a {
 }
 
 .toolbar-menu {
-  margin-left: 40px;
+  margin-left: 70px;
 }
 
 .brand-logo:hover {
@@ -221,6 +254,13 @@ input:focus {
   border-bottom: 1px solid #000!important;
   box-shadow: 0 1px 0 0 #000!important;
 }
+
+.wordlogo {
+  height: 40px;
+  margin-top: 10px;
+  -webkit-filter: contrast(50%); /* Safari 6.0 - 9.0 */
+    filter: contrast(50%);
+}
 /*Delete item*/
 
 .delete-doc h5, .delete-doc h6 {
@@ -247,6 +287,50 @@ input:focus {
 
 .doc-card {
   padding: 25px;
+}
+
+.print-view, #textarea1 {
+  white-space: pre-wrap!important;
+}
+
+.ql-toolbar.ql-snow {
+    border: none;
+    box-sizing: border-box;
+    font-family: inherit;
+    padding: 8px;
+    position: fixed;
+    top: 0;
+    z-index: 999;
+    width: 100%;
+    left: 200px;
+    background: white;
+    height: 60px;
+    padding: 15px!important;
+}
+
+.ql-container.ql-snow {
+  border: none;
+}
+.ql-editor {
+  font-family: "Times New Roman", Georgia, Serif;
+  line-height: 2;
+  font-size: 16px;
+}
+
+/* Profile Page */
+
+.profile-stats {
+  padding: 20px;
+}
+#section-2 {
+  margin-top: 45px;
+}
+.profile-stats h4, .profile-stats h5, .profile-stats h3 {
+  padding: 20px;
+}
+
+.stats {
+  font-size: 24px;
 }
 
 /*Media Queires*/
@@ -295,7 +379,11 @@ input:focus {
     display: none;
   }
   .container {
-    width: 90%;
+    width: 95%;
+  }
+  .print-view {
+    font-family: "Times New Roman", Georgia, Serif;
+    line-height: 200%;
   }
   .card {
     border: none;
@@ -304,9 +392,18 @@ input:focus {
   textarea {
     border: none;
   }
+
+  .print-content {
+    /* font-size: 16px!important;
+    line-height: 200% */
+  }
   .print-title {
     font-size: 20px!important;
     border: none!important;
+  }
+
+  .wordcount {
+    display: none;
   }
 
   @page {

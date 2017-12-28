@@ -49,7 +49,7 @@ export default class Header extends Component {
       return (
         <ul id="nav-mobile" className="right">
         <ul id="dropdown1" className="dropdown-content">
-          <li><a href="#!">Profile</a></li>
+          <li><a href="/profile">Profile</a></li>
           <li><a href="#!">Contact</a></li>
           <li className="divider"></li>
           <li><a href="#" onClick={ handleSignOut.bind(this) }>Sign out</a></li>

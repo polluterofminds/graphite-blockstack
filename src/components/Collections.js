@@ -21,8 +21,11 @@ export default class Collections extends Component {
       textvalue: "",
       test:"",
       rando: "",
-      loading: ""
+      loading: "",
+      autoSave: false
     }
+    this.handleaddItem = this.handleaddItem.bind(this);
+    this.saveNewFile = this.saveNewFile.bind(this);
   }
 
   componentWillMount() {
@@ -34,23 +37,65 @@ export default class Collections extends Component {
   }
 
   componentDidMount() {
-    blockstack.getFile("/newDoc.json", true)
+    blockstack.getFile("documents.json", true)
      .then((fileContents) => {
         this.setState({ value: JSON.parse(fileContents || '{}').value })
-        console.log("loaded");
+        console.log(JSON.parse(fileContents || '{}').value);
         this.setState({ loading: "hide" });
      })
       .catch(error => {
         console.log(error);
       });
   }
+  handleaddItem() {
+    const today = new Date();
+    const day = today.getDate();
+    const month = today.getMonth() + 1;
+    const year = today.getFullYear();
+    const rando = Math.floor((Math.random() * 2500) + 1);
+    const object = {};
+    object.title = "Untitled";
+    object.content = "";
+    object.id = rando;
+    object.updated = month + "/" + day + "/" + year;
+    this.setState({ value: [...this.state.value, object] });
+    // this.setState({ confirm: true, cancel: false });
+    setTimeout(this.saveNewFile, 500)
+  }
+  saveNewFile() {
+    // this.setState({ loading: "show" });
+    // this.setState({ save: "hide"});
+    blockstack.putFile("documents.json", JSON.stringify(this.state), true)
+      .then(() => {
+        console.log(JSON.stringify(this.state));
+        // location.href = '/documents/'+ this.state.rando;
+      })
+      .catch(e => {
+        console.log("e");
+        console.log(e);
+        alert(e.message);
+      });
+  }
+
+  renderAutoSave() {
+    if (this.state.autoSave == true) {
+      return (
+        <div className="recovery-message center-align">
+          <p><i className="material-icons warning">warning</i></p>
+          <p>You have an unsaved document. Click <strong><a href="/recovery">here</a></strong> to access it and save.</p>
+        </div>
+      );
+    } else {
+      return;
+    }
+  }
 
   render() {
-    console.log(this.state.value);
     let value = this.state.value;
     const loading = this.state.loading;
     return (
         <div className="docs">
+          {this.renderAutoSave()}
           <div className="container">
             <div className={loading}>
               <div className="progress center-align">
@@ -62,16 +107,16 @@ export default class Collections extends Component {
         <h3 className="container center-align">Your documents</h3>
         <div className="row">
           <div className="col s6 m3">
-            <Link to={'/new'}><div className="card">
+            <a onClick={this.handleaddItem}><div className="card small">
               <div className="center-align card-content">
-                <p><i className="large material-icons">add</i></p>
+                <p><i className="addDoc large material-icons">add</i></p>
               </div>
               <div className="card-action">
                 <a className="black-text">New Document</a>
               </div>
-            </div></Link>
+            </div></a>
           </div>
-          {value.map(doc => {
+          {value.slice(0).reverse().map(doc => {
               return (
                 <div key={doc.id} className="col s6 m3">
 
@@ -88,6 +133,9 @@ export default class Collections extends Component {
                           <i className="modal-trigger material-icons red-text delete-button">delete</i>
 
                       </Link>
+                      <div className="muted">
+                        <p>Last updated: {doc.updated}</p>
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -24,7 +24,6 @@ export default class DeleteDoc extends Component {
       loading: "hide"
     }
     this.handleDeleteItem = this.handleDeleteItem.bind(this);
-    this.handleChange = this.handleChange.bind(this);
     this.saveNewFile = this.saveNewFile.bind(this);
   }
 
@@ -37,7 +36,7 @@ export default class DeleteDoc extends Component {
   }
 
   componentDidMount() {
-    blockstack.getFile("/newDoc.json", true)
+    blockstack.getFile("documents.json", true)
      .then((fileContents) => {
         this.setState({ value: JSON.parse(fileContents || '{}').value })
         console.log("loaded");
@@ -53,20 +52,8 @@ export default class DeleteDoc extends Component {
       .catch(error => {
         console.log(error);
       });
-      this.enableTab('textarea1');
     }
 
-
-  handleTitleChange(e) {
-    this.setState({
-      textvalue: e.target.value
-    });
-  }
-  handleChange(e) {
-    this.setState({
-      test: e.target.value
-    });
-  }
   handleDeleteItem() {
     const object = {};
     object.title = this.state.textvalue;
@@ -81,7 +68,7 @@ export default class DeleteDoc extends Component {
   saveNewFile() {
     this.setState({ loading: "show" });
     this.setState({ save: "hide"});
-    blockstack.putFile("/newDoc.json", JSON.stringify(this.state), true)
+    blockstack.putFile("documents.json", JSON.stringify(this.state), true)
       .then(() => {
         console.log(JSON.stringify(this.state));
         this.setState({ loading: "hide" });
@@ -92,29 +79,6 @@ export default class DeleteDoc extends Component {
         console.log(e);
         alert(e.message);
       });
-  }
-
-  enableTab(id) {
-      var el = document.getElementById(id);
-      el.onkeydown = function(e) {
-          if (e.keyCode === 9) { // tab was pressed
-
-              // get caret position/selection
-              var val = this.value,
-                  start = this.selectionStart,
-                  end = this.selectionEnd;
-
-              // set textarea value to: text before caret + tab + text after caret
-              this.value = val.substring(0, start) + '\t' + val.substring(end);
-
-              // put caret at right position again
-              this.selectionStart = this.selectionEnd = start + 1;
-
-              // prevent the focus lose
-              return false;
-
-          }
-      };
   }
 
   render() {

@@ -1,5 +1,8 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import ReactDOM from 'react-dom';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import Profile from "./Profile";
 import Signin from "./Signin";
 import Header from "./Header";
@@ -12,6 +15,7 @@ import {
 } from "blockstack";
 
 const blockstack = require("blockstack");
+const wordcount = require("wordcount");
 
 export default class TestDoc extends Component {
   constructor(props) {
@@ -21,11 +25,17 @@ export default class TestDoc extends Component {
       textvalue: "",
       test:"",
       rando: "",
-      confirm: false
+      updated: "",
+      words: "",
+      confirm: false,
+      loading: "hide",
+      save: "",
+      cancel: false
     }
     this.handleaddItem = this.handleaddItem.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
     this.saveNewFile = this.saveNewFile.bind(this);
   }
 
@@ -35,140 +45,211 @@ export default class TestDoc extends Component {
         window.location = window.location.origin;
       });
     }
-
-    this.edit = () => {
-      this.setState({ confirm: false });
-    }
+    // this.enableTab('textarea1');
   }
 
   componentDidMount() {
-    blockstack.getFile("/testfile.json", true)
+    blockstack.getFile("documents.json", true)
      .then((fileContents) => {
         this.setState({ value: JSON.parse(fileContents || '{}').value })
-        console.log(this.state.value);
+        console.log("loaded");
      })
       .catch(error => {
         console.log(error);
       });
+    this.enableTab('textarea1');
+    // this.autoSave();
+    // this.refresh = setInterval(() => this.autoSave(), 3000);
   }
 
   handleTitleChange(e) {
-    const rando = Math.floor((Math.random() * 2500) + 1);
     this.setState({
       textvalue: e.target.value
     });
-    this.setState({
-      rando: rando
-    });
   }
-  handleChange(e) {
-    this.setState({
-      test: e.target.value
-    });
-  }
+  handleChange(value) {
+      this.setState({ test: value })
+    }
   handleaddItem() {
+    if(this.state.textvalue || this.state.test) {
+      const today = new Date();
+      const day = today.getDate();
+      const month = today.getMonth() + 1;
+      const year = today.getFullYear();
+      const rando = Math.floor((Math.random() * 2500) + 1);
+      const object = {};
+      object.title = this.state.textvalue || "Untitled";
+      object.content = this.state.test;
+      object.id = rando;
+      object.updated = month + "/" + day + "/" + year;
+      object.words = wordcount(this.state.test);
+      this.setState({ value: [...this.state.value, object] });
+      // this.setState({ confirm: true, cancel: false });
+      this.setState({ loading: "show" });
+      this.setState({ save: "hide"});
+      setTimeout(this.saveNewFile, 500)
+    } else {
+      location.href = '/';
+    }
+  };
+
+  autoSave() {
     const object = {};
     object.title = this.state.textvalue;
     object.content = this.state.test;
-    object.id = Math.floor((Math.random() * 2500) + 1);
-    this.setState({ value: [...this.state.value, object] });
-    this.setState({ confirm: true });
-    // this.saveNewFile();
-  };
-
-  saveNewFile() {
-    blockstack.putFile("/testfile.json", JSON.stringify(this.state), true)
+    object.id = parseInt(this.props.match.params.id);
+    this.setState({ value: object })
+    blockstack.putFile("/autosave.json", JSON.stringify(this.state), true)
       .then(() => {
-        console.log(JSON.stringify(this.state));
+        console.log("Saved behind the scenes" + JSON.stringify(this.state));
       })
       .catch(e => {
         console.log("e");
         console.log(e);
         alert(e.message);
       });
-    this.setState({ confirm: false });
+  };
+
+  saveNewFile() {
+    // this.setState({ loading: "show" });
+    // this.setState({ save: "hide"});
+    blockstack.putFile("documents.json", JSON.stringify(this.state), true)
+      .then(() => {
+        console.log(JSON.stringify(this.state));
+        location.href = '/';
+      })
+      .catch(e => {
+        console.log("e");
+        console.log(e);
+        alert(e.message);
+      });
+  }
+  handleCancel() {
+    this.setState({ confirm: false, cancel: true});
+
   }
 
-  edit() {
-    location.reload();
+  handleDoubleSpace() {
+    this.setState({ lineSpacing: "materialize-textarea double-space" });
   }
 
-  renderButton() {
-    if(this.state.confirm === false) {
-      return(
-        <div className="container">
-          <div className="input-field card">
-            <input type="text" onChange={this.handleTitleChange} />
-          </div>
-          <div className="center-align">
-            <button className="btn black" onClick={this.handleaddItem}>
-              Add Document
-            </button>
-          </div>
-        </div>
+  handleSingleSpace() {
+    this.setState({ lineSpacing: "materialize-textarea single-space" });
+  }
 
+  enableTab(id) {
+      var el = document.getElementById(id);
+      el.onkeydown = function(e) {
+          if (e.keyCode === 9) { // tab was pressed
 
+              // get caret position/selection
+              var val = this.value,
+                  start = this.selectionStart,
+                  end = this.selectionEnd;
 
-      );
-    } else if (this.state.confirm === true) {
-      return(
+              // set textarea value to: text before caret + tab + text after caret
+              this.value = val.substring(0, start) + '\t' + val.substring(end);
 
-        <div className="container">
-          <div className="input-field card">
-            <div className="center-align">
-            <h6>Confirm Title:</h6>
-            <strong><h5>{this.state.textvalue}</h5></strong>
-            </div>
-          </div>
-          <div className="center-align">
-            <Link to={"/"}><button className="btn grey">
-              Cancel
-            </button></Link>
-            <button className="btn orange" onClick={this.saveNewFile}>
-              Save It
-            </button>
-          </div>
-        </div>
+              // put caret at right position again
+              this.selectionStart = this.selectionEnd = start + 1;
 
-      );
-    }
+              // prevent the focus lose
+              return false;
+
+          }
+      };
+  }
+
+  print(){
+    const curURL = window.location.href;
+    history.replaceState(history.state, '', '/');
+    window.print();
+    history.replaceState(history.state, '', curURL);
   }
 
   render() {
-    console.log(this.state.value);
-    let value = this.state.value;
+    const words = wordcount(this.state.test);
+    const loading = this.state.loading;
+    const save = this.state.save;
+    const lineSpacing = this.state.lineSpacing;
+    console.log(this.state.test);
     return (
       <div>
-        <div className="container">
-          {this.renderButton()}
-        </div>
-        <div className="row">
-          {value.map(doc => {
-            if (doc.title.length > 0) {
-              return (
-                <div key={doc.id} className="col s6 m3">
-                  <div className="card">
-                    <div className="center-align card-content">
-                      <p><i className="large material-icons">short_text</i></p>
-                    </div>
-                    <div className="card-action">
-                      <a className="black-text" href="#">{doc.title}</a>
-                    </div>
-                  </div>
+      <div className="navbar-fixed toolbar">
+        <nav className="toolbar-nav">
+          <div className="nav-wrapper">
+            <a onClick={this.handleaddItem} className="brand-logo"><div className={save}><i className="material-icons">arrow_back</i></div></a>
+            <div className={loading}>
+            <div className="preloader-wrapper loading-small active">
+              <div className="spinner-layer spinner-green-only">
+                <div className="circle-clipper left">
+                  <div className="circle"></div>
+                </div><div className="gap-patch">
+                  <div className="circle"></div>
+                </div><div className="circle-clipper right">
+                  <div className="circle"></div>
                 </div>
-              )
-            }
-            })
-          }
+              </div>
+            </div>
+            </div>
+            <div className={save}>
+              <ul id="dropdown2" className="dropdown-content">
+                <li><a onClick={this.handleSingleSpace}>Single Space</a></li>
+                <li><a onClick={this.handleDoubleSpace}>Double Space</a></li>
+              </ul>
+              <ul className="left toolbar-menu">
+                <li><a onClick={this.print}><i className="material-icons">local_printshop</i></a></li>
+                <li><a className="dropdown-button" href="#!" data-activates="dropdown2">Formatting<i className="material-icons right">arrow_drop_down</i></a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+      </div>
+        <div className="container docs">
+        <div className="card">
+        <div className="input-field">
+          <input className="print-title" type="text" placeholder="Title" onChange={this.handleTitleChange} />
+          <div className="doc-margin">
+
+          <ReactQuill value={this.state.test}
+                  onChange={this.handleChange} />
+
+            <textarea
+              type="text"
+              id="textarea1"
+              placeholder="Write something great"
+              className="materialize-textarea double-space"
+              onChange={this.handleChange}
+            />
+            <div className="right-align wordcounter">
+              <p className="wordcount">{words} words</p>
+            </div>
+          </div>
         </div>
+        </div>
+        <div>
+          <div className={save}>
+          <button className="btn black" onClick={this.handleaddItem}>
+            Save
+          </button>
+          </div>
+          <div className={loading}>
+          <div className="preloader-wrapper small active">
+            <div className="spinner-layer spinner-green-only">
+              <div className="circle-clipper left">
+                <div className="circle"></div>
+              </div><div className="gap-patch">
+                <div className="circle"></div>
+              </div><div className="circle-clipper right">
+                <div className="circle"></div>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+        </div>
+
       </div>
     );
   }
 }
-
-// <textarea
-//   type="text"
-//   id="textarea1"
-//   className="materialize-textarea"
-//   onChange={this.handleChange}
-// />
