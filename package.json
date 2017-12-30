@@ -37,9 +37,10 @@
     "webpack-dev-server": "^2.4.2"
   },
   "dependencies": {
-    "blockstack": "^0.11.0",
+    "blockstack": "^0.14.2",
     "bootstrap": "^3.3.7",
     "chart.js": "^2.7.1",
+    "immutability-helper": "^2.6.2",
     "react": "^15.6.2",
     "react-chartjs-2": "^2.6.4",
     "react-dom": "^15.6.2",

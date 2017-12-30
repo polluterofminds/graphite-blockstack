@@ -12,6 +12,7 @@ import {
   handlePendingSignIn,
   signUserOut
 } from "blockstack";
+import update from 'immutability-helper';
 const wordcount = require("wordcount");
 const blockstack = require("blockstack");
 const Quill = ReactQuill.Quill
@@ -23,7 +24,6 @@ export default class SingleDoc extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      autosave: [],
       value: [],
       textvalue : "",
       test:"",
@@ -32,7 +32,8 @@ export default class SingleDoc extends Component {
       index: "",
       save: "",
       loading: "hide",
-      printPreview: false
+      printPreview: false,
+      autoSave: "Saved"
     }
     this.handleaddItem = this.handleaddItem.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -72,8 +73,8 @@ export default class SingleDoc extends Component {
           this.setState({printPreview: true});
         }
       }
-      this.autoSave();
-      this.refresh = setInterval(() => this.autoSave(), 4000);
+      setTimeout(this.handleAutoAdd,1000);
+      this.refresh = setInterval(() => this.handleAutoAdd(), 3000);
     }
 
 
@@ -102,6 +103,22 @@ export default class SingleDoc extends Component {
     console.log(this.state);
   };
 
+  saveNewFile() {
+    this.setState({ loading: "show" });
+    this.setState({ save: "hide"});
+    blockstack.putFile("documents.json", JSON.stringify(this.state), true)
+      .then(() => {
+        console.log(JSON.stringify(this.state));
+        this.setState({ loading: "hide" });
+        location.href = '/';
+      })
+      .catch(e => {
+        console.log("e");
+        console.log(e);
+        alert(e.message);
+      });
+  }
+
   handleAutoAdd() {
     const today = new Date();
     const day = today.getDate();
@@ -113,55 +130,21 @@ export default class SingleDoc extends Component {
     object.id = parseInt(this.props.match.params.id);
     object.updated = month + "/" + day + "/" + year;
     object.words = wordcount(this.state.test);
-    this.setState({ value: [...this.state.value, this.state.value.splice(this.state.index, 1, object)]})
-    console.log(this.state);
-
+    const index = this.state.index;
+    const updatedDoc = update(this.state.value, {$splice: [[index, 1, object]]});  // array.splice(start, deleteCount, item1)
+    this.setState({value: updatedDoc});
+    // this.setState({autoSave: true});
+    console.log(this.state.value);
+    this.autoSave();
   };
 
-  loadFile() {
-    blockstack.getFile("documents.json", true)
-     .then((fileContents) => {
-        this.setState({ value: JSON.parse(fileContents || '{}').value })
-        console.log("Autoloaded");
-        console.log(JSON.stringify(this.state.value));
-     }).then(() =>{
-       let value = this.state.value;
-       const thisDoc = value.find((doc) => { return doc.id == this.props.match.params.id});
-       let index = thisDoc && thisDoc.id;
-       function findObjectIndex(doc) {
-           return doc.id == index;
-       }
-     })
-      .catch(error => {
-        console.log(error);
-      });
-  }
-
   autoSave() {
-    console.log("Trying");
-    this.handleAutoAdd()
-      .then(() => {
-      blockstack.putFile("documents.json", JSON.stringify(this.state), true)
-        .then(() => {
-          console.log("Autosaved");
-          this.loadFile();
-        })
-        .catch(e => {
-          console.log("e");
-          console.log(e);
-          alert(e.message);
-        });
-    })
-  }
-
-  saveNewFile() {
-    this.setState({ loading: "show" });
-    this.setState({ save: "hide"});
+    this.setState({autoSave: "Saving"});
     blockstack.putFile("documents.json", JSON.stringify(this.state), true)
       .then(() => {
-        console.log(JSON.stringify(this.state));
-        this.setState({ loading: "hide" });
-        location.href = '/';
+        console.log("Autosaved");
+        this.setState({autoSave: "Saved"});
+        // setState({autoSave: false});
       })
       .catch(e => {
         console.log("e");
@@ -181,7 +164,7 @@ export default class SingleDoc extends Component {
     const words = wordcount(this.state.test);
     const loading = this.state.loading;
     const save = this.state.save;
-    console.log("Index = " + this.state.index);
+    const autoSave = this.state.autoSave;
 
     if(this.state.printPreview === true) {
       return (
@@ -221,7 +204,7 @@ export default class SingleDoc extends Component {
               </p>
               <div>
                 <div
-                  className="print-view"
+                  className="print-view no-edit"
                   dangerouslySetInnerHTML={{ __html: this.state.test }}
                 />
               </div>
@@ -254,7 +237,9 @@ export default class SingleDoc extends Component {
               <div className={save}>
                 <ul className="left toolbar-menu">
                 <li><a onClick={this.printPreview}>Export Options</a></li>
-                  <li><a href="badges.html">Toolbar</a></li>
+                </ul>
+                <ul className="right toolbar-menu auto-save">
+                <li><a className="muted">{autoSave}</a></li>
                 </ul>
               </div>
             </div>
@@ -278,9 +263,6 @@ export default class SingleDoc extends Component {
                 <p className="wordcount">{words} words</p>
               </div>
               <div className={save}>
-              <button className="btn black" onClick={this.handleaddItem}>
-                Update
-              </button>
               </div>
               <div className={loading}>
               <div className="preloader-wrapper small active">
@@ -311,11 +293,3 @@ export default class SingleDoc extends Component {
     );
   }
 }
-
-// <textarea
-//   type="text"
-  // id="textarea1"
-  // className="materialize-textarea print-content"
-//   value={this.state.test}
-//   onChange={this.handleChange}
-// />

@@ -17,15 +17,12 @@ export default class Collections extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: [],
-      textvalue: "",
-      test:"",
-      rando: "",
-      loading: "",
-      autoSave: false
+      value: []
     }
     this.handleaddItem = this.handleaddItem.bind(this);
     this.saveNewFile = this.saveNewFile.bind(this);
+    // this.handleMerge = this.handleMerge.bind(this);
+    // this.autoMerge = this.autoMerge.bind(this);
   }
 
   componentWillMount() {
@@ -39,7 +36,7 @@ export default class Collections extends Component {
   componentDidMount() {
     blockstack.getFile("documents.json", true)
      .then((fileContents) => {
-        this.setState({ value: JSON.parse(fileContents || '{}').value })
+        this.setState({ value: JSON.parse(fileContents || '{}').value });
         console.log(JSON.parse(fileContents || '{}').value);
         this.setState({ loading: "hide" });
      })
@@ -47,6 +44,7 @@ export default class Collections extends Component {
         console.log(error);
       });
   }
+
   handleaddItem() {
     const today = new Date();
     const day = today.getDate();
@@ -62,13 +60,11 @@ export default class Collections extends Component {
     // this.setState({ confirm: true, cancel: false });
     setTimeout(this.saveNewFile, 500)
   }
+
   saveNewFile() {
-    // this.setState({ loading: "show" });
-    // this.setState({ save: "hide"});
     blockstack.putFile("documents.json", JSON.stringify(this.state), true)
       .then(() => {
         console.log(JSON.stringify(this.state));
-        // location.href = '/documents/'+ this.state.rando;
       })
       .catch(e => {
         console.log("e");
@@ -77,25 +73,12 @@ export default class Collections extends Component {
       });
   }
 
-  renderAutoSave() {
-    if (this.state.autoSave == true) {
-      return (
-        <div className="recovery-message center-align">
-          <p><i className="material-icons warning">warning</i></p>
-          <p>You have an unsaved document. Click <strong><a href="/recovery">here</a></strong> to access it and save.</p>
-        </div>
-      );
-    } else {
-      return;
-    }
-  }
-
   render() {
     let value = this.state.value;
     const loading = this.state.loading;
+
     return (
         <div className="docs">
-          {this.renderAutoSave()}
           <div className="container">
             <div className={loading}>
               <div className="progress center-align">

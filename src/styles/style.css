@@ -4,6 +4,11 @@ body {
   background-color: #C4C4C4;
 }
 
+.dropdown-content li {
+  list-style: none!important;
+  margin-left: 0!important;
+}
+
 .card.small {
   height: 250px!important;
 }
@@ -285,6 +290,32 @@ input:focus {
 
 /* Single document */
 
+.auto-save {
+  margin-right: 50px;
+}
+
+.no-edit h1 {
+  font-size: 32px;
+}
+
+.no-edit h2 {
+  font-size: 24px;
+}
+
+.no-edit h3 {
+  font-size: 18px;
+}
+
+.preloader-wrapper {
+  margin-top: 12px;
+  margin-left: 10px;
+}
+
+.auto-save li a:hover {
+  background: #fff;
+  cursor: default;
+}
+
 .doc-card {
   padding: 25px;
 }
@@ -301,7 +332,7 @@ input:focus {
     position: fixed;
     top: 0;
     z-index: 999;
-    width: 100%;
+    width: 70%;
     left: 200px;
     background: white;
     height: 60px;
