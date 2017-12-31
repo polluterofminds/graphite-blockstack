@@ -1,8 +1,5 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import ReactDOM from 'react-dom';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
 import Profile from "./Profile";
 import Signin from "./Signin";
 import Header from "./Header";
@@ -15,28 +12,19 @@ import {
 } from "blockstack";
 
 const blockstack = require("blockstack");
-const wordcount = require("wordcount");
 
 export default class TestDoc extends Component {
   constructor(props) {
     super(props);
     this.state = {
       value: [],
-      textvalue: "",
-      test:"",
-      rando: "",
-      updated: "",
-      words: "",
-      confirm: false,
-      loading: "hide",
-      save: "",
-      cancel: false
+      filteredValue: []
     }
     this.handleaddItem = this.handleaddItem.bind(this);
-    this.handleTitleChange = this.handleTitleChange.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.handleCancel = this.handleCancel.bind(this);
     this.saveNewFile = this.saveNewFile.bind(this);
+    this.filterList = this.filterList.bind(this);
+    // this.handleMerge = this.handleMerge.bind(this);
+    // this.autoMerge = this.autoMerge.bind(this);
   }
 
   componentWillMount() {
@@ -45,78 +33,49 @@ export default class TestDoc extends Component {
         window.location = window.location.origin;
       });
     }
-    // this.enableTab('textarea1');
   }
 
   componentDidMount() {
     blockstack.getFile("documents.json", true)
      .then((fileContents) => {
-        this.setState({ value: JSON.parse(fileContents || '{}').value })
-        console.log("loaded");
+        this.setState({ value: JSON.parse(fileContents || '{}').value });
+        this.setState({filteredValue: this.state.value})
+        console.log(JSON.parse(fileContents || '{}').value);
+        this.setState({ loading: "hide" });
      })
       .catch(error => {
         console.log(error);
       });
-    this.enableTab('textarea1');
-    // this.autoSave();
-    // this.refresh = setInterval(() => this.autoSave(), 3000);
   }
 
-  handleTitleChange(e) {
-    this.setState({
-      textvalue: e.target.value
-    });
-  }
-  handleChange(value) {
-      this.setState({ test: value })
-    }
   handleaddItem() {
-    if(this.state.textvalue || this.state.test) {
-      const today = new Date();
-      const day = today.getDate();
-      const month = today.getMonth() + 1;
-      const year = today.getFullYear();
-      const rando = Math.floor((Math.random() * 2500) + 1);
-      const object = {};
-      object.title = this.state.textvalue || "Untitled";
-      object.content = this.state.test;
-      object.id = rando;
-      object.updated = month + "/" + day + "/" + year;
-      object.words = wordcount(this.state.test);
-      this.setState({ value: [...this.state.value, object] });
-      // this.setState({ confirm: true, cancel: false });
-      this.setState({ loading: "show" });
-      this.setState({ save: "hide"});
-      setTimeout(this.saveNewFile, 500)
-    } else {
-      location.href = '/';
-    }
-  };
-
-  autoSave() {
+    const today = new Date();
+    const day = today.getDate();
+    const month = today.getMonth() + 1;
+    const year = today.getFullYear();
+    const rando = Math.floor((Math.random() * 2500) + 1);
     const object = {};
-    object.title = this.state.textvalue;
-    object.content = this.state.test;
-    object.id = parseInt(this.props.match.params.id);
-    this.setState({ value: object })
-    blockstack.putFile("/autosave.json", JSON.stringify(this.state), true)
-      .then(() => {
-        console.log("Saved behind the scenes" + JSON.stringify(this.state));
-      })
-      .catch(e => {
-        console.log("e");
-        console.log(e);
-        alert(e.message);
-      });
-  };
+    object.title = "Untitled";
+    object.content = "";
+    object.id = rando;
+    object.updated = month + "/" + day + "/" + year;
+    this.setState({ value: [...this.state.value, object] });
+    // this.setState({ confirm: true, cancel: false });
+    setTimeout(this.saveNewFile, 500)
+  }
+  filterList(event){
+    var updatedList = this.state.value;
+    updatedList = updatedList.filter(function(item){
+      return item.title.toLowerCase().search(
+        event.target.value.toLowerCase()) !== -1;
+    });
+    this.setState({filteredValue: updatedList});
+  }
 
   saveNewFile() {
-    // this.setState({ loading: "show" });
-    // this.setState({ save: "hide"});
     blockstack.putFile("documents.json", JSON.stringify(this.state), true)
       .then(() => {
         console.log(JSON.stringify(this.state));
-        location.href = '/';
       })
       .catch(e => {
         console.log("e");
@@ -124,131 +83,69 @@ export default class TestDoc extends Component {
         alert(e.message);
       });
   }
-  handleCancel() {
-    this.setState({ confirm: false, cancel: true});
 
-  }
-
-  handleDoubleSpace() {
-    this.setState({ lineSpacing: "materialize-textarea double-space" });
-  }
-
-  handleSingleSpace() {
-    this.setState({ lineSpacing: "materialize-textarea single-space" });
-  }
-
-  enableTab(id) {
-      var el = document.getElementById(id);
-      el.onkeydown = function(e) {
-          if (e.keyCode === 9) { // tab was pressed
-
-              // get caret position/selection
-              var val = this.value,
-                  start = this.selectionStart,
-                  end = this.selectionEnd;
-
-              // set textarea value to: text before caret + tab + text after caret
-              this.value = val.substring(0, start) + '\t' + val.substring(end);
-
-              // put caret at right position again
-              this.selectionStart = this.selectionEnd = start + 1;
-
-              // prevent the focus lose
-              return false;
-
-          }
-      };
-  }
-
-  print(){
-    const curURL = window.location.href;
-    history.replaceState(history.state, '', '/');
-    window.print();
-    history.replaceState(history.state, '', curURL);
-  }
 
   render() {
-    const words = wordcount(this.state.test);
+    let value = this.state.filteredValue;
     const loading = this.state.loading;
-    const save = this.state.save;
-    const lineSpacing = this.state.lineSpacing;
-    console.log(this.state.test);
+    console.log(this.state.filteredValue);
+
     return (
-      <div>
-      <div className="navbar-fixed toolbar">
-        <nav className="toolbar-nav">
-          <div className="nav-wrapper">
-            <a onClick={this.handleaddItem} className="brand-logo"><div className={save}><i className="material-icons">arrow_back</i></div></a>
+        <div className="docs">
+        <div className="search card">
+          <form className="searchform">
+          <fieldset className="form-group searchfield">
+          <input type="text" className="form-control form-control-lg searchinput" placeholder="Search" onChange={this.filterList}/>
+          </fieldset>
+          </form>
+        </div>
+          <div className="container">
             <div className={loading}>
-            <div className="preloader-wrapper loading-small active">
-              <div className="spinner-layer spinner-green-only">
-                <div className="circle-clipper left">
-                  <div className="circle"></div>
-                </div><div className="gap-patch">
-                  <div className="circle"></div>
-                </div><div className="circle-clipper right">
-                  <div className="circle"></div>
+              <div className="progress center-align">
+                <p>Loading...</p>
+                <div className="indeterminate"></div>
+              </div>
+            </div>
+          </div>
+        <h3 className="container center-align">Your documents</h3>
+        <div className="row">
+          <div className="col s6 m3">
+            <a onClick={this.handleaddItem}><div className="card small">
+              <div className="center-align card-content">
+                <p><i className="addDoc large material-icons">add</i></p>
+              </div>
+              <div className="card-action">
+                <a className="black-text">New Document</a>
+              </div>
+            </div></a>
+          </div>
+          {value.slice(0).reverse().map(doc => {
+              return (
+                <div key={doc.id} className="col s6 m3">
+
+                  <div className="card small renderedDocs">
+                  <Link to={'/documents/'+ doc.id} className="black-text">
+                    <div className="center-align card-content">
+                      <p><i className="large material-icons">short_text</i></p>
+                    </div>
+                    </Link>
+                    <div className="card-action">
+                      <Link to={'/documents/'+ doc.id}><a className="black-text">{doc.title.length > 17 ? doc.title.substring(0,17)+"..." :  doc.title}</a></Link>
+                      <Link to={'/documents/delete/'+ doc.id}>
+
+                          <i className="modal-trigger material-icons red-text delete-button">delete</i>
+
+                      </Link>
+                      <div className="muted">
+                        <p>Last updated: {doc.updated}</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-            </div>
-            <div className={save}>
-              <ul id="dropdown2" className="dropdown-content">
-                <li><a onClick={this.handleSingleSpace}>Single Space</a></li>
-                <li><a onClick={this.handleDoubleSpace}>Double Space</a></li>
-              </ul>
-              <ul className="left toolbar-menu">
-                <li><a onClick={this.print}><i className="material-icons">local_printshop</i></a></li>
-                <li><a className="dropdown-button" href="#!" data-activates="dropdown2">Formatting<i className="material-icons right">arrow_drop_down</i></a></li>
-              </ul>
-            </div>
-          </div>
-        </nav>
-      </div>
-        <div className="container docs">
-        <div className="card">
-        <div className="input-field">
-          <input className="print-title" type="text" placeholder="Title" onChange={this.handleTitleChange} />
-          <div className="doc-margin">
-
-          <ReactQuill value={this.state.test}
-                  onChange={this.handleChange} />
-
-            <textarea
-              type="text"
-              id="textarea1"
-              placeholder="Write something great"
-              className="materialize-textarea double-space"
-              onChange={this.handleChange}
-            />
-            <div className="right-align wordcounter">
-              <p className="wordcount">{words} words</p>
-            </div>
-          </div>
+              )
+            })
+          }
         </div>
-        </div>
-        <div>
-          <div className={save}>
-          <button className="btn black" onClick={this.handleaddItem}>
-            Save
-          </button>
-          </div>
-          <div className={loading}>
-          <div className="preloader-wrapper small active">
-            <div className="spinner-layer spinner-green-only">
-              <div className="circle-clipper left">
-                <div className="circle"></div>
-              </div><div className="gap-patch">
-                <div className="circle"></div>
-              </div><div className="circle-clipper right">
-                <div className="circle"></div>
-              </div>
-            </div>
-          </div>
-          </div>
-        </div>
-        </div>
-
       </div>
     );
   }

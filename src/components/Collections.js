@@ -17,10 +17,12 @@ export default class Collections extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: []
+      value: [],
+      filteredValue: []
     }
     this.handleaddItem = this.handleaddItem.bind(this);
     this.saveNewFile = this.saveNewFile.bind(this);
+    this.filterList = this.filterList.bind(this);
     // this.handleMerge = this.handleMerge.bind(this);
     // this.autoMerge = this.autoMerge.bind(this);
   }
@@ -37,6 +39,7 @@ export default class Collections extends Component {
     blockstack.getFile("documents.json", true)
      .then((fileContents) => {
         this.setState({ value: JSON.parse(fileContents || '{}').value });
+        this.setState({filteredValue: this.state.value})
         console.log(JSON.parse(fileContents || '{}').value);
         this.setState({ loading: "hide" });
      })
@@ -57,8 +60,17 @@ export default class Collections extends Component {
     object.id = rando;
     object.updated = month + "/" + day + "/" + year;
     this.setState({ value: [...this.state.value, object] });
+    this.setState({ filteredValue: [...this.state.filteredValue, object] });
     // this.setState({ confirm: true, cancel: false });
     setTimeout(this.saveNewFile, 500)
+  }
+  filterList(event){
+    var updatedList = this.state.value;
+    updatedList = updatedList.filter(function(item){
+      return item.title.toLowerCase().search(
+        event.target.value.toLowerCase()) !== -1;
+    });
+    this.setState({filteredValue: updatedList});
   }
 
   saveNewFile() {
@@ -73,12 +85,21 @@ export default class Collections extends Component {
       });
   }
 
+
   render() {
-    let value = this.state.value;
+    let value = this.state.filteredValue;
     const loading = this.state.loading;
+    console.log(this.state.filteredValue);
 
     return (
         <div className="docs">
+        <div className="search card">
+          <form className="searchform">
+          <fieldset className="form-group searchfield">
+          <input type="text" className="form-control form-control-lg searchinput" placeholder="Search" onChange={this.filterList}/>
+          </fieldset>
+          </form>
+        </div>
           <div className="container">
             <div className={loading}>
               <div className="progress center-align">

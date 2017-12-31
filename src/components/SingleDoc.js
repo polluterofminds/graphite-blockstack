@@ -165,6 +165,18 @@ export default class SingleDoc extends Component {
     const loading = this.state.loading;
     const save = this.state.save;
     const autoSave = this.state.autoSave;
+    var content = "<p style='text-align: center;'>" + this.state.textvalue + "</p>" + "<div style='text-indent: 30px;'>" + this.state.test + "</div>";
+
+    var htmlString = $('<html xmlns:office="urn:schemas-microsoft-com:office:office" xmlns:word="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">').html('<body>' +
+
+    content +
+
+    '</body>'
+
+    ).get().outerHTML;
+
+    var htmlDocument = '<html xmlns:office="urn:schemas-microsoft-com:office:office" xmlns:word="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><xml><word:WordDocument><word:View>Print</word:View><word:Zoom>90</word:Zoom><word:DoNotOptimizeForBrowser/></word:WordDocument></xml></head><body>' + content + '</body></html>';
+    var dataUri = 'data:text/html,' + encodeURIComponent(htmlDocument);
 
     if(this.state.printPreview === true) {
       return (
@@ -190,7 +202,7 @@ export default class SingleDoc extends Component {
                 <ul className="left toolbar-menu">
                   <li><a onClick={this.printPreview}>Back to Editing</a></li>
                   <li><a onClick={this.print}><i className="material-icons">local_printshop</i></a></li>
-                  <li><a ><img className="wordlogo" src="http://www.free-icons-download.net/images/docx-file-icon-71578.png" /></a></li>
+                  <li><a download={this.state.textvalue + ".docx"}  href={dataUri}><img className="wordlogo" src="http://www.free-icons-download.net/images/docx-file-icon-71578.png" /></a></li>
                 </ul>
               </div>
             </div>
