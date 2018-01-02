@@ -42,10 +42,7 @@ module.exports = {
       { test: /\.css$/, loader: 'style-loader!css-loader' }
     ],
     loaders: [
-      {
-        test: /\.(png|jpg)$/,
-        loader: 'url?limit=25000'
-      }
+      { test: /\.(png|jpg)$/, loader: 'url-loader?limit=8192' }
     ]
   },
   plugins: [HtmlWebpackPluginConfig, ManifestAssetPlugin, IconAssetPlugin]

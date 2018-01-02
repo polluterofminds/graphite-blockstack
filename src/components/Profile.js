@@ -23,7 +23,7 @@ export default class Profile extends Component {
   	  	  return avatarFallbackImage;
   	  	},
   	  },
-      value: [],
+      value: []
   	};
   }
 
@@ -98,6 +98,7 @@ export default class Profile extends Component {
 
     const { handleSignOut } = this.props;
     const { person } = this.state;
+    console.log(words);
     return (
       !isSignInPending() ?
       <div className="container" id="section-2">

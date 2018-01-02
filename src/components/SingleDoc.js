@@ -1,5 +1,6 @@
-import React, { Component, Link } from "react";
+import React, { Component } from "react";
 import ReactDOM from 'react-dom';
+import { Link } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import Profile from "./Profile";
@@ -92,7 +93,7 @@ export default class SingleDoc extends Component {
     const month = today.getMonth() + 1;
     const year = today.getFullYear();
     const object = {};
-    object.title = this.state.textvalue;
+    object.title = this.state.textvalue || "Untitled";
     object.content = this.state.test;
     object.id = parseInt(this.props.match.params.id);
     object.updated = month + "/" + day + "/" + year;
@@ -125,7 +126,7 @@ export default class SingleDoc extends Component {
     const month = today.getMonth() + 1;
     const year = today.getFullYear();
     const object = {};
-    object.title = this.state.textvalue;
+    object.title = this.state.textvalue || "Untitled";
     object.content = this.state.test;
     object.id = parseInt(this.props.match.params.id);
     object.updated = month + "/" + day + "/" + year;
@@ -184,27 +185,15 @@ export default class SingleDoc extends Component {
         <div className="navbar-fixed toolbar">
           <nav className="toolbar-nav">
             <div className="nav-wrapper">
-              <a onClick={this.handleaddItem} className="brand-logo"><div className={save}><i className="material-icons">arrow_back</i></div></a>
-              <div className={loading}>
-              <div className="preloader-wrapper small active">
-                <div className="spinner-layer spinner-green-only">
-                  <div className="circle-clipper left">
-                    <div className="circle"></div>
-                  </div><div className="gap-patch">
-                    <div className="circle"></div>
-                  </div><div className="circle-clipper right">
-                    <div className="circle"></div>
-                  </div>
-                </div>
-              </div>
-              </div>
-              <div className={save}>
+              <a href="/" className="brand-logo"><i className="material-icons">arrow_back</i></a>
+
+
                 <ul className="left toolbar-menu">
                   <li><a onClick={this.printPreview}>Back to Editing</a></li>
                   <li><a onClick={this.print}><i className="material-icons">local_printshop</i></a></li>
                   <li><a download={this.state.textvalue + ".docx"}  href={dataUri}><img className="wordlogo" src="http://www.free-icons-download.net/images/docx-file-icon-71578.png" /></a></li>
                 </ul>
-              </div>
+
             </div>
           </nav>
         </div>
@@ -232,28 +221,16 @@ export default class SingleDoc extends Component {
         <div className="navbar-fixed toolbar">
           <nav className="toolbar-nav">
             <div className="nav-wrapper">
-              <a onClick={this.handleaddItem} className="brand-logo"><div className={save}><i className="material-icons">arrow_back</i></div></a>
-              <div className={loading}>
-              <div className="preloader-wrapper small active">
-                <div className="spinner-layer spinner-green-only">
-                  <div className="circle-clipper left">
-                    <div className="circle"></div>
-                  </div><div className="gap-patch">
-                    <div className="circle"></div>
-                  </div><div className="circle-clipper right">
-                    <div className="circle"></div>
-                  </div>
-                </div>
-              </div>
-              </div>
-              <div className={save}>
+              <a href="/" className="brand-logo"><i className="material-icons">arrow_back</i></a>
+
+
                 <ul className="left toolbar-menu">
                 <li><a onClick={this.printPreview}>Export Options</a></li>
                 </ul>
                 <ul className="right toolbar-menu auto-save">
                 <li><a className="muted">{autoSave}</a></li>
                 </ul>
-              </div>
+
             </div>
           </nav>
         </div>
@@ -261,7 +238,7 @@ export default class SingleDoc extends Component {
             <div className="card doc-card">
               <div className="double-space doc-margin">
               <h4 className="align-left">
-              <input className="print-title" type="text" value={this.state.textvalue} onChange={this.handleTitleChange} />
+              <input className="print-title" placeholder="Title" type="text" value={this.state.textvalue} onChange={this.handleTitleChange} />
               </h4>
 
               <ReactQuill

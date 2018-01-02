@@ -12,6 +12,7 @@ import {
 } from "blockstack";
 
 const blockstack = require("blockstack");
+const Dropbox = require("dropbox");
 
 export default class TestDoc extends Component {
   constructor(props) {
@@ -86,12 +87,15 @@ export default class TestDoc extends Component {
 
 
   render() {
+
     let value = this.state.filteredValue;
     const loading = this.state.loading;
-    console.log(this.state.filteredValue);
+
 
     return (
         <div className="docs">
+        <a href='hello.txt' className="dropbox-saver"></a>
+
         <div className="search card">
           <form className="searchform">
           <fieldset className="form-group searchfield">

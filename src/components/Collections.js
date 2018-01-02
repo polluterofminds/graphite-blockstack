@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, Route, withRouter} from 'react-router-dom';
+import { Redirect } from 'react-router';
 import Profile from "./Profile";
 import Signin from "./Signin";
 import Header from "./Header";
@@ -18,13 +19,14 @@ export default class Collections extends Component {
     super(props);
     this.state = {
       value: [],
-      filteredValue: []
+      filteredValue: [],
+      tempDocId: "",
+      redirect: false
     }
     this.handleaddItem = this.handleaddItem.bind(this);
     this.saveNewFile = this.saveNewFile.bind(this);
     this.filterList = this.filterList.bind(this);
-    // this.handleMerge = this.handleMerge.bind(this);
-    // this.autoMerge = this.autoMerge.bind(this);
+
   }
 
   componentWillMount() {
@@ -55,14 +57,17 @@ export default class Collections extends Component {
     const year = today.getFullYear();
     const rando = Math.floor((Math.random() * 2500) + 1);
     const object = {};
-    object.title = "Untitled";
+    // object.title = "Untitled";
     object.content = "";
     object.id = rando;
-    object.updated = month + "/" + day + "/" + year;
+    object.created = month + "/" + day + "/" + year;
+
     this.setState({ value: [...this.state.value, object] });
     this.setState({ filteredValue: [...this.state.filteredValue, object] });
+    this.setState({ tempDocId: object.id });
     // this.setState({ confirm: true, cancel: false });
-    setTimeout(this.saveNewFile, 500)
+    setTimeout(this.saveNewFile, 500);
+    // setTimeout(this.handleGo, 700);
   }
   filterList(event){
     var updatedList = this.state.value;
@@ -76,7 +81,8 @@ export default class Collections extends Component {
   saveNewFile() {
     blockstack.putFile("documents.json", JSON.stringify(this.state), true)
       .then(() => {
-        console.log(JSON.stringify(this.state));
+        console.log("Saved!");
+        this.setState({ redirect: true });
       })
       .catch(e => {
         console.log("e");
@@ -85,11 +91,21 @@ export default class Collections extends Component {
       });
   }
 
+  // handleGo() {
+  //   this.setState({ redirect: true });
+  // }
+
 
   render() {
     let value = this.state.filteredValue;
     const loading = this.state.loading;
-    console.log(this.state.filteredValue);
+    const link = '/documents/' + this.state.tempDocId;
+    if (this.state.redirect) {
+      return <Redirect push to={link} />;
+    } else {
+      console.log("No redirect");
+    }
+
 
     return (
         <div className="docs">

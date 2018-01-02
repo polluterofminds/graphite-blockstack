@@ -214,6 +214,11 @@ nav ul a {
   margin-left: 10px;
 }
 
+.ql-editor.ql-blank::before {
+  font-style: normal!important;
+  color: #c9c7c7!important;
+}
+
 .add {
   margin-top: 140px;
 }
