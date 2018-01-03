@@ -1,5 +1,5 @@
 {
-  "name": "hello-blockstack",
+  "name": "Graphite",
   "version": "0.0.0",
   "description": "A simple Blockstack app using ReactJS",
   "main": "index.js",
@@ -14,7 +14,7 @@
   "bugs": {
     "url": "https://github.com/blockstack/hello-blockstack/issues"
   },
-  "homepage": "https://github.com/blockstack/hello-blockstack#readme",
+  "homepage": "http://www.graphitedocs.com",
   "author": "",
   "license": "MIT",
   "devDependencies": {
