@@ -1,7 +1,7 @@
 {
   "name": "Graphite",
   "version": "0.0.0",
-  "description": "A simple Blockstack app using ReactJS",
+  "description": "Own your documents",
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server",
@@ -9,10 +9,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/blockstack/hello-blockstack.git"
+    "url": "git+https://github.com/jehunter5811/graphite-blockstack"
   },
   "bugs": {
-    "url": "https://github.com/blockstack/hello-blockstack/issues"
+    "url": "https://github.com/jehunter5811/graphite-blockstack"
   },
   "homepage": "http://www.graphitedocs.com",
   "author": "",
