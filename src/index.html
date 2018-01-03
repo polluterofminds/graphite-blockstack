@@ -13,7 +13,480 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="//cdn.quilljs.com/1.2.6/quill.snow.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+    <style>
+    @import url('https://fonts.googleapis.com/css?family=Alfa+Slab+One');
 
+    body {
+      background-color: #C4C4C4;
+    }
+
+    .dropdown-content li {
+      list-style: none!important;
+      margin-left: 0!important;
+    }
+
+    .card.small {
+      height: 250px!important;
+    }
+
+    .main-container {
+      margin-bottom: 50px;
+    }
+
+    .indent {
+      text-indent: 2em;
+    }
+
+    .span-indent {
+      margin-left: 2em;
+    }
+
+    .double-space {
+      line-height: 200%
+    }
+
+    .single-space {
+      line-height: 100%;
+    }
+
+    .one-five-space {
+      line-height: 150%;
+    }
+
+    .btn, .btn-large, .btn:hover, .btn-large:hover, .btn:active, .btn-larg:active {
+      background: #000;
+    }
+
+    .hide {
+      display: none;
+    }
+
+    select {
+      display: inline-block;
+    }
+
+    .btn:active, .btn-large:active {
+      color: #000;
+    }
+
+    .addbtn {
+      margin-top: 35px;
+    }
+
+    /*//Header design*/
+    .nav-wrapper {
+      background-color: #fff;
+    }
+
+    nav .brand-logo {
+      color: #000;
+    }
+
+    nav ul a {
+      color: #000;
+    }
+
+    .brand-logo {
+      margin-left: 15px;
+      font-family: 'Alfa Slab One', cursive;
+    }
+
+    .brand-image {
+      height: 25px;
+      width: 25px;
+      margin-bottom: 10px;
+      margin-left: 3px;
+    }
+
+    .pencil {
+      height: 20px;
+      width: 20px;
+      margin-bottom: 8px;
+      margin-right: 3px;
+    }
+
+    .img-rounded {
+      height: 35px;
+      width: 35px;
+      border-radius: 100%;
+      margin-top: 12px;
+    }
+
+    /*main*/
+
+    .search {
+      margin-bottom: 25px;
+    }
+
+    .searchform {
+      padding: 10px;
+      height: 70px;
+    }
+
+    .searchfield {
+      border: none!important;
+      padding: none!important;
+    }
+
+    .searchinput {
+      border: none!important;
+      margin-bottom: 0!important;
+    }
+
+    .searchinput:active, .searchinput:focus {
+      border: none!important;
+      box-shadow: none!important;
+    }
+
+    .recovery-message {
+      width: 100%;
+      margin: auto;
+      padding: 5px;
+      margin-bottom: 25px;
+      background: #f4ce42;
+    }
+
+    .warning {
+    }
+
+    .welcome {
+      margin-top: 15%;
+    }
+
+    .welcome a {
+      margin-top: 40px;
+    }
+
+    .btn, .btn-large, .btn:hover, .btn-large:hover {
+      background-color: #000;
+    }
+
+    .items {
+      margin: 15px;
+      padding: 30px;
+    }
+
+    .plus-button {
+      font-size: 72px;
+      margin-top: 30%;
+    }
+
+    .docs {
+      width: 90%;
+      margin: auto;
+      margin-top: 50px;
+    }
+
+    .docs h3 {
+      margin-bottom: 35px;
+    }
+
+    .addDoc {
+      margin-top: 25px;
+    }
+
+    .addDoc:hover {
+      cursor: pointer;
+    }
+
+    .renderedDocs {
+      color: #000;
+    }
+
+    .doc-title {
+      text-transform: capitalize!important;
+    }
+
+    .muted {
+      color: grey;
+      font-size: 14px;
+    }
+
+    .muted p {
+      margin: 0;
+    }
+
+    .materialize-textarea, .materialize-textarea:focus {
+      border-bottom: none!important;
+      box-shadow: none!important;
+    }
+
+    .input-field {
+      padding: 25px!important;
+    }
+
+    .doc-margin {
+      padding: 70px;
+    }
+
+    .delete-button {
+      float: right;
+    }
+
+    /*New item*/
+
+    .loading-thing {
+      padding: 10px;
+      margin-left: 10px;
+    }
+
+    .ql-editor.ql-blank::before {
+      font-style: normal!important;
+      color: #c9c7c7!important;
+    }
+
+    .add {
+      margin-top: 140px;
+    }
+    .add p {
+      margin-top: 70px;
+    }
+
+    .add-item {
+      background-color: #fff;
+    }
+
+    .preview {
+      width: 85%;
+      margin: auto;
+    }
+
+    .doc-toolbar {
+      position: fixed;
+      top: 0px;
+      z-index: 100;
+      background: #fff;
+      height: 100px;
+      width: 100%;
+    }
+
+    .doc-toolbar-wrapper {
+      margin-left: 25px;
+      margin-right: 25px;
+    }
+
+    .wordcounter {
+      color: grey;
+    }
+
+    .toolbar {
+      position: fixed;
+      top: 0;
+    }
+
+    .toolbar-menu {
+      margin-left: 70px;
+    }
+
+    .brand-logo:hover {
+      cursor: pointer;
+    }
+
+    .inputs {
+      width: 65%;
+      margin: auto;
+      margin-top: 60px;
+      padding-top: 40px;
+      padding-bottom: 40px;
+    }
+
+    .font-twelve textarea {
+      font-size: 12px;
+    }
+
+    .input-field {
+      width: 85%;
+      margin: auto;
+      padding-bottom: 50px;
+      padding-top: 50px;
+    }
+    input:focus {
+      border-bottom: 1px solid #000!important;
+      box-shadow: 0 1px 0 0 #000!important;
+    }
+
+    .wordlogo {
+      height: 40px;
+      margin-top: 10px;
+
+    }
+    /*Delete item*/
+
+    .delete-doc h5, .delete-doc h6 {
+      margin-bottom: 25px;
+    }
+
+
+    /* .item-form {
+      padding: 20px;
+      margin-top: 50px;
+    }
+    .selectField {
+      width: 60%;
+      margin: auto;
+    } */
+
+    /* Profile Dropdown */
+
+    .dropdown-content li>a, .dropdown-content li>span {
+      color: #000;
+    }
+
+    /* Single document */
+
+    .auto-save {
+      margin-right: 50px;
+    }
+
+    .no-edit h1 {
+      font-size: 32px;
+    }
+
+    .no-edit h2 {
+      font-size: 24px;
+    }
+
+    .no-edit h3 {
+      font-size: 18px;
+    }
+
+    .preloader-wrapper {
+      margin-top: 12px;
+      margin-left: 10px;
+    }
+
+    .auto-save li a:hover {
+      background: #fff;
+      cursor: default;
+    }
+
+    .doc-card {
+      padding: 25px;
+    }
+
+    .print-view, #textarea1 {
+      white-space: pre-wrap!important;
+    }
+
+    .ql-toolbar.ql-snow {
+        border: none;
+        box-sizing: border-box;
+        font-family: inherit;
+        padding: 8px;
+        position: fixed;
+        top: 0;
+        z-index: 999;
+        width: 70%;
+        left: 200px;
+        background: white;
+        height: 60px;
+        padding: 15px!important;
+    }
+
+    .ql-container.ql-snow {
+      border: none;
+    }
+    .ql-editor {
+      font-family: "Times New Roman", Georgia, Serif;
+      line-height: 2;
+      font-size: 16px;
+    }
+
+    /* Profile Page */
+
+    .profile-stats {
+      padding: 20px;
+    }
+    #section-2 {
+      margin-top: 45px;
+    }
+    .profile-stats h4, .profile-stats h5, .profile-stats h3 {
+      padding: 20px;
+    }
+
+    .stats {
+      font-size: 24px;
+    }
+
+    /*Media Queires*/
+    @media screen and (max-width: 960px) {
+      .collection-cards {
+        height: 190px;
+      }
+      .collection-cards h1 {
+        margin-top: 30px
+      }
+
+      .collection-cards p {
+        margin-top: 20px;
+        /*padding-bottom: 20px;*/
+      }
+    }
+
+    @media screen and (max-width: 1400px) {
+      .card-action a {
+        font-size: 13px;
+      }
+
+      .delete-buton {
+        font-size: 17px;
+      }
+    }
+
+    @media print {
+      body {
+        margin-bottom: 25mm;
+        background: #fff
+      }
+      a:after {
+        content: none;
+      }
+
+      .docs {
+        margin-top: 0;
+        width: 100%;
+      }
+
+      .doc-card, .doc-margin {
+        padding: 0;
+      }
+      .btn, nav {
+        display: none;
+      }
+      .container {
+        width: 95%;
+      }
+      .print-view {
+        font-family: "Times New Roman", Georgia, Serif;
+        line-height: 200%;
+      }
+      .card {
+        border: none;
+        box-shadow: none;
+      }
+      textarea {
+        border: none;
+      }
+
+      .print-content {
+        /* font-size: 16px!important;
+        line-height: 200% */
+      }
+      .print-title {
+        font-size: 20px!important;
+        border: none!important;
+      }
+
+      .wordcount {
+        display: none;
+      }
+
+      @page {
+      margin: 2cm;
+      }
+    }
+
+    </style>
     <title>Graphite</title>
   </head>
   <body>
