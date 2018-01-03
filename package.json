@@ -4,9 +4,8 @@
   "description": "A simple Blockstack app using ReactJS",
   "main": "index.js",
   "scripts": {
-    "postinstall": "webpack -p",
     "start": "webpack-dev-server",
-    "build": "NODE_ENV=production webpack --config ./webpack.prod.js --progress --colors"
+    "build": "webpack -p"
   },
   "repository": {
     "type": "git",
@@ -35,8 +34,7 @@
     "style-loader": "^0.16.1",
     "url-loader": "^0.5.9",
     "webpack": "^2.3.3",
-    "webpack-dev-server": "^2.4.2",
-    "webpack-merge": "^4.1.1"
+    "webpack-dev-server": "^2.4.2"
   },
   "dependencies": {
     "blockstack": "^0.14.2",
@@ -49,8 +47,6 @@
     "react-dom": "^15.6.2",
     "react-quill": "^1.2.2",
     "react-router-dom": "^4.2.2",
-    "wordcount": "^1.1.1",
-    "webpack": "^1.13.1",
-    "webpack-dev-server": "^1.14.0"
+    "wordcount": "^1.1.1"
   }
 }
