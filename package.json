@@ -4,8 +4,8 @@
   "description": "A simple Blockstack app using ReactJS",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --open --config webpack.dev.js",
-    "build": "webpack --config webpack.prod.js"
+    "start": "webpack-dev-server",
+    "build": "NODE_ENV=production webpack --config ./webpack.prod.js --progress --colors"
   },
   "repository": {
     "type": "git",
@@ -17,6 +17,26 @@
   "homepage": "http://www.graphitedocs.com",
   "author": "",
   "license": "MIT",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^6.4.1",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "copy-webpack-plugin": "^4.0.1",
+    "css-loader": "^0.28.0",
+    "file-loader": "^0.11.2",
+    "html-webpack-plugin": "^2.28.0",
+    "json-loader": "^0.5.4",
+    "path": "^0.12.7",
+    "style-loader": "^0.16.1",
+    "url-loader": "^0.5.9",
+    "webpack": "^2.3.3",
+    "webpack-dev-server": "^2.4.2",
+    "webpack-merge": "^4.1.1"
+  },
   "dependencies": {
     "blockstack": "^0.14.2",
     "bootstrap": "^3.3.7",
@@ -28,26 +48,6 @@
     "react-dom": "^15.6.2",
     "react-quill": "^1.2.2",
     "react-router-dom": "^4.2.2",
-    "wordcount": "^1.1.1",
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.0",
-    "babel-loader": "^6.4.1",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-react": "^6.24.1",
-    "babel-preset-stage-0": "^6.24.1",
-    "clean-webpack-plugin": "^0.1.17",
-    "copy-webpack-plugin": "^4.0.1",
-    "css-loader": "^0.28.0",
-    "file-loader": "^0.11.2",
-    "html-webpack-plugin": "^2.28.0",
-    "json-loader": "^0.5.4",
-    "path": "^0.12.7",
-    "style-loader": "^0.16.1",
-    "uglifyjs-webpack-plugin": "^1.0.0-rc.0",
-    "url-loader": "^0.5.9",
-    "webpack": "^2.3.3",
-    "webpack-dev-server": "^2.4.2",
-    "webpack-merge": "^4.1.1"
+    "wordcount": "^1.1.1"
   }
 }
