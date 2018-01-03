@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server",
-    "build": "NODE_ENV=production webpack --config ./webpack.prod.js --progress --colors"
+    "build": "NODE_ENV=production webpack --config ./webpack.prod.js --progress --colors",
+    "heroku-postbuild": "webpack -p --config ./webpack.prod.js --progress"
   },
   "repository": {
     "type": "git",
