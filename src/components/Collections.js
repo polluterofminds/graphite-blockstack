@@ -21,7 +21,8 @@ export default class Collections extends Component {
       value: [],
       filteredValue: [],
       tempDocId: "",
-      redirect: false
+      redirect: false,
+      loading: ""
     }
     this.handleaddItem = this.handleaddItem.bind(this);
     this.saveNewFile = this.saveNewFile.bind(this);
@@ -40,10 +41,19 @@ export default class Collections extends Component {
   componentDidMount() {
     blockstack.getFile("documents.json", true)
      .then((fileContents) => {
-        this.setState({ value: JSON.parse(fileContents || '{}').value });
-        this.setState({filteredValue: this.state.value})
-        console.log(JSON.parse(fileContents || '{}').value);
-        this.setState({ loading: "hide" });
+       if(fileContents) {
+         console.log("Files are here");
+         this.setState({ value: JSON.parse(fileContents || '{}').value });
+         this.setState({filteredValue: this.state.value})
+         console.log(JSON.parse(fileContents || '{}').value);
+         this.setState({ loading: "hide" });
+       } else {
+         console.log("Nothing to see here");
+         // this.setState({ value: {} });
+         // this.setState({filteredValue: {}})
+         // console.log(this.state.value);
+         this.setState({ loading: "hide" });
+       }
      })
       .catch(error => {
         console.log(error);
@@ -90,10 +100,6 @@ export default class Collections extends Component {
         alert(e.message);
       });
   }
-
-  // handleGo() {
-  //   this.setState({ redirect: true });
-  // }
 
 
   render() {

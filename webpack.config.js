@@ -8,6 +8,7 @@ const ManifestAssetPlugin = new CopyWebpackPlugin([ { from: 'src/assets/manifest
 const IconAssetPlugin = new CopyWebpackPlugin([ { from: 'src/images/icon-192x192.png', to: 'icon-192x192.png' } ]);
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
   template: './src/index.html',
   filename: 'index.html',
@@ -45,5 +46,26 @@ module.exports = {
       { test: /\.(png|jpg)$/, loader: 'url-loader?limit=8192' }
     ]
   },
-  plugins: [HtmlWebpackPluginConfig, ManifestAssetPlugin, IconAssetPlugin]
+  plugins: [
+    HtmlWebpackPluginConfig,
+    ManifestAssetPlugin,
+    IconAssetPlugin,
+    new UglifyJsPlugin({
+      uglifyOptions: {
+        mangle: {
+          reserved: [
+            'Buffer',
+            'BigInteger',
+            'Point',
+            'ECPubKey',
+            'ECKey',
+            'sha512_asm',
+            'asm',
+            'ECPair',
+            'HDNode'
+        ]
+        }
+      }
+    })
+  ]
 }

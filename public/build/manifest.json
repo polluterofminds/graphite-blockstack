@@ -1,9 +1,9 @@
 {
   "name": "Graphite",
-  "start_url": "/index.html",
+  "start_url": "localhost:8080",
   "description": "Own your documents",
   "icons": [{
-    "src": "http://www.graphitedocs.com/favicon.ico",
+    "src": "https://image.ibb.co/hde71b/AppIcon.png",
     "sizes": "192x192",
     "type": "image/png"
   }]
