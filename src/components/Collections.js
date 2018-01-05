@@ -65,7 +65,7 @@ export default class Collections extends Component {
     const day = today.getDate();
     const month = today.getMonth() + 1;
     const year = today.getFullYear();
-    const rando = Math.floor((Math.random() * 2500) + 1);
+    const rando = Date.now();
     const object = {};
     // object.title = "Untitled";
     object.content = "";

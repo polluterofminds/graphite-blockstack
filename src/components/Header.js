@@ -10,6 +10,7 @@ import {
   signUserOut,
 } from 'blockstack';
 const blockstack = require('blockstack');
+const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
 
 export default class Header extends Component {
   constructor(props) {
