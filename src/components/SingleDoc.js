@@ -16,10 +16,10 @@ import {
 import update from 'immutability-helper';
 const wordcount = require("wordcount");
 const blockstack = require("blockstack");
-const Quill = ReactQuill.Quill
-const Font = Quill.import('formats/font');
-Font.whitelist = ['Ubuntu', 'Raleway', 'Roboto'];
-Quill.register(Font, true);
+const Quill = ReactQuill.Quill;
+const Font = ReactQuill.Quill.import('formats/font');
+Font.whitelist = ['Ubuntu', 'Raleway', 'Roboto', 'Lato', 'Open Sans', 'Montserrat'] ; // allow ONLY these fonts and the default
+ReactQuill.Quill.register(Font, true);
 
 export default class SingleDoc extends Component {
   constructor(props) {
@@ -163,6 +163,33 @@ export default class SingleDoc extends Component {
   }
 
   renderView() {
+
+    SingleDoc.modules = {
+      toolbar: [
+        [{ 'header': '1'}, {'header': '2'}, { 'font': Font.whitelist }],,
+        [{size: []}],
+        ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+        [{'list': 'ordered'}, {'list': 'bullet'},
+         {'indent': '-1'}, {'indent': '+1'}],
+        ['link', 'image', 'video'],
+        ['clean']
+      ],
+      clipboard: {
+        // toggle to add extra line breaks when pasting HTML:
+        matchVisual: false,
+      }
+    }
+    /*
+     * Quill editor formats
+     * See https://quilljs.com/docs/formats/
+     */
+    SingleDoc.formats = [
+      'header', 'font', 'size',
+      'bold', 'italic', 'underline', 'strike', 'blockquote',
+      'list', 'bullet', 'indent',
+      'link', 'image', 'video'
+    ]
+
     const words = wordcount(this.state.test);
     const loading = this.state.loading;
     const save = this.state.save;
@@ -192,7 +219,7 @@ export default class SingleDoc extends Component {
                 <ul className="left toolbar-menu">
                   <li><a onClick={this.printPreview}>Back to Editing</a></li>
                   <li><a onClick={this.print}><i className="material-icons">local_printshop</i></a></li>
-                  <li><a download={this.state.textvalue + ".docx"}  href={dataUri}><img className="wordlogo" src="http://www.free-icons-download.net/images/docx-file-icon-71578.png" /></a></li>
+                  <li><a download={this.state.textvalue + ".doc"}  href={dataUri}><img className="wordlogo" src="http://www.free-icons-download.net/images/docx-file-icon-71578.png" /></a></li>
                 </ul>
 
             </div>
@@ -243,6 +270,8 @@ export default class SingleDoc extends Component {
               </h4>
 
               <ReactQuill
+                modules={SingleDoc.modules}
+                formats={SingleDoc.formats}
                 id="textarea1"
                 className="materialize-textarea print-view"
                 placeholder="Write something great"

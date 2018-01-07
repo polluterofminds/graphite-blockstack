@@ -1,8 +1,118 @@
-@import url('https://fonts.googleapis.com/css?family=Alfa+Slab+One');
+@import url('https://fonts.googleapis.com/css?family=Alfa+Slab+One|Raleway|Roboto|Ubuntu|Lato|Open+Sans|Montserrat');
+
 
 body {
   background-color: #C4C4C4;
 }
+
+/* Quill Editor */
+
+
+/* Font families begin */
+.ql-font span[data-label="Ubuntu"]::before {
+  font-family: "Ubuntu";
+  content: "Ubuntu";
+}
+.ql-font .ql-font span[data-label="Raleway"]::before {
+  font-family: "Raleway";
+  content: "Raleway";
+}
+.ql-font span[data-label="Roboto"]::before {
+  font-family: "Roboto" !important;
+  content: "Roboto";
+}
+.ql-font span[data-label="Lato"]::before {
+  font-family: "Lato" !important;
+  content: "Lato";
+}
+.ql-font span[data-label="Open Sans"]::before {
+  font-family: "Open Sans" !important;
+  content: "Open Sans";
+}
+.ql-font span[data-label="Montserrat"]::before {
+  font-family: "Montserrat" !important;
+  content: "Montserrat";
+}
+
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value='Roboto']::before, .ql-snow .ql-picker.ql-font .ql-picker-item[data-value='Roboto']::before {
+  font-family: "Roboto" !important;
+  content: "Roboto";
+}
+
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value='Ubunut']::before, .ql-snow .ql-picker.ql-font .ql-picker-item[data-value='Ubunut']::before {
+  font-family: "Ubuntu" !important;
+  content: "Ubuntu";
+}
+
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value='Raleway']::before, .ql-snow .ql-picker.ql-font .ql-picker-item[data-value='Raleway']::before {
+  font-family: "Raleway" !important;
+  content: "Raleway";
+}
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value='Lato']::before, .ql-snow .ql-picker.ql-font .ql-picker-item[data-value='Lato']::before {
+  font-family: "Lato" !important;
+  content: "Lato";
+}
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value='Open Sans']::before, .ql-snow .ql-picker.ql-font .ql-picker-item[data-value='Open Sans']::before {
+  font-family: "Open Sans" !important;
+  content: "Open Sans";
+}
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value='Montserrat']::before, .ql-snow .ql-picker.ql-font .ql-picker-item[data-value='Montserrat']::before {
+  font-family: "Montserrat" !important;
+  content: "Montserrat";
+}
+
+.ql-font-Raleway {
+  font-family: "Raleway";
+}
+.ql-font-Roboto {
+  font-family: "Roboto";
+}
+.ql-font-Ubuntu {
+  font-family: "Ubuntu";
+}
+.ql-font-Lato {
+  font-family: "Lato";
+}
+.ql-font-Lato {
+  font-family: "Open Sans";
+}
+.ql-font-Lato {
+  font-family: "Montserrat";
+}
+
+/* Font families end */
+
+/* Font size begin */
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value=small]::before {
+  font-size: 13px;
+}
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value=normal]::before {
+  font-size: 16px;
+}
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value=large]::before {
+  font-size: 22px;
+}
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value=huge]::before {
+  font-size: 32px;
+}
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value=small]::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value=small]::before {
+  content: "10";
+}
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value=normal]::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value=normal]::before {
+  content: "12";
+}
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value=large]::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value=large]::before {
+  content: "16";
+}
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value=huge]::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value=huge]::before {
+  content: "24";
+}
+.ql-snow .ql-picker.ql-size .ql-picker-label::before, .ql-snow .ql-picker.ql-size .ql-picker-item::before {
+  content: "12";
+}
+/* Font size end */
+/*
+/// */
 
 .dropdown-content li {
   list-style: none!important;
