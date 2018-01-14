@@ -35,12 +35,20 @@ export default class SingleDoc extends Component {
       save: "",
       loading: "hide",
       printPreview: false,
-      autoSave: "Saved"
+      autoSave: "Saved",
+      receiverID: "",
+      shareModal: "hide",
+      shareFile: ""
     }
     this.handleaddItem = this.handleaddItem.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
     this.saveNewFile = this.saveNewFile.bind(this);
+    this.handleIDChange = this.handleIDChange.bind(this);
+    this.shareModal = this.shareModal.bind(this);
+    this.hideModal = this.hideModal.bind(this);
+    this.shareDoc = this.shareDoc.bind(this);
+    this.sharedInfo = this.sharedInfo.bind(this);
   }
 
   componentWillMount() {
@@ -89,6 +97,11 @@ export default class SingleDoc extends Component {
   handleChange(value) {
       this.setState({ test: value })
     }
+
+  handleIDChange(e) {
+      this.setState({ receiverID: e.target.value })
+    }
+
   handleaddItem() {
     const today = new Date();
     const day = today.getDate();
@@ -109,7 +122,7 @@ export default class SingleDoc extends Component {
   saveNewFile() {
     this.setState({ loading: "show" });
     this.setState({ save: "hide"});
-    blockstack.putFile("documents.json", JSON.stringify(this.state), true)
+    putFile("documents.json", JSON.stringify(this.state), {encrypt: true})
       .then(() => {
         console.log(JSON.stringify(this.state));
         this.setState({ loading: "hide" });
@@ -155,6 +168,44 @@ export default class SingleDoc extends Component {
       });
   }
 
+  shareModal() {
+    this.setState({
+      shareModal: ""
+    });
+  }
+
+  sharedInfo(){
+    const object = {};
+    object.title = this.state.textvalue || "Untitled";
+    object.content = this.state.test;
+    object.id = Date.now();
+    object.receiverID = this.state.receiverID;
+    object.words = wordcount(this.state.test);
+    this.setState({ shareFile: object });
+    setTimeout(this.shareDoc, 1000);
+  }
+
+  hideModal() {
+    this.setState({
+      shareModal: "hide"
+    });
+  }
+
+  shareDoc() {
+    const fileName = 'shared.json'
+    putFile(fileName, JSON.stringify(this.state.shareFile), true)
+      .then(() => {
+        console.log("Shared!");
+        this.setState({ shareModal: "hide" });
+      })
+      .catch(e => {
+        console.log("e");
+        console.log(e);
+        alert(e.message);
+      });
+
+  }
+
   print(){
     const curURL = window.location.href;
     history.replaceState(history.state, '', '/');
@@ -194,6 +245,7 @@ export default class SingleDoc extends Component {
     const loading = this.state.loading;
     const save = this.state.save;
     const autoSave = this.state.autoSave;
+    const shareModal = this.state.shareModal;
     var content = "<p style='text-align: center;'>" + this.state.textvalue + "</p>" + "<div style='text-indent: 30px;'>" + this.state.test + "</div>";
 
     var htmlString = $('<html xmlns:office="urn:schemas-microsoft-com:office:office" xmlns:word="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">').html('<body>' +
@@ -220,10 +272,21 @@ export default class SingleDoc extends Component {
                   <li><a onClick={this.printPreview}>Back to Editing</a></li>
                   <li><a onClick={this.print}><i className="material-icons">local_printshop</i></a></li>
                   <li><a download={this.state.textvalue + ".doc"}  href={dataUri}><img className="wordlogo" src="http://www.free-icons-download.net/images/docx-file-icon-71578.png" /></a></li>
+                  <li><a onClick={this.shareModal}><i className="material-icons">share</i></a></li>
                 </ul>
 
             </div>
           </nav>
+        </div>
+        <div className={shareModal}>
+          <div className="container">
+            <div className="card share center-align">
+              <h6>Enter the Blockstack user ID of the person to share with</h6>
+              <input className="" placeholder="Ex: JohnnyCash.id" type="text" onChange={this.handleIDChange} />
+              <button onClick={this.sharedInfo} className="btn black">Share</button>
+              <button onClick={this.hideModal} className="btn grey">Cancel</button>
+            </div>
+          </div>
         </div>
         <div className="container docs">
           <div className="card doc-card">
@@ -305,6 +368,8 @@ export default class SingleDoc extends Component {
   }
 
   render() {
+    console.log(this.state.receiverID);
+
     return (
       <div>
         {this.renderView()}

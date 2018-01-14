@@ -30,7 +30,8 @@ export default class Header extends Component {
 
   handleSignIn(e) {
     e.preventDefault();
-    redirectToSignIn();
+    const origin = window.location.origin
+    redirectToSignIn(origin, origin + '/manifest.json', ['store_write', 'publish_data'])
   }
 
   handleSignOut(e) {
@@ -51,7 +52,7 @@ export default class Header extends Component {
         <ul id="nav-mobile" className="right">
         <ul id="dropdown1" className="dropdown-content">
           <li><a href="/profile">Profile</a></li>
-          <li><a href="#!">Contact</a></li>
+          <li><a href="/shared">Shared Files</a></li>
           <li className="divider"></li>
           <li><a href="#" onClick={ handleSignOut.bind(this) }>Sign out</a></li>
           </ul>
@@ -62,7 +63,7 @@ export default class Header extends Component {
       return(
         <ul id="nav-mobile" className="right">
           <li><a href="#" onClick={ handleSignIn.bind(this) }>Sign in</a></li>
-          <li><a href="">About</a></li>
+          <li><a href="http://graphitedocs.com" target="_blank">About</a></li>
         </ul>
       );
     }

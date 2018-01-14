@@ -8,6 +8,7 @@ import Doc from './Document';
 import TestDoc from './TestDoc';
 import SingleDoc from './SingleDoc';
 import DeleteDoc from './DeleteDoc';
+import SharedDocs from './SharedDocs';
 import {
   isSignInPending,
   isUserSignedIn,
@@ -44,6 +45,7 @@ export default class App extends Component {
             <Route exact path="/documents/:id" component={SingleDoc} />
             <Route exact path="/documents/delete/:id" component={DeleteDoc} />
             <Route exact path="/profile" component={Profile} />
+            <Route path="/shared" component={SharedDocs} />
           </div>
         </BrowserRouter>
       </div>

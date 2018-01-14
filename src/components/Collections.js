@@ -50,7 +50,7 @@ export default class Collections extends Component {
        } else {
          console.log("Nothing to see here");
          // this.setState({ value: {} });
-         // this.setState({filteredValue: {}})
+         // this.setState({ filteredValue: {} })
          // console.log(this.state.value);
          this.setState({ loading: "hide" });
        }

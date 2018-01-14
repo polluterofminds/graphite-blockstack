@@ -319,6 +319,11 @@ nav ul a {
 
 /*New item*/
 
+.share {
+  padding: 20px;
+  margin-top: 25px;
+}
+
 .loading-thing {
   padding: 10px;
   margin-left: 10px;
