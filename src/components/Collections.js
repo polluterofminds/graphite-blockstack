@@ -6,11 +6,12 @@ import Signin from "./Signin";
 import Header from "./Header";
 import {
   isSignInPending,
-  isUserSignedIn,
-  redirectToSignIn,
-  handlePendingSignIn,
-  signUserOut
-} from "blockstack";
+  loadUserData,
+  Person,
+  getFile,
+  putFile,
+  lookupProfile
+} from 'blockstack';
 
 const blockstack = require("blockstack");
 
@@ -39,13 +40,12 @@ export default class Collections extends Component {
   }
 
   componentDidMount() {
-    blockstack.getFile("documents.json", true)
+    getFile("documents.json", {decrypt: true})
      .then((fileContents) => {
        if(fileContents) {
          console.log("Files are here");
          this.setState({ value: JSON.parse(fileContents || '{}').value });
          this.setState({filteredValue: this.state.value})
-         console.log(JSON.parse(fileContents || '{}').value);
          this.setState({ loading: "hide" });
        } else {
          console.log("Nothing to see here");
@@ -89,7 +89,7 @@ export default class Collections extends Component {
   }
 
   saveNewFile() {
-    blockstack.putFile("documents.json", JSON.stringify(this.state), true)
+    putFile("documents.json", JSON.stringify(this.state), {encrypt:true})
       .then(() => {
         console.log("Saved!");
         this.setState({ redirect: true });

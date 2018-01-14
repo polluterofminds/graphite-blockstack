@@ -8,11 +8,12 @@ import Signin from "./Signin";
 import Header from "./Header";
 import {
   isSignInPending,
-  isUserSignedIn,
-  redirectToSignIn,
-  handlePendingSignIn,
-  signUserOut
-} from "blockstack";
+  loadUserData,
+  Person,
+  getFile,
+  putFile,
+  lookupProfile
+} from 'blockstack';
 import update from 'immutability-helper';
 const wordcount = require("wordcount");
 const blockstack = require("blockstack");
@@ -51,7 +52,7 @@ export default class SingleDoc extends Component {
   }
 
   componentDidMount() {
-    blockstack.getFile("documents.json", true)
+    getFile("documents.json", {decrypt: true})
      .then((fileContents) => {
         this.setState({ value: JSON.parse(fileContents || '{}').value })
         console.log("loaded");
@@ -142,11 +143,10 @@ export default class SingleDoc extends Component {
 
   autoSave() {
     this.setState({autoSave: "Saving"});
-    blockstack.putFile("documents.json", JSON.stringify(this.state), true)
+    putFile("documents.json", JSON.stringify(this.state), {encrypt: true})
       .then(() => {
         console.log("Autosaved");
         this.setState({autoSave: "Saved"});
-        // setState({autoSave: false});
       })
       .catch(e => {
         console.log("e");
