@@ -321,7 +321,15 @@ nav ul a {
 
 .share {
   padding: 20px;
-  margin-top: 25px;
+  position: fixed;
+  top: 35%;
+  left: 35%;
+  z-index: 99;
+}
+
+.shared {
+  padding: 20px;
+  margin-top: 50px;
 }
 
 .loading-thing {

@@ -55,7 +55,8 @@ export default class SharedDocs extends Component {
       receiverID: "",
       senderID: "",
       show: "",
-      hide: ""
+      hide: "",
+      hideButton: ""
     }
 
     this.fetchData = this.fetchData.bind(this);
@@ -95,6 +96,7 @@ export default class SharedDocs extends Component {
 
   handleaddItem() {
     this.setState({ show: "hide" });
+    this.setState({ hideButton: "hide", loading: "" })
     const today = new Date();
     const day = today.getDate();
     const month = today.getMonth() + 1;
@@ -140,6 +142,9 @@ export default class SharedDocs extends Component {
         })
         .catch((error) => {
           console.log('could not resolve profile')
+          this.setState({ loading: "hide" });
+          Materialize.toast('Could not find user', 2000);
+          setTimeout(this.windowRefresh, 2000);
         })
 
       const options = { username: this.state.senderID}
@@ -149,15 +154,22 @@ export default class SharedDocs extends Component {
           const doc = JSON.parse(file || '{}');
           console.log(doc.title);
           this.setState({ title: doc.title, content: doc.content, receiverID: doc.receiverID })
-          this.setState({ show: "hide", loading: "hide", hide: ""});
+          this.setState({ show: "hide", loading: "hide", hideButton: ""});
         })
         .catch((error) => {
-          console.log('could not fetch')
+          console.log('could not fetch');
+          this.setState({ loading: "hide" });
+          Materialize.toast('Nothing shared', 2000);
+          setTimeout(this.windowRefresh, 2000);
         })
         .finally(() => {
           this.setState({ isLoading: false })
         })
     }
+
+  windowRefresh() {
+    window.location.reload(true);
+  }
 
 
   handleSignIn(e) {
@@ -187,7 +199,7 @@ export default class SharedDocs extends Component {
 
   pullData() {
     this.fetchData();
-    this.setState({ hide: "hide", loading: "" });
+    this.setState({ hideButton: "hide", loading: "" });
   }
 
   renderView() {
@@ -223,6 +235,7 @@ export default class SharedDocs extends Component {
     const hide = this.state.hide;
     const autoSave = this.state.autoSave;
     const shareModal = this.state.shareModal;
+    const hideButton = this.state.hideButton;
     var content = "<p style='text-align: center;'>" + this.state.textvalue + "</p>" + "<div style='text-indent: 30px;'>" + this.state.test + "</div>";
 
     var htmlString = $('<html xmlns:office="urn:schemas-microsoft-com:office:office" xmlns:word="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">').html('<body>' +
@@ -249,7 +262,7 @@ export default class SharedDocs extends Component {
           </nav>
         </div>
         <div className="container docs">
-          <div className={hide}>
+          <div className={hideButton}>
             <button onClick={this.handleaddItem} className="btn black center-align">Add to Your Documents</button>
           </div>
           <div className={loading}>
@@ -304,6 +317,7 @@ export default class SharedDocs extends Component {
 
   render() {
     const show = this.state.show;
+    const hideButton = this.state.hideButton;
     let value = this.state.value;
     console.log(loadUserData().username);
     const loading = this.state.loading;
@@ -312,10 +326,10 @@ export default class SharedDocs extends Component {
       <div>
       <div className={show}>
         <div className="container">
-          <div className="card center-align share">
+          <div className="card center-align shared">
             <h6>Enter the Blockstack user ID of the person who shared the file with you</h6>
             <input className="" placeholder="Ex: JohnnyCash.id" type="text" onChange={this.handleIDChange} />
-            <div>
+            <div className={hideButton}>
               <button onClick={this.pullData} className="btn black">Find File</button>
             </div>
             <div className={loading}>

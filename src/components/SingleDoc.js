@@ -38,7 +38,8 @@ export default class SingleDoc extends Component {
       autoSave: "Saved",
       receiverID: "",
       shareModal: "hide",
-      shareFile: ""
+      shareFile: "",
+      show: ""
     }
     this.handleaddItem = this.handleaddItem.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -175,6 +176,7 @@ export default class SingleDoc extends Component {
   }
 
   sharedInfo(){
+    this.setState({ loading: "", show: "hide" });
     const object = {};
     object.title = this.state.textvalue || "Untitled";
     object.content = this.state.test;
@@ -182,7 +184,7 @@ export default class SingleDoc extends Component {
     object.receiverID = this.state.receiverID;
     object.words = wordcount(this.state.test);
     this.setState({ shareFile: object });
-    setTimeout(this.shareDoc, 1000);
+    setTimeout(this.shareDoc, 700);
   }
 
   hideModal() {
@@ -196,7 +198,8 @@ export default class SingleDoc extends Component {
     putFile(fileName, JSON.stringify(this.state.shareFile), true)
       .then(() => {
         console.log("Shared!");
-        this.setState({ shareModal: "hide" });
+        this.setState({ shareModal: "hide", loading: "hide", show: "" });
+        Materialize.toast('Document shared with ' + this.state.receiverID, 4000);
       })
       .catch(e => {
         console.log("e");
@@ -246,6 +249,7 @@ export default class SingleDoc extends Component {
     const save = this.state.save;
     const autoSave = this.state.autoSave;
     const shareModal = this.state.shareModal;
+    const show = this.state.show;
     var content = "<p style='text-align: center;'>" + this.state.textvalue + "</p>" + "<div style='text-indent: 30px;'>" + this.state.test + "</div>";
 
     var htmlString = $('<html xmlns:office="urn:schemas-microsoft-com:office:office" xmlns:word="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">').html('<body>' +
@@ -280,11 +284,26 @@ export default class SingleDoc extends Component {
         </div>
         <div className={shareModal}>
           <div className="container">
-            <div className="card share center-align">
+            <div className="card share grey white-text center-align">
               <h6>Enter the Blockstack user ID of the person to share with</h6>
-              <input className="" placeholder="Ex: JohnnyCash.id" type="text" onChange={this.handleIDChange} />
-              <button onClick={this.sharedInfo} className="btn black">Share</button>
-              <button onClick={this.hideModal} className="btn grey">Cancel</button>
+              <input className="white grey-text" placeholder="Ex: JohnnyCash.id" type="text" onChange={this.handleIDChange} />
+              <div className={show}>
+                <button onClick={this.sharedInfo} className="btn white black-text">Share</button>
+                <button onClick={this.hideModal} className="btn">Cancel</button>
+              </div>
+              <div className={loading}>
+                <div className="preloader-wrapper small active">
+                  <div className="spinner-layer spinner-green-only">
+                    <div className="circle-clipper left">
+                      <div className="circle"></div>
+                    </div><div className="gap-patch">
+                      <div className="circle"></div>
+                    </div><div className="circle-clipper right">
+                      <div className="circle"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
