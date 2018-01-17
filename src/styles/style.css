@@ -515,6 +515,21 @@ input:focus {
   font-size: 24px;
 }
 
+/* Sheets */
+
+.csvlogo {
+  height: 30px;
+  margin-top: 15px;
+}
+
+.spreadsheet-icon {
+  margin-top: 20px;
+}
+
+.sheets-loader {
+  margin-top: 200px;
+}
+
 /*Media Queires*/
 @media screen and (max-width: 960px) {
   .collection-cards {

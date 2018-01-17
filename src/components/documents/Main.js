@@ -1,7 +1,7 @@
 import React, { Component, Link } from 'react';
-import Profile from './Profile';
-import Signin from './Signin';
-import Header from './Header';
+import Profile from '../Profile';
+import Signin from '../Signin';
+import Header from '../Header';
 import Collections from './Collections';
 import {
   isSignInPending,

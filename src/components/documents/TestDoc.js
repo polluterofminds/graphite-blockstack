@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import Profile from "./Profile";
-import Signin from "./Signin";
-import Header from "./Header";
+import Profile from "../Profile";
+import Signin from "../Signin";
+import Header from "../Header";
 import {
   isSignInPending,
   isUserSignedIn,

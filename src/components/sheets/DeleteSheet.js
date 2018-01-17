@@ -1,7 +1,7 @@
 import React, { Component, Link } from "react";
-import Profile from "./Profile";
-import Signin from "./Signin";
-import Header from "./Header";
+import Profile from "../Profile";
+import Signin from "../Signin";
+import Header from "../Header";
 import {
   isSignInPending,
   loadUserData,
@@ -13,16 +13,24 @@ import {
 
 const blockstack = require("blockstack");
 
-export default class DeleteDoc extends Component {
+export default class DeleteSheet extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: [],
-      textvalue : "",
-      test:"",
+      sheets: [],
+      grid: [
+        [],
+      ],
+      title: "",
       index: "",
       save: "",
-      loading: "hide"
+      loading: "hide",
+      printPreview: false,
+      autoSave: "Saved",
+      receiverID: "",
+      shareModal: "hide",
+      shareFile: "",
+      initialLoad: ""
     }
     this.handleDeleteItem = this.handleDeleteItem.bind(this);
     this.saveNewFile = this.saveNewFile.bind(this);
@@ -37,18 +45,19 @@ export default class DeleteDoc extends Component {
   }
 
   componentDidMount() {
-    getFile("documents.json", {decrypt: true})
+    getFile("spread.json", {decrypt: true})
      .then((fileContents) => {
-        this.setState({ value: JSON.parse(fileContents || '{}').value })
+        this.setState({ sheets: JSON.parse(fileContents || '{}').sheets })
         console.log("loaded");
      }).then(() =>{
-       let value = this.state.value;
-       const thisDoc = value.find((doc) => { return doc.id == this.props.match.params.id});
-       let index = thisDoc && thisDoc.id;
-       function findObjectIndex(doc) {
-           return doc.id == index;
+       let sheets = this.state.sheets;
+       const thisSheet = sheets.find((sheet) => { return sheet.id == this.props.match.params.id});
+       let index = thisSheet && thisSheet.id;
+       console.log(index);
+       function findObjectIndex(sheet) {
+           return sheet.id == index;
        }
-       this.setState({ test: thisDoc && thisDoc.content, textvalue: thisDoc && thisDoc.title, index: value.findIndex(findObjectIndex) })
+       this.setState({ grid: thisSheet && thisSheet.grid || this.state.grid, title: thisSheet && thisSheet.title, index: sheets.findIndex(findObjectIndex) })
      })
       .catch(error => {
         console.log(error);
@@ -57,11 +66,11 @@ export default class DeleteDoc extends Component {
 
   handleDeleteItem() {
     const object = {};
-    object.title = this.state.textvalue;
-    object.content = this.state.test;
+    object.title = this.state.title;
+    object.grid = this.state.grid;
     object.id = parseInt(this.props.match.params.id);
-    this.setState({ value: [...this.state.value, this.state.value.splice(this.state.index, 1)]})
-    console.log(this.state.value);
+    this.setState({ sheets: [...this.state.sheets, this.state.sheets.splice(this.state.index, 1)]})
+    console.log(this.state.grid);
     this.setState({ loading: "show", save: "hide" });
     this.saveNewFile();
   };
@@ -69,11 +78,11 @@ export default class DeleteDoc extends Component {
   saveNewFile() {
     this.setState({ loading: "show" });
     this.setState({ save: "hide"});
-    putFile("documents.json", JSON.stringify(this.state), {encrypt: true})
+    putFile("spread.json", JSON.stringify(this.state), {encrypt: true})
       .then(() => {
         console.log(JSON.stringify(this.state));
         this.setState({ loading: "hide" });
-        location.href = '/';
+        location.href = '/sheets';
       })
       .catch(e => {
         console.log("e");
@@ -91,15 +100,15 @@ export default class DeleteDoc extends Component {
           <div className="card doc-card">
             <div className="double-space doc-margin delete-doc center-align">
             <h5>
-              Delete Document
+              Delete Sheet
             </h5>
-            <h6>Are you sure you want to delete <strong>{this.state.textvalue}</strong>?
+            <h6>Are you sure you want to delete <strong>{this.state.title}</strong>?
             </h6>
             <div className={save}>
             <button className="btn red" onClick={this.handleDeleteItem}>
               Delete
             </button>
-            <a href="/"><button className="btn grey">
+            <a href="/documents"><button className="btn grey">
               No, go back
             </button></a>
             </div>

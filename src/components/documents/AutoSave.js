@@ -2,9 +2,9 @@ import React, { Component, Link } from "react";
 import ReactDOM from 'react-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import Profile from "./Profile";
-import Signin from "./Signin";
-import Header from "./Header";
+import Profile from "../Profile";
+import Signin from "../Signin";
+import Header from "../Header";
 import {
   isSignInPending,
   isUserSignedIn,

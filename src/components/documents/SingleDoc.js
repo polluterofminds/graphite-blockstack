@@ -3,9 +3,9 @@ import ReactDOM from 'react-dom';
 import { Link } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import Profile from "./Profile";
-import Signin from "./Signin";
-import Header from "./Header";
+import Profile from "../Profile";
+import Signin from "../Signin";
+import Header from "../Header";
 import {
   isSignInPending,
   loadUserData,
@@ -269,7 +269,7 @@ export default class SingleDoc extends Component {
         <div className="navbar-fixed toolbar">
           <nav className="toolbar-nav">
             <div className="nav-wrapper">
-              <a href="/" className="brand-logo"><i className="material-icons">arrow_back</i></a>
+              <a href="/documents" className="brand-logo"><i className="material-icons">arrow_back</i></a>
 
 
                 <ul className="left toolbar-menu">
@@ -331,7 +331,7 @@ export default class SingleDoc extends Component {
         <div className="navbar-fixed toolbar">
           <nav className="toolbar-nav">
             <div className="nav-wrapper">
-              <a href="/" className="brand-logo"><i className="material-icons">arrow_back</i></a>
+              <a href="/documents" className="brand-logo"><i className="material-icons">arrow_back</i></a>
 
 
                 <ul className="left toolbar-menu">

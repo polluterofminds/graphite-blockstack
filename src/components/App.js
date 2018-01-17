@@ -3,12 +3,16 @@ import { BrowserRouter, Route } from 'react-router-dom';
 import Profile from './Profile';
 import Signin from './Signin';
 import Header from './Header';
-import Main from './Main';
-import Doc from './Document';
-import TestDoc from './TestDoc';
-import SingleDoc from './SingleDoc';
-import DeleteDoc from './DeleteDoc';
-import SharedDocs from './SharedDocs';
+import Main from './documents/Main';
+import Doc from './documents/Document';
+import TestDoc from './documents/TestDoc';
+import SingleDoc from './documents/SingleDoc';
+import DeleteDoc from './documents/DeleteDoc';
+import SharedDocs from './documents/SharedDocs';
+import MainSheets from './sheets/MainSheets';
+import SingleSheet from './sheets/SingleSheet';
+import TestSheet from './sheets/TestSheet';
+import DeleteSheet from './sheets/DeleteSheet';
 import {
   isSignInPending,
   isUserSignedIn,
@@ -39,13 +43,17 @@ export default class App extends Component {
       <BrowserRouter>
           <div className="main-container">
             <Header handleSignOut={ this.handleSignOut } handleSignIn={ this.handleSignIn } />
-            <Route exact path="/" component={Main} />
+            <Route exact path="/documents" component={Main} />
             <Route exact path="/test" component={TestDoc} />
-            <Route exact path="/new" component={Doc} />
-            <Route exact path="/documents/:id" component={SingleDoc} />
-            <Route exact path="/documents/delete/:id" component={DeleteDoc} />
+            <Route exact path="/documents/doc/new" component={Doc} />
+            <Route exact path="/documents/doc/:id" component={SingleDoc} />
+            <Route exact path="/documents/doc/delete/:id" component={DeleteDoc} />
             <Route exact path="/profile" component={Profile} />
-            <Route path="/shared" component={SharedDocs} />
+            <Route exact path="/shared" component={SharedDocs} />
+            <Route exact path="/sheets" component={MainSheets} />
+            <Route exact path="/sheets/sheet/:id" component={SingleSheet} />
+            <Route exact path="/sheets/sheet/delete/:id" component={DeleteSheet} />
+            <Route exact path="/testsheet" component={TestSheet} />
           </div>
         </BrowserRouter>
       </div>

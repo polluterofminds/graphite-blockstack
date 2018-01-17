@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { Link, Route, withRouter} from 'react-router-dom';
 import { Redirect } from 'react-router';
-import Profile from "./Profile";
-import Signin from "./Signin";
-import Header from "./Header";
+import Profile from "../Profile";
+import Signin from "../Signin";
+import Header from "../Header";
 import {
   isSignInPending,
   loadUserData,
@@ -15,13 +15,13 @@ import {
 
 const blockstack = require("blockstack");
 
-export default class Collections extends Component {
+export default class SheetsCollections extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: [],
-      filteredValue: [],
-      tempDocId: "",
+      sheets: [],
+      filteredSheets: [],
+      tempSheetId: "",
       redirect: false,
       loading: ""
     }
@@ -40,12 +40,13 @@ export default class Collections extends Component {
   }
 
   componentDidMount() {
-    getFile("documents.json", {decrypt: true})
+    getFile("spread.json", {decrypt: true})
      .then((fileContents) => {
        if(fileContents) {
          console.log("Files are here");
-         this.setState({ value: JSON.parse(fileContents || '{}').value });
-         this.setState({filteredValue: this.state.value})
+         console.log(fileContents);
+         this.setState({ sheets: JSON.parse(fileContents || '{}').sheets });
+         this.setState({filteredSheets: this.state.sheets})
          this.setState({ loading: "hide" });
        } else {
          console.log("Nothing to see here");
@@ -67,29 +68,29 @@ export default class Collections extends Component {
     const year = today.getFullYear();
     const rando = Date.now();
     const object = {};
-    // object.title = "Untitled";
+    object.title = "Untitled";
     object.content = "";
     object.id = rando;
     object.created = month + "/" + day + "/" + year;
 
-    this.setState({ value: [...this.state.value, object] });
-    this.setState({ filteredValue: [...this.state.filteredValue, object] });
-    this.setState({ tempDocId: object.id });
+    this.setState({ sheets: [...this.state.sheets, object] });
+    this.setState({ filteredSheets: [...this.state.filteredSheets, object] });
+    this.setState({ tempSheetId: object.id });
     // this.setState({ confirm: true, cancel: false });
     setTimeout(this.saveNewFile, 500);
-    // setTimeout(this.handleGo, 700);
+    // setTimeout(console.log(this.state.sheets), 1000);
   }
   filterList(event){
-    var updatedList = this.state.value;
+    var updatedList = this.state.sheets;
     updatedList = updatedList.filter(function(item){
       return item.title.toLowerCase().search(
         event.target.value.toLowerCase()) !== -1;
     });
-    this.setState({filteredValue: updatedList});
+    this.setState({filteredSheets: updatedList});
   }
 
   saveNewFile() {
-    putFile("documents.json", JSON.stringify(this.state), {encrypt:true})
+    putFile("spread.json", JSON.stringify(this.state), {encrypt:true})
       .then(() => {
         console.log("Saved!");
         this.setState({ redirect: true });
@@ -103,9 +104,10 @@ export default class Collections extends Component {
 
 
   render() {
-    let value = this.state.filteredValue;
+
+    let sheets = this.state.filteredSheets;
     const loading = this.state.loading;
-    const link = '/documents/' + this.state.tempDocId;
+    const link = '/sheets/sheet/' + this.state.tempSheetId;
     if (this.state.redirect) {
       return <Redirect push to={link} />;
     } else {
@@ -130,7 +132,7 @@ export default class Collections extends Component {
               </div>
             </div>
           </div>
-        <h3 className="container center-align">Your documents</h3>
+        <h3 className="container center-align">Your Sheets</h3>
         <div className="row">
           <div className="col s6 m3">
             <a onClick={this.handleaddItem}><div className="card small">
@@ -142,25 +144,25 @@ export default class Collections extends Component {
               </div>
             </div></a>
           </div>
-          {value.slice(0).reverse().map(doc => {
+          {sheets.slice(0).reverse().map(sheet => {
               return (
-                <div key={doc.id} className="col s6 m3">
+                <div key={sheet.id} className="col s6 m3">
 
                   <div className="card small renderedDocs">
-                  <Link to={'/documents/'+ doc.id} className="black-text">
+                  <Link to={'/sheets/sheet/'+ sheet.id} className="black-text">
                     <div className="center-align card-content">
-                      <p><i className="large material-icons">short_text</i></p>
+                      <p><i className="spreadsheet-icon large green-text text-lighten-1 material-icons">grid_on</i></p>
                     </div>
                     </Link>
                     <div className="card-action">
-                      <Link to={'/documents/'+ doc.id}><a className="black-text">{doc.title.length > 17 ? doc.title.substring(0,17)+"..." :  doc.title}</a></Link>
-                      <Link to={'/documents/delete/'+ doc.id}>
+                      <Link to={'/sheets/sheet/'+ sheet.id}><a className="black-text">{sheet.title.length > 17 ? sheet.title.substring(0,17)+"..." :  sheet.title}</a></Link>
+                      <Link to={'/sheets/sheet/delete/'+ sheet.id}>
 
                           <i className="modal-trigger material-icons red-text delete-button">delete</i>
 
                       </Link>
                       <div className="muted">
-                        <p>Last updated: {doc.updated}</p>
+                        <p>Last updated: {sheet.updated}</p>
                       </div>
                     </div>
                   </div>

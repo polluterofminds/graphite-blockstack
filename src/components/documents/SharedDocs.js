@@ -3,9 +3,9 @@ import ReactDOM from 'react-dom';
 import { Link } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import Profile from './Profile';
-import Signin from './Signin';
-import Header from './Header';
+import Profile from '../Profile';
+import Signin from '../Signin';
+import Header from '../Header';
 import Collections from './Collections';
 import {
   isSignInPending,
@@ -121,7 +121,7 @@ export default class SharedDocs extends Component {
     putFile("documents.json", JSON.stringify(this.state), {encrypt:true})
       .then(() => {
         console.log("Saved!");
-        window.location.replace("/");
+        window.location.replace("/documents");
       })
       .catch(e => {
         console.log("e");
@@ -256,7 +256,7 @@ export default class SharedDocs extends Component {
         <div className="navbar-fixed toolbar">
           <nav className="toolbar-nav">
             <div className="nav-wrapper">
-              <a href="/" className="brand-logo"><i className="material-icons">arrow_back</i></a>
+              <a href="/documents" className="brand-logo"><i className="material-icons">arrow_back</i></a>
 
             </div>
           </nav>
@@ -302,7 +302,7 @@ export default class SharedDocs extends Component {
           <div className="navbar-fixed toolbar">
             <nav className="toolbar-nav">
               <div className="nav-wrapper">
-                <a href="/" className="brand-logo"><i className="material-icons">arrow_back</i></a>
+                <a href="/documents" className="brand-logo"><i className="material-icons">arrow_back</i></a>
 
               </div>
             </nav>
