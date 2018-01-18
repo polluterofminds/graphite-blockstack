@@ -3,6 +3,9 @@ import {
   isSignInPending,
   loadUserData,
   Person,
+  getFile,
+  putFile,
+  lookupProfile
 } from 'blockstack';
 import {Bar} from 'react-chartjs-2';
 import {Line} from 'react-chartjs-2';
@@ -31,7 +34,7 @@ export default class Profile extends Component {
     this.setState({
       person: new Person(loadUserData().profile),
     });
-    blockstack.getFile("documents.json", true)
+    getFile("documents.json", {decrypt: true})
      .then((fileContents) => {
         this.setState({ value: JSON.parse(fileContents || '{}').value })
      })

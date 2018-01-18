@@ -27,8 +27,8 @@ export default class SingleDoc extends Component {
     super(props);
     this.state = {
       value: [],
-      textvalue : "",
-      test:"",
+      title : "",
+      content:"",
       updated: "",
       words: "",
       index: "",
@@ -41,15 +41,14 @@ export default class SingleDoc extends Component {
       shareFile: "",
       show: ""
     }
-    this.handleaddItem = this.handleaddItem.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
-    this.saveNewFile = this.saveNewFile.bind(this);
     this.handleIDChange = this.handleIDChange.bind(this);
     this.shareModal = this.shareModal.bind(this);
     this.hideModal = this.hideModal.bind(this);
     this.shareDoc = this.shareDoc.bind(this);
     this.sharedInfo = this.sharedInfo.bind(this);
+    this.handleBack = this.handleBack.bind(this); //this is here to resolve auto-save and home button conflicts
   }
 
   componentWillMount() {
@@ -65,15 +64,13 @@ export default class SingleDoc extends Component {
      .then((fileContents) => {
         this.setState({ value: JSON.parse(fileContents || '{}').value })
         console.log("loaded");
-     }).then(() =>{
-       let value = this.state.value;
-       const thisDoc = value.find((doc) => { return doc.id == this.props.match.params.id});
-       let index = thisDoc && thisDoc.id;
-       console.log(index);
-       function findObjectIndex(doc) {
-           return doc.id == index;
-       }
-       this.setState({ test: thisDoc && thisDoc.content, textvalue: thisDoc && thisDoc.title, index: value.findIndex(findObjectIndex) })
+        let value = this.state.value;
+        const thisDoc = value.find((doc) => { return doc.id == this.props.match.params.id});
+        let index = thisDoc && thisDoc.id;
+        function findObjectIndex(doc) {
+            return doc.id == index;
+        }
+        this.setState({ content: thisDoc && thisDoc.content, title: thisDoc && thisDoc.title, index: value.findIndex(findObjectIndex) })
      })
       .catch(error => {
         console.log(error);
@@ -85,56 +82,31 @@ export default class SingleDoc extends Component {
           this.setState({printPreview: true});
         }
       }
-      setTimeout(this.handleAutoAdd,1000);
+      setTimeout(this.handleAutoAdd, 1000);
       this.refresh = setInterval(() => this.handleAutoAdd(), 3000);
     }
 
 
   handleTitleChange(e) {
     this.setState({
-      textvalue: e.target.value
+      title: e.target.value
     });
   }
   handleChange(value) {
-      this.setState({ test: value })
+      this.setState({ content: value })
     }
 
   handleIDChange(e) {
       this.setState({ receiverID: e.target.value })
     }
 
-  handleaddItem() {
-    const today = new Date();
-    const day = today.getDate();
-    const month = today.getMonth() + 1;
-    const year = today.getFullYear();
-    const object = {};
-    object.title = this.state.textvalue || "Untitled";
-    object.content = this.state.test;
-    object.id = parseInt(this.props.match.params.id);
-    object.updated = month + "/" + day + "/" + year;
-    object.words = wordcount(this.state.test);
-    this.setState({ value: [...this.state.value, this.state.value.splice(this.state.index, 1, object)]})
-    this.setState({ loading: "show", save: "hide" });
-    this.saveNewFile();
-    console.log(this.state);
-  };
-
-  saveNewFile() {
-    this.setState({ loading: "show" });
-    this.setState({ save: "hide"});
-    putFile("documents.json", JSON.stringify(this.state), {encrypt: true})
-      .then(() => {
-        console.log(JSON.stringify(this.state));
-        this.setState({ loading: "hide" });
-        location.href = '/';
-      })
-      .catch(e => {
-        console.log("e");
-        console.log(e);
-        alert(e.message);
-      });
-  }
+    handleBack() {
+      if(this.state.autoSave == "Saving") {
+        setTimeout(this.handleBack, 500);
+      } else {
+        window.location.replace("/documents");
+      }
+    }
 
   handleAutoAdd() {
     const today = new Date();
@@ -142,11 +114,11 @@ export default class SingleDoc extends Component {
     const month = today.getMonth() + 1;
     const year = today.getFullYear();
     const object = {};
-    object.title = this.state.textvalue || "Untitled";
-    object.content = this.state.test;
+    object.title = this.state.title;
+    object.content = this.state.content;
     object.id = parseInt(this.props.match.params.id);
     object.updated = month + "/" + day + "/" + year;
-    object.words = wordcount(this.state.test);
+    object.words = wordcount(this.state.content);
     const index = this.state.index;
     const updatedDoc = update(this.state.value, {$splice: [[index, 1, object]]});  // array.splice(start, deleteCount, item1)
     this.setState({value: updatedDoc});
@@ -156,7 +128,6 @@ export default class SingleDoc extends Component {
   };
 
   autoSave() {
-    this.setState({autoSave: "Saving"});
     putFile("documents.json", JSON.stringify(this.state), {encrypt: true})
       .then(() => {
         console.log("Autosaved");
@@ -178,11 +149,11 @@ export default class SingleDoc extends Component {
   sharedInfo(){
     this.setState({ loading: "", show: "hide" });
     const object = {};
-    object.title = this.state.textvalue || "Untitled";
-    object.content = this.state.test;
+    object.title = this.state.title || "Untitled";
+    object.content = this.state.content;
     object.id = Date.now();
     object.receiverID = this.state.receiverID;
-    object.words = wordcount(this.state.test);
+    object.words = wordcount(this.state.content);
     this.setState({ shareFile: object });
     setTimeout(this.shareDoc, 700);
   }
@@ -217,6 +188,7 @@ export default class SingleDoc extends Component {
   }
 
   renderView() {
+    console.log(this.state.title);
 
     SingleDoc.modules = {
       toolbar: [
@@ -244,13 +216,13 @@ export default class SingleDoc extends Component {
       'link', 'image', 'video'
     ]
 
-    const words = wordcount(this.state.test);
+    const words = wordcount(this.state.content);
     const loading = this.state.loading;
     const save = this.state.save;
     const autoSave = this.state.autoSave;
     const shareModal = this.state.shareModal;
     const show = this.state.show;
-    var content = "<p style='text-align: center;'>" + this.state.textvalue + "</p>" + "<div style='text-indent: 30px;'>" + this.state.test + "</div>";
+    var content = "<p style='text-align: center;'>" + this.state.title + "</p>" + "<div style='text-indent: 30px;'>" + this.state.content + "</div>";
 
     var htmlString = $('<html xmlns:office="urn:schemas-microsoft-com:office:office" xmlns:word="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">').html('<body>' +
 
@@ -269,13 +241,13 @@ export default class SingleDoc extends Component {
         <div className="navbar-fixed toolbar">
           <nav className="toolbar-nav">
             <div className="nav-wrapper">
-              <a href="/documents" className="brand-logo"><i className="material-icons">arrow_back</i></a>
+              <a onClick={this.handleBack} className="brand-logo"><i className="material-icons">arrow_back</i></a>
 
 
                 <ul className="left toolbar-menu">
                   <li><a onClick={this.printPreview}>Back to Editing</a></li>
                   <li><a onClick={this.print}><i className="material-icons">local_printshop</i></a></li>
-                  <li><a download={this.state.textvalue + ".doc"}  href={dataUri}><img className="wordlogo" src="http://www.free-icons-download.net/images/docx-file-icon-71578.png" /></a></li>
+                  <li><a download={this.state.title + ".doc"}  href={dataUri}><img className="wordlogo" src="http://www.free-icons-download.net/images/docx-file-icon-71578.png" /></a></li>
                   <li><a onClick={this.shareModal}><i className="material-icons">share</i></a></li>
                 </ul>
 
@@ -286,7 +258,7 @@ export default class SingleDoc extends Component {
           <div className="container">
             <div className="card share grey white-text center-align">
               <h6>Enter the Blockstack user ID of the person to share with</h6>
-              <input className="white grey-text" placeholder="Ex: JohnnyCash.id" type="text" onChange={this.handleIDChange} />
+              <input className="share-input white grey-text" placeholder="Ex: JohnnyCash.id" type="text" onChange={this.handleIDChange} />
               <div className={show}>
                 <button onClick={this.sharedInfo} className="btn white black-text">Share</button>
                 <button onClick={this.hideModal} className="btn">Cancel</button>
@@ -311,12 +283,12 @@ export default class SingleDoc extends Component {
           <div className="card doc-card">
             <div className="double-space doc-margin">
               <p className="center-align print-view">
-              {this.state.textvalue}
+              {this.state.title}
               </p>
               <div>
                 <div
                   className="print-view no-edit"
-                  dangerouslySetInnerHTML={{ __html: this.state.test }}
+                  dangerouslySetInnerHTML={{ __html: this.state.content }}
                 />
               </div>
               </div>
@@ -331,7 +303,7 @@ export default class SingleDoc extends Component {
         <div className="navbar-fixed toolbar">
           <nav className="toolbar-nav">
             <div className="nav-wrapper">
-              <a href="/documents" className="brand-logo"><i className="material-icons">arrow_back</i></a>
+              <a onClick={this.handleBack} className="brand-logo"><i className="material-icons">arrow_back</i></a>
 
 
                 <ul className="left toolbar-menu">
@@ -348,7 +320,7 @@ export default class SingleDoc extends Component {
             <div className="card doc-card">
               <div className="double-space doc-margin">
               <h4 className="align-left">
-              <input className="print-title" placeholder="Title" type="text" value={this.state.textvalue} onChange={this.handleTitleChange} />
+              <input className="print-title" placeholder="Title" type="text" value={this.state.title} onChange={this.handleTitleChange} />
               </h4>
 
               <ReactQuill
@@ -357,7 +329,7 @@ export default class SingleDoc extends Component {
                 id="textarea1"
                 className="materialize-textarea print-view"
                 placeholder="Write something great"
-                value={this.state.test}
+                value={this.state.content}
                 onChange={this.handleChange} />
 
               <div className="right-align wordcounter">

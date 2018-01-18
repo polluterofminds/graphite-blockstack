@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Link } from 'react-router-dom';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
 import Profile from '../Profile';
 import Signin from '../Signin';
 import Header from '../Header';
-import Collections from './Collections';
 import {
   isSignInPending,
   loadUserData,
@@ -16,14 +13,9 @@ import {
   lookupProfile
 } from 'blockstack';
 import update from 'immutability-helper';
-const wordcount = require("wordcount");
 const blockstack = require("blockstack");
-const Quill = ReactQuill.Quill;
-const Font = ReactQuill.Quill.import('formats/font');
-Font.whitelist = ['Ubuntu', 'Raleway', 'Roboto', 'Lato', 'Open Sans', 'Montserrat'] ; // allow ONLY these fonts and the default
-ReactQuill.Quill.register(Font, true);
 
-export default class SharedDocs extends Component {
+export default class SharedSheets extends Component {
 
   constructor(props) {
     super(props);
@@ -38,7 +30,9 @@ export default class SharedDocs extends Component {
   	  },
       username: "",
       title : "",
-      content:"",
+      grid: [
+        []
+      ],
       updated: "",
       words: "",
       index: "",
@@ -46,7 +40,8 @@ export default class SharedDocs extends Component {
       loading: "hide",
       printPreview: false,
       autoSave: "Saved",
-      value: [],
+      senderID: "",
+      sheets: [],
       filteredValue: [],
       tempDocId: "",
       redirect: false,
@@ -68,18 +63,12 @@ export default class SharedDocs extends Component {
   }
 
   componentDidMount() {
-    getFile("documents.json", {decrypt: true})
+    getFile("spread.json", {decrypt: true})
      .then((fileContents) => {
        if(fileContents) {
-         this.setState({ value: JSON.parse(fileContents || '{}').value });
-         this.setState({filteredValue: this.state.value})
-         // this.setState({ loading: "hide" });
+         this.setState({ sheets: JSON.parse(fileContents || '{}').sheets });
        } else {
-         console.log("Nothing to see here");
-         // this.setState({ value: {} });
-         // this.setState({ filteredValue: {} })
-         // console.log(this.state.value);
-         // this.setState({ loading: "hide" });
+         console.log("Nothing shared");
        }
      })
       .catch(error => {
@@ -103,12 +92,11 @@ export default class SharedDocs extends Component {
     const rando = Date.now();
     const object = {};
     object.title = this.state.title;
-    object.content = this.state.content;
+    object.content = this.state.grid;
     object.id = rando;
     object.created = month + "/" + day + "/" + year;
 
-    this.setState({ value: [...this.state.value, object] });
-    this.setState({ filteredValue: [...this.state.filteredValue, object] });
+    this.setState({ sheets: [...this.state.sheets, object] });
     this.setState({ tempDocId: object.id });
     this.setState({ loading: "" });
     // this.setState({ confirm: true, cancel: false });
@@ -117,10 +105,10 @@ export default class SharedDocs extends Component {
   }
 
   saveNewFile() {
-    putFile("documents.json", JSON.stringify(this.state), {encrypt:true})
+    putFile("spread.json", JSON.stringify(this.state), {encrypt:true})
       .then(() => {
         console.log("Saved!");
-        window.location.replace("/documents");
+        window.location.replace("/sheets");
       })
       .catch(e => {
         console.log("e");
@@ -148,11 +136,11 @@ export default class SharedDocs extends Component {
 
       const options = { username: this.state.senderID}
 
-      getFile('shared.json', options)
+      getFile('sharedsheet.json', options)
         .then((file) => {
           const doc = JSON.parse(file || '{}');
           console.log(doc.title);
-          this.setState({ title: doc.title, content: doc.content, receiverID: doc.receiverID })
+          this.setState({ title: doc.title, grid: doc.content, receiverID: doc.receiverID })
           this.setState({ show: "hide", loading: "hide", hideButton: ""});
         })
         .catch((error) => {
@@ -202,51 +190,13 @@ export default class SharedDocs extends Component {
   }
 
   renderView() {
-    SharedDocs.modules = {
-      toolbar: [
-        [{ 'header': '1'}, {'header': '2'}, { 'font': Font.whitelist }],,
-        [{size: []}],
-        ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-        [{'list': 'ordered'}, {'list': 'bullet'},
-         {'indent': '-1'}, {'indent': '+1'}],
-        ['link', 'image', 'video'],
-        ['clean']
-      ],
-      clipboard: {
-        // toggle to add extra line breaks when pasting HTML:
-        matchVisual: false,
-      }
-    }
-    /*
-     * Quill editor formats
-     * See https://quilljs.com/docs/formats/
-     */
-    SharedDocs.formats = [
-      'header', 'font', 'size',
-      'bold', 'italic', 'underline', 'strike', 'blockquote',
-      'list', 'bullet', 'indent',
-      'link', 'image', 'video'
-    ]
 
-    const words = wordcount(this.state.content);
     const loading = this.state.loading;
     const save = this.state.save;
     const hide = this.state.hide;
     const autoSave = this.state.autoSave;
     const shareModal = this.state.shareModal;
     const hideButton = this.state.hideButton;
-    var content = "<p style='text-align: center;'>" + this.state.textvalue + "</p>" + "<div style='text-indent: 30px;'>" + this.state.test + "</div>";
-
-    var htmlString = $('<html xmlns:office="urn:schemas-microsoft-com:office:office" xmlns:word="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">').html('<body>' +
-
-    content +
-
-    '</body>'
-
-    ).get().outerHTML;
-
-    var htmlDocument = '<html xmlns:office="urn:schemas-microsoft-com:office:office" xmlns:word="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><xml><word:WordDocument><word:View>Print</word:View><word:Zoom>90</word:Zoom><word:DoNotOptimizeForBrowser/></word:WordDocument></xml></head><body>' + content + '</body></html>';
-    var dataUri = 'data:text/html,' + encodeURIComponent(htmlDocument);
 
 
     if(this.state.receiverID == loadUserData().username) {
@@ -255,15 +205,12 @@ export default class SharedDocs extends Component {
         <div className="navbar-fixed toolbar">
           <nav className="toolbar-nav">
             <div className="nav-wrapper">
-              <a href="/documents" className="brand-logo"><i className="material-icons">arrow_back</i></a>
+              <a href="/sheets" className="brand-logo"><i className="material-icons">arrow_back</i></a>
 
             </div>
           </nav>
         </div>
-        <div className="container docs">
-          <div className={hideButton}>
-            <button onClick={this.handleaddItem} className="btn black center-align">Add to Your Documents</button>
-          </div>
+        <div className="">
           <div className={loading}>
             <div className="preloader-wrapper small active">
                 <div className="spinner-layer spinner-green-only">
@@ -278,17 +225,20 @@ export default class SharedDocs extends Component {
               </div>
             </div>
 
-          <div className="card doc-card">
-            <div className="double-space doc-margin">
+          <div className="card sharedSheet">
+            <div className="center-align">
+            <div className={hideButton}>
+              <button onClick={this.handleaddItem} className="btn addButton black center-align">Add to Your Sheets</button>
+            </div>
               <p className="center-align print-view">
               {this.state.title}
               </p>
-              <div>
-                <div
-                  className="print-view no-edit"
-                  dangerouslySetInnerHTML={{ __html: this.state.content }}
-                />
-              </div>
+              <p>
+              <i className="spreadsheet-icon large green-text text-lighten-1 material-icons">grid_on</i>
+              </p>
+              <p>
+              Created by {this.state.senderID}
+              </p>
               </div>
               </div>
         </div>
@@ -301,7 +251,7 @@ export default class SharedDocs extends Component {
           <div className="navbar-fixed toolbar">
             <nav className="toolbar-nav">
               <div className="nav-wrapper">
-                <a href="/documents" className="brand-logo"><i className="material-icons">arrow_back</i></a>
+                <a href="/sheets" className="brand-logo"><i className="material-icons">arrow_back</i></a>
 
               </div>
             </nav>

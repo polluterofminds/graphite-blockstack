@@ -27,7 +27,8 @@ export default class SingleSheet extends Component {
       receiverID: "",
       shareModal: "hide",
       shareFile: "",
-      initialLoad: ""
+      initialLoad: "",
+      show: ""
     }
     this.handleChange = this.handleChange.bind(this);
     this.autoSave = this.autoSave.bind(this);
@@ -37,6 +38,7 @@ export default class SingleSheet extends Component {
     this.sharedInfo = this.sharedInfo.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
     this.handleAddItem = this.handleAddItem.bind(this);
+    this.handleIDChange = this.handleIDChange.bind(this);
   }
   componentDidMount() {
     getFile("spread.json", {decrypt: true})
@@ -59,7 +61,7 @@ export default class SingleSheet extends Component {
        this.$el.jexcel({
          data: this.state.grid,
          onchange: this.handleChange,
-         minDimensions:[26,100],
+         minDimensions:[40,100],
          colWidths: [ ]
        });
        this.$el.jexcel('updateSettings', {
@@ -125,6 +127,10 @@ handleChange(instance, cell, value) {
     console.log(this.state.grid);
 }
 
+handleIDChange(e) {
+    this.setState({ receiverID: e.target.value })
+  }
+
 autoSave() {
   this.setState({autoSave: "Saving"});
   putFile("spread.json", JSON.stringify(this.state), {encrypt: true})
@@ -148,11 +154,10 @@ shareModal() {
 sharedInfo(){
   this.setState({ loading: "", show: "hide" });
   const object = {};
-  object.title = this.state.textvalue || "Untitled";
-  object.content = this.state.test;
+  object.title = this.state.title || "Untitled";
+  object.content = this.state.grid;
   object.id = Date.now();
   object.receiverID = this.state.receiverID;
-  object.words = wordcount(this.state.test);
   this.setState({ shareFile: object });
   setTimeout(this.shareDoc, 700);
 }
@@ -164,12 +169,12 @@ hideModal() {
 }
 
 shareDoc() {
-  const fileName = 'shared.json'
+  const fileName = 'sharedsheet.json'
   putFile(fileName, JSON.stringify(this.state.shareFile), true)
     .then(() => {
       console.log("Shared!");
       this.setState({ shareModal: "hide", loading: "hide", show: "" });
-      Materialize.toast('Document shared with ' + this.state.receiverID, 4000);
+      Materialize.toast('Sheet shared with ' + this.state.receiverID, 4000);
     })
     .catch(e => {
       console.log("e");
@@ -178,6 +183,15 @@ shareDoc() {
     });
 
 }
+
+print(){
+  const curURL = window.location.href;
+  history.replaceState(history.state, '', '/');
+  window.print();
+  history.replaceState(history.state, '', curURL);
+}
+
+
 
 renderView() {
 
@@ -192,6 +206,25 @@ renderView() {
   if(this.state.initialLoad === "") {
     return (
       <div className="center-align sheets-loader">
+      <div className="navbar-fixed toolbar">
+        <nav className="toolbar-nav">
+          <div className="nav-wrapper">
+            <a href="/sheets" className="brand-logo"><i className="material-icons">arrow_back</i></a>
+
+
+              <ul className="left toolbar-menu">
+                <li><input className="black-text" type="text" placeholder="Sheet Title" value={this.state.title} onChange={this.handleTitleChange} /></li>
+                <li><a onClick={this.print}><i className="material-icons">local_printshop</i></a></li>
+                <li><a ref={el => this.el = el} onClick={this.download}><img className="csvlogo" src="https://d30y9cdsu7xlg0.cloudfront.net/png/605579-200.png" /></a></li>
+                <li><a onClick={this.shareModal}><i className="material-icons">share</i></a></li>
+              </ul>
+              <ul className="right toolbar-menu auto-save">
+              <li><a className="muted">{autoSave}</a></li>
+              </ul>
+
+          </div>
+        </nav>
+      </div>
       <div className={initialLoad}>
         <div className="preloader-wrapper big active">
           <div className="spinner-layer spinner-green-only">
@@ -218,9 +251,9 @@ renderView() {
 
               <ul className="left toolbar-menu">
                 <li><input className="black-text" type="text" placeholder="Sheet Title" value={this.state.title} onChange={this.handleTitleChange} /></li>
-                <li><a ><i className="material-icons">local_printshop</i></a></li>
+                <li><a onClick={this.print}><i className="material-icons">local_printshop</i></a></li>
                 <li><a ref={el => this.el = el} onClick={this.download}><img className="csvlogo" src="https://d30y9cdsu7xlg0.cloudfront.net/png/605579-200.png" /></a></li>
-                <li><a><i className="material-icons">share</i></a></li>
+                <li><a onClick={this.shareModal}><i className="material-icons">share</i></a></li>
               </ul>
               <ul className="right toolbar-menu auto-save">
               <li><a className="muted">{autoSave}</a></li>
@@ -233,10 +266,10 @@ renderView() {
         <div className="container">
           <div className="card share grey white-text center-align">
             <h6>Enter the Blockstack user ID of the person to share with</h6>
-            <input className="white grey-text" placeholder="Ex: JohnnyCash.id" type="text" onChange={this.handleIDChange} />
+            <input className="share-input white grey-text" placeholder="Ex: JohnnyCash.id" type="text" onChange={this.handleIDChange} />
             <div className={show}>
-              <button className="btn white black-text">Share</button>
-              <button className="btn">Cancel</button>
+            <button onClick={this.sharedInfo} className="btn white black-text">Share</button>
+            <button onClick={this.hideModal} className="btn">Cancel</button>
             </div>
             <div className={loading}>
               <div className="preloader-wrapper small active">
@@ -268,7 +301,7 @@ renderView() {
 }
 
   render () {
-    console.log(this.state.title);
+
     return (
       <div>
       {this.renderView()}

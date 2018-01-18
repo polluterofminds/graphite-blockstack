@@ -9,6 +9,7 @@ import TestDoc from './documents/TestDoc';
 import SingleDoc from './documents/SingleDoc';
 import DeleteDoc from './documents/DeleteDoc';
 import SharedDocs from './documents/SharedDocs';
+import SharedSheets from './sheets/SharedSheets';
 import MainSheets from './sheets/MainSheets';
 import SingleSheet from './sheets/SingleSheet';
 import TestSheet from './sheets/TestSheet';
@@ -49,11 +50,12 @@ export default class App extends Component {
             <Route exact path="/documents/doc/:id" component={SingleDoc} />
             <Route exact path="/documents/doc/delete/:id" component={DeleteDoc} />
             <Route exact path="/profile" component={Profile} />
-            <Route exact path="/shared" component={SharedDocs} />
+            <Route exact path="/shared-docs" component={SharedDocs} />
             <Route exact path="/sheets" component={MainSheets} />
             <Route exact path="/sheets/sheet/:id" component={SingleSheet} />
             <Route exact path="/sheets/sheet/delete/:id" component={DeleteSheet} />
             <Route exact path="/testsheet" component={TestSheet} />
+            <Route exact path="/shared-sheets" component={SharedSheets} />
           </div>
         </BrowserRouter>
       </div>

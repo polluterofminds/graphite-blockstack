@@ -49,15 +49,7 @@ export default class Header extends Component {
       const person = new blockstack.Person(userData.profile);
       console.log('person', person);
       return (
-        <ul id="nav-mobile" className="right">
-        <ul id="dropdown1" className="dropdown-content">
-          <li><a href="/profile">Profile</a></li>
-          <li><a href="/shared">Shared Files</a></li>
-          <li className="divider"></li>
-          <li><a href="#" onClick={ handleSignOut.bind(this) }>Sign out</a></li>
-          </ul>
-          <li><a className="dropdown-button" href="#!" data-activates="dropdown1"><img src={ person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage } className="img-rounded avatar" id="avatar-image" /><i className="material-icons right">arrow_drop_down</i></a></li>
-        </ul>
+        ""
       );
     } else {
       return(

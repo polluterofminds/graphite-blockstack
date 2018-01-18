@@ -199,6 +199,14 @@ nav ul a {
   margin-right: 3px;
 }
 
+.calculator {
+  height: 20px;
+  width: 20px;
+  margin-bottom: 8px;
+  margin-right: 3px;
+  transform: rotate(25deg);
+}
+
 .img-rounded {
   height: 35px;
   width: 35px;
@@ -258,6 +266,14 @@ nav ul a {
 .items {
   margin: 15px;
   padding: 30px;
+}
+
+#dropdown2 {
+  width: auto!important;
+}
+
+.apps {
+  font-size: 35px!important;
 }
 
 .plus-button {
@@ -516,6 +532,21 @@ input:focus {
 }
 
 /* Sheets */
+
+.share-input {
+  padding: 5px!important;
+}
+
+.sharedSheet {
+  max-width: 60%;
+  margin: auto;
+  margin-top: 50px;
+  padding: 25px;
+}
+
+.addButton {
+  margin-top: 25px;
+}
 
 .csvlogo {
   height: 30px;

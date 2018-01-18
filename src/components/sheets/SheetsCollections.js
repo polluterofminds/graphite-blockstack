@@ -10,15 +10,25 @@ import {
   Person,
   getFile,
   putFile,
-  lookupProfile
+  lookupProfile,
+  signUserOut,
 } from 'blockstack';
 
 const blockstack = require("blockstack");
+const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
 
 export default class SheetsCollections extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      person: {
+  	  	name() {
+          return 'Anonymous';
+        },
+  	  	avatarUrl() {
+  	  	  return avatarFallbackImage;
+  	  	},
+  	  },
       sheets: [],
       filteredSheets: [],
       tempSheetId: "",
@@ -28,6 +38,7 @@ export default class SheetsCollections extends Component {
     this.handleaddItem = this.handleaddItem.bind(this);
     this.saveNewFile = this.saveNewFile.bind(this);
     this.filterList = this.filterList.bind(this);
+    this.handleSignOut = this.handleSignOut.bind(this);
 
   }
 
@@ -44,7 +55,6 @@ export default class SheetsCollections extends Component {
      .then((fileContents) => {
        if(fileContents) {
          console.log("Files are here");
-         console.log(fileContents);
          this.setState({ sheets: JSON.parse(fileContents || '{}').sheets });
          this.setState({filteredSheets: this.state.sheets})
          this.setState({ loading: "hide" });
@@ -59,6 +69,11 @@ export default class SheetsCollections extends Component {
       .catch(error => {
         console.log(error);
       });
+  }
+
+  handleSignOut(e) {
+    e.preventDefault();
+    signUserOut(window.location.origin);
   }
 
   handleaddItem() {
@@ -113,9 +128,32 @@ export default class SheetsCollections extends Component {
     } else {
       console.log("No redirect");
     }
-
-
+    const userData = blockstack.loadUserData();
+    const person = new blockstack.Person(userData.profile);
     return (
+      <div>
+      <div className="navbar-fixed toolbar">
+        <nav className="toolbar-nav">
+          <div className="nav-wrapper">
+            <a href="/sheets" className="brand-logo">Graphite.<img className="calculator" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9%0D%0AIjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik0uMDkgMGMtLjA2IDAtLjA5LjA0LS4w%0D%0AOS4wOXY3LjgxYzAgLjA1LjA0LjA5LjA5LjA5aDYuODFjLjA1IDAgLjA5LS4wNC4wOS0uMDl2LTcu%0D%0AODFjMC0uMDYtLjA0LS4wOS0uMDktLjA5aC02Ljgxem0uOTEgMWg1djJoLTV2LTJ6bTAgM2gxdjFo%0D%0ALTF2LTF6bTIgMGgxdjFoLTF2LTF6bTIgMGgxdjNoLTF2LTN6bS00IDJoMXYxaC0xdi0xem0yIDBo%0D%0AMXYxaC0xdi0xeiIgLz4KPC9zdmc+" alt="calculator" /></a>
+
+            <ul id="nav-mobile" className="right">
+            <ul id="dropdown1" className="dropdown-content">
+              <li><a href="/profile">Profile</a></li>
+              <li><a href="/shared-sheets">Shared Files</a></li>
+              <li className="divider"></li>
+              <li><a href="#" onClick={ this.handleSignOut }>Sign out</a></li>
+            </ul>
+            <ul id="dropdown2" className="dropdown-content">
+              <li><a href="/documents"><i className="material-icons blue-text text-darken-2">description</i><br />Documents</a></li>
+              <li><a href="/sheets"><i className="material-icons green-text text-lighten-1">grid_on</i><br />Sheets</a></li>
+            </ul>
+              <li><a className="dropdown-button" href="#!" data-activates="dropdown2"><i className="material-icons apps">apps</i></a></li>
+              <li><a className="dropdown-button" href="#!" data-activates="dropdown1"><img src={ person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage } className="img-rounded avatar" id="avatar-image" /><i className="material-icons right">arrow_drop_down</i></a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
         <div className="docs">
         <div className="search card">
           <form className="searchform">
@@ -140,7 +178,7 @@ export default class SheetsCollections extends Component {
                 <p><i className="addDoc large material-icons">add</i></p>
               </div>
               <div className="card-action">
-                <a className="black-text">New Document</a>
+                <a className="black-text">New Sheet</a>
               </div>
             </div></a>
           </div>
@@ -172,6 +210,7 @@ export default class SheetsCollections extends Component {
           }
         </div>
       </div>
+    </div>
     );
   }
 }

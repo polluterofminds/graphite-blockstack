@@ -10,7 +10,8 @@ import {
   Person,
   getFile,
   putFile,
-  lookupProfile
+  lookupProfile,
+  signUserOut,
 } from 'blockstack';
 
 const blockstack = require("blockstack");
@@ -19,6 +20,14 @@ export default class Collections extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      person: {
+  	  	name() {
+          return 'Anonymous';
+        },
+  	  	avatarUrl() {
+  	  	  return avatarFallbackImage;
+  	  	},
+  	  },
       value: [],
       filteredValue: [],
       tempDocId: "",
@@ -48,10 +57,7 @@ export default class Collections extends Component {
          this.setState({filteredValue: this.state.value})
          this.setState({ loading: "hide" });
        } else {
-         console.log("Nothing to see here");
-         // this.setState({ value: {} });
-         // this.setState({ filteredValue: {} })
-         // console.log(this.state.value);
+         console.log("No saved files");
          this.setState({ loading: "hide" });
        }
      })
@@ -67,7 +73,7 @@ export default class Collections extends Component {
     const year = today.getFullYear();
     const rando = Date.now();
     const object = {};
-    // object.title = "Untitled";
+    object.title = "Untitled";
     object.content = "";
     object.id = rando;
     object.created = month + "/" + day + "/" + year;
@@ -101,6 +107,11 @@ export default class Collections extends Component {
       });
   }
 
+  handleSignOut(e) {
+    e.preventDefault();
+    signUserOut(window.location.origin);
+  }
+
 
   render() {
     let value = this.state.filteredValue;
@@ -111,9 +122,33 @@ export default class Collections extends Component {
     } else {
       console.log("No redirect");
     }
-
+    const userData = blockstack.loadUserData();
+    const person = new blockstack.Person(userData.profile);
 
     return (
+      <div>
+      <div className="navbar-fixed toolbar">
+        <nav className="toolbar-nav">
+          <div className="nav-wrapper">
+            <a href="/documents" className="brand-logo">Graphite.<img className="pencil" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Black_pencil.svg/1000px-Black_pencil.svg.png" alt="pencil" /></a>
+
+            <ul id="nav-mobile" className="right">
+            <ul id="dropdown1" className="dropdown-content">
+              <li><a href="/profile">Profile</a></li>
+              <li><a href="/shared-docs">Shared Files</a></li>
+              <li className="divider"></li>
+              <li><a href="#" onClick={ this.handleSignOut }>Sign out</a></li>
+            </ul>
+            <ul id="dropdown2" className="dropdown-content">
+              <li><a href="/documents"><i className="material-icons blue-text text-darken-2">description</i><br />Documents</a></li>
+              <li><a href="/sheets"><i className="material-icons green-text text-lighten-1">grid_on</i><br />Sheets</a></li>
+            </ul>
+              <li><a className="dropdown-button" href="#!" data-activates="dropdown2"><i className="material-icons apps">apps</i></a></li>
+              <li><a className="dropdown-button" href="#!" data-activates="dropdown1"><img src={ person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage } className="img-rounded avatar" id="avatar-image" /><i className="material-icons right">arrow_drop_down</i></a></li>
+            </ul>
+          </div>
+        </nav>
+        </div>
         <div className="docs">
         <div className="search card">
           <form className="searchform">
@@ -169,6 +204,7 @@ export default class Collections extends Component {
             })
           }
         </div>
+      </div>
       </div>
     );
   }
