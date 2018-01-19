@@ -136,6 +136,7 @@ export default class Collections extends Component {
             <ul id="dropdown1" className="dropdown-content">
               <li><a href="/profile">Profile</a></li>
               <li><a href="/shared-docs">Shared Files</a></li>
+              <li><a href="/export">Export All Data</a></li>
               <li className="divider"></li>
               <li><a href="#" onClick={ this.handleSignOut }>Sign out</a></li>
             </ul>

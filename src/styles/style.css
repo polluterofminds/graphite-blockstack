@@ -1,8 +1,53 @@
 @import url('https://fonts.googleapis.com/css?family=Alfa+Slab+One|Raleway|Roboto|Ubuntu|Lato|Open+Sans|Montserrat');
-
+@import url('https://fonts.googleapis.com/css?family=Slabo+27px');
 
 body {
   background-color: #C4C4C4;
+}
+
+.app-card {
+  padding: 30px;
+}
+
+.app-list {
+  margin-top: 50px;
+}
+
+.splash {
+  height: 150px;
+}
+.hero-image {
+  background: #fff;
+  padding-top: 50px;
+}
+
+.copy img {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.copy {
+  font-family: 'Slabo 27px', serif;
+  font-size: 20px;
+}
+
+.app-headers {
+  font-family: 'Raleway', sans-serif;
+}
+
+.exports {
+  margin-top: 50px;
+}
+
+.export-card {
+  padding: 30px;
+}
+
+#doccontainer a, #sheetcontainer a {
+  display: none;
+}
+#doccontainer a:nth-last-of-type(1), #sheetcontainer a:nth-of-type(1) {
+  display: block;
 }
 
 /* Quill Editor */

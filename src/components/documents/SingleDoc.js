@@ -122,7 +122,7 @@ export default class SingleDoc extends Component {
     const index = this.state.index;
     const updatedDoc = update(this.state.value, {$splice: [[index, 1, object]]});  // array.splice(start, deleteCount, item1)
     this.setState({value: updatedDoc});
-    // this.setState({autoSave: true});
+    this.setState({autoSave: "Saving..."});
     console.log(this.state.value);
     this.autoSave();
   };

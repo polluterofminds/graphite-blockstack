@@ -39,6 +39,7 @@
     "webpack-dev-server": "^2.4.2"
   },
   "dependencies": {
+    "axios": "^0.17.1",
     "blockstack": "^0.15.0",
     "bootstrap": "^3.3.7",
     "chart.js": "^2.7.1",

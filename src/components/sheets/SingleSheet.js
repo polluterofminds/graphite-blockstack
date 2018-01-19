@@ -132,7 +132,7 @@ handleIDChange(e) {
   }
 
 autoSave() {
-  this.setState({autoSave: "Saving"});
+  this.setState({autoSave: "Saving..."});
   putFile("spread.json", JSON.stringify(this.state), {encrypt: true})
     .then(() => {
       console.log("Autosaved");

@@ -3,6 +3,7 @@ import { BrowserRouter, Route } from 'react-router-dom';
 import Profile from './Profile';
 import Signin from './Signin';
 import Header from './Header';
+import AppPage from './AppPage';
 import Main from './documents/Main';
 import Doc from './documents/Document';
 import TestDoc from './documents/TestDoc';
@@ -14,6 +15,7 @@ import MainSheets from './sheets/MainSheets';
 import SingleSheet from './sheets/SingleSheet';
 import TestSheet from './sheets/TestSheet';
 import DeleteSheet from './sheets/DeleteSheet';
+import Export from './Export';
 import {
   isSignInPending,
   isUserSignedIn,
@@ -44,6 +46,7 @@ export default class App extends Component {
       <BrowserRouter>
           <div className="main-container">
             <Header handleSignOut={ this.handleSignOut } handleSignIn={ this.handleSignIn } />
+            <Route exact path="/" component={AppPage} />
             <Route exact path="/documents" component={Main} />
             <Route exact path="/test" component={TestDoc} />
             <Route exact path="/documents/doc/new" component={Doc} />
@@ -56,6 +59,7 @@ export default class App extends Component {
             <Route exact path="/sheets/sheet/delete/:id" component={DeleteSheet} />
             <Route exact path="/testsheet" component={TestSheet} />
             <Route exact path="/shared-sheets" component={SharedSheets} />
+            <Route exact path="/export" component={Export} />
           </div>
         </BrowserRouter>
       </div>
