@@ -100,14 +100,27 @@ body {
 
 .receiver-message-img {
   width: 35%;
-  margin-top: 33%;
-  margin-left: 15px;
+  /* margin-top: 33%; */
+  /* margin-left: 15px; */
+}
+
+.profile-img {
+  max-width: 40%!important;
+  margin-top: 25px!important;
 }
 
 .sender-message-img {
   width: 35%;
-  margin-top: 33%;
-  margin-right: 15px;
+  /* margin-top: 33%; */
+  /* margin-right: 15px; */
+}
+
+.message-input {
+  padding: 15px;
+}
+
+.message-send {
+  margin-left: 10px;
 }
 
 /* Quill Editor */

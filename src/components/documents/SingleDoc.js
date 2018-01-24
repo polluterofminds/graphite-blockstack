@@ -67,6 +67,7 @@ export default class SingleDoc extends Component {
         let value = this.state.value;
         const thisDoc = value.find((doc) => { return doc.id == this.props.match.params.id});
         let index = thisDoc && thisDoc.id;
+        console.log(index);
         function findObjectIndex(doc) {
             return doc.id == index;
         }

@@ -19,6 +19,7 @@ import DeleteSheet from './sheets/DeleteSheet';
 import MainContacts from './messages/MainContacts';
 import Contacts from './messages/Contacts';
 import Conversations from './messages/Conversations';
+import DeleteContact from './messages/DeleteContact';
 import Export from './Export';
 import {
   isSignInPending,
@@ -67,6 +68,7 @@ export default class App extends Component {
             <Route exact path="/export" component={Export} />
             <Route exact path="/contacts" component={MainContacts} />
             <Route exact path="/contacts/conversations/:id" component={Conversations} />
+            <Route exact path="/contacts/delete/:id" component={DeleteContact} />
           </div>
         </BrowserRouter>
       </div>

@@ -10,7 +10,8 @@ import {
   Person,
   getFile,
   putFile,
-  lookupProfile
+  lookupProfile,
+  signUserOut
 } from 'blockstack';
 import update from 'immutability-helper';
 const blockstack = require("blockstack");
@@ -37,12 +38,12 @@ export default class Conversations extends Component {
     tempDocId: "",
     redirect: false,
     loading: "",
+    show: "hide",
     newMessage: "",
     receiver: "",
     conversationUser: "",
     conversationUserImage: avatarFallbackImage,
-    userImg: avatarFallbackImage,
-    loading: true
+    userImg: avatarFallbackImage
   }
   this.handleaddItem = this.handleaddItem.bind(this);
   this.saveNewFile = this.saveNewFile.bind(this);
@@ -58,11 +59,14 @@ componentWillMount() {
 }
 
 componentDidMount() {
+  this.scrollToBottom();
   this.setState({receiver: loadUserData().username});
   let info = loadUserData().profile;
-  // if(info) {
-  //   this.setState({ userImg: info.image[0].contentUrl});
-  // }
+  if(info.image) {
+    this.setState({ userImg: info.image[0].contentUrl});
+  } else {
+    this.setState({ userImg: avatarFallbackImage});
+  }
 
   getFile("contact.json", {decrypt: true})
      .then((fileContents) => {
@@ -84,6 +88,10 @@ componentDidMount() {
     this.refresh = setInterval(() => this.fetchData(), 1000);
     // let combined = [{...this.state.myMessages, ...this.state.sharedMessages}]
     // this.setState({ combined: combined});
+}
+
+componentDidUpdate() {
+  this.scrollToBottom();
 }
 
 fetchMine() {
@@ -126,6 +134,7 @@ const username = this.state.conversationUser;
     .then((file) => {
       console.log("fetched!");
       this.setState({ sharedMessages: JSON.parse(file || '{}').messages });
+      this.setState({ loading: "hide", show: "" });
     })
     .catch((error) => {
       console.log('could not fetch');
@@ -168,25 +177,17 @@ handleMessage(e) {
   this.setState({ newMessage: e.target.value })
 }
 
-renderView() {
-  <div>
-    <div className="container">
-      <div className={loading}>
-        <div className="progress center-align">
-          <p>Loading...</p>
-          <div className="indeterminate"></div>
-        </div>
-      </div>
-    </div>
-  </div>
+scrollToBottom = () => {
+  this.messagesEnd.scrollIntoView({ behavior: "smooth" });
 }
-
 
 render() {
   let myMessages = this.state.myMessages;
   let sharedMessages = this.state.sharedMessages;
   const userData = blockstack.loadUserData();
   const person = new blockstack.Person(userData.profile);
+  let loading = this.state.loading;
+  let show = this.state.show;
 
 
   return (
@@ -194,28 +195,27 @@ render() {
     <div className="navbar-fixed toolbar">
       <nav className="toolbar-nav">
         <div className="nav-wrapper">
-          <a href="/documents" className="brand-logo">Graphite.<img className="pencil" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Black_pencil.svg/1000px-Black_pencil.svg.png" alt="pencil" /></a>
+          <a href="/contacts" className="brand-logo"><i className="material-icons">arrow_back</i></a>
 
-          <ul id="nav-mobile" className="right">
-          <ul id="dropdown1" className="dropdown-content">
-            <li><a href="/profile">Profile</a></li>
-            <li><a href="/shared-docs">Shared Files</a></li>
-            <li><a href="/export">Export All Data</a></li>
-            <li className="divider"></li>
-            <li><a onClick={ this.handleSignOut }>Sign out</a></li>
-          </ul>
-          <ul id="dropdown2" className="dropdown-content">
-            <li><a href="/documents"><i className="material-icons blue-text text-darken-2">description</i><br />Documents</a></li>
-            <li><a href="/sheets"><i className="material-icons green-text text-lighten-1">grid_on</i><br />Sheets</a></li>
-          </ul>
-            <li><a className="dropdown-button" href="#!" data-activates="dropdown2"><i className="material-icons apps">apps</i></a></li>
-            <li><a className="dropdown-button" href="#!" data-activates="dropdown1"><img src={ person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage } className="img-rounded avatar" id="avatar-image" /><i className="material-icons right">arrow_drop_down</i></a></li>
-          </ul>
+
+            <ul className="left toolbar-menu">
+              <li><a>Conversation with {this.state.conversationUser}</a></li>
+            </ul>
+
         </div>
       </nav>
+    </div>
+
+      <div className="container">
+        <div className={loading}>
+          <div className="progress center-align">
+            <p>Loading...</p>
+            <div className="indeterminate"></div>
+          </div>
+        </div>
       </div>
+      <div className={show}>
       <div className="messages row">
-        <h3>Conversation with {this.state.conversationUser}</h3>
         <div className="message col s6">
         {sharedMessages.map(message => {
           if(message.sender == loadUserData().username || message.receiver == loadUserData().username){
@@ -252,7 +252,7 @@ render() {
                       <p>{message.content}</p>
                       <p>{message.created}</p>
                     </div>
-                    <div className="col s4">
+                    <div className="col s4 right-align">
                       <img className="responsive-img sender-message-img circle" src={this.state.userImg} alt="avatar" />
                     </div>
                   </div>
@@ -266,10 +266,13 @@ render() {
           })
         }
         </div>
+        </div>
+        <div style={{ float:"left", clear: "both" }}
+          ref={(el) => { this.messagesEnd = el; }}>
+        </div>
       </div>
-      <div className="center-align container white">
-        <input type="text" placeholder="Message here" value={this.state.newMessage} onChange={this.handleMessage} />
-        <button onClick={this.handleaddItem} className="btn">Send</button>
+      <div className="center-align message-input container white">
+        <p><input type="text" placeholder="Message here" value={this.state.newMessage} onChange={this.handleMessage} /><span className="message-send"><button onClick={this.handleaddItem} className="btn">Send</button></span></p>
       </div>
 
     </div>

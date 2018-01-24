@@ -9,7 +9,8 @@ import {
   Person,
   getFile,
   putFile,
-  lookupProfile
+  lookupProfile,
+  signUserOut
 } from "blockstack";
 import Conversations from './Conversations';
 
@@ -32,7 +33,10 @@ export default class Contacts extends Component {
       contacts: [],
       redirect: false,
       newContact: "",
-      add: false
+      add: false,
+      loading: "hide",
+      show: "",
+      newContactImg: avatarFallbackImage
     }
     this.handleaddItem = this.handleaddItem.bind(this);
     this.saveNewFile = this.saveNewFile.bind(this);
@@ -108,19 +112,35 @@ export default class Contacts extends Component {
   }
 
   handleaddItem() {
-    const object = {};
-    object.contact = this.state.newContact;
-
-    this.setState({ contacts: [...this.state.contacts, object], add: false });
-    // this.setState({ confirm: true, cancel: false });
-    setTimeout(this.saveNewFile, 500);
-    // setTimeout(this.handleGo, 700);
+    this.setState({ loading: "", show: "hide" })
+    let newContact = this.state.newContact
+    lookupProfile(newContact)
+      .then((profile) => {
+        let image = profile.image;
+        console.log(profile);
+        if(profile.image){
+          this.setState({newContactImg: image[0].contentUrl})
+        } else {
+          this.setState({ newContactImg: avatarFallbackImage })
+        }
+      }).then(() => {
+        const object = {};
+        object.contact = this.state.newContact;
+        object.img = this.state.newContactImg;
+        console.log(object);
+        this.setState({ contacts: [...this.state.contacts, object], add: false });
+        setTimeout(this.saveNewFile, 500);
+      })
+      .catch((error) => {
+        console.log('could not resolve profile')
+      })
   }
 
   saveNewFile() {
     putFile("contact.json", JSON.stringify(this.state), {encrypt: true})
       .then(() => {
         console.log("Saved!");
+        this.setState({loading: "hide", show: "" });
       })
       .catch(e => {
         console.log(e);
@@ -142,6 +162,8 @@ export default class Contacts extends Component {
     console.log(loadUserData().username);
     const userData = blockstack.loadUserData();
     const person = new blockstack.Person(userData.profile);
+    let show = this.state.show;
+    let loading = this.state.loading;
 
     if(this.state.add == true){
     return (
@@ -150,7 +172,22 @@ export default class Contacts extends Component {
           <div className="add-new">
             <label>Add a Contact</label>
             <input type="text" placeholder="Ex: JohnnyCash.id" onChange={this.handleNewContact} />
+            <div className={show}>
             <button className="btn" onClick={this.handleaddItem}>Add</button>
+            </div>
+            <div className={loading}>
+              <div className="preloader-wrapper small active">
+                <div className="spinner-layer spinner-green-only">
+                  <div className="circle-clipper left">
+                    <div className="circle"></div>
+                  </div><div className="gap-patch">
+                    <div className="circle"></div>
+                  </div><div className="circle-clipper right">
+                    <div className="circle"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -173,12 +210,12 @@ export default class Contacts extends Component {
             </div>
             {contacts.slice(0).reverse().map(contact => {
                 return (
-                  <div key={contacts.contact} className="col s6 m3">
+                  <div key={contact.contact} className="col s6 m3">
 
                     <div className="card small renderedDocs">
                     <Link to={'/contacts/conversations/'+ contact.contact} className="black-text">
                       <div className="center-align card-content">
-                        <p><i className="large material-icons">person</i></p>
+                        <p><img className="responsive-img circle profile-img" src={contact.img} alt="profile" /></p>
                       </div>
                     </Link>
                       <div className="card-action">
@@ -210,7 +247,7 @@ export default class Contacts extends Component {
       <div className="navbar-fixed toolbar">
         <nav className="toolbar-nav">
           <div className="nav-wrapper">
-            <a href="/documents" className="brand-logo">Graphite.<img className="pencil" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Black_pencil.svg/1000px-Black_pencil.svg.png" alt="pencil" /></a>
+            <a href="/documents" className="brand-logo">Graphite.<img className="calculator" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9%0D%0AIjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik0wIDB2MWw0IDIgNC0ydi0xaC04em0w%0D%0AIDJ2NGg4di00bC00IDItNC0yeiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAxKSIgLz4KPC9zdmc+" alt="inbox" /></a>
 
             <ul id="nav-mobile" className="right">
             <ul id="dropdown1" className="dropdown-content">

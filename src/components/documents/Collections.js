@@ -190,7 +190,7 @@ export default class Collections extends Component {
                     </div>
                     </Link>
                     <div className="card-action">
-                      <Link to={'/documents/'+ doc.id}><a className="black-text">{doc.title.length > 17 ? doc.title.substring(0,17)+"..." :  doc.title}</a></Link>
+                      <Link to={'/documents/doc/'+ doc.id}><a className="black-text">{doc.title.length > 17 ? doc.title.substring(0,17)+"..." :  doc.title}</a></Link>
                       <Link to={'/documents/doc/delete/'+ doc.id}>
 
                           <i className="modal-trigger material-icons red-text delete-button">delete</i>
