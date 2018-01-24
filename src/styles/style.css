@@ -50,6 +50,66 @@ body {
   display: block;
 }
 
+/* messaging */
+
+.add-contact {
+  padding: 25px;
+  margin-top: 75px;
+}
+
+.add-contact.card {
+  pading: 15px;
+}
+
+.card-add {
+  width: 65%;
+  margin: auto;
+}
+
+.add-new {
+  width: 60%;
+  margin: auto;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.bubble {
+    padding: 8px 15px 8px 15px;
+    border-radius: 20px;
+    text-align: left;
+    /* font-family: "Helvetica Neue"; */
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.receiver {
+  background-color: #E5E5EA;
+  color: #000;
+  margin-top: 40px;
+}
+
+.sender {
+  background-color: #039BE3;
+  color: #fff;
+  margin-top: 40px;
+}
+
+.right-side {
+  margin-top: 80px;
+}
+
+.receiver-message-img {
+  width: 35%;
+  margin-top: 33%;
+  margin-left: 15px;
+}
+
+.sender-message-img {
+  width: 35%;
+  margin-top: 33%;
+  margin-right: 15px;
+}
+
 /* Quill Editor */
 
 

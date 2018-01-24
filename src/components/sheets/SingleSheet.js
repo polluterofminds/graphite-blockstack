@@ -56,7 +56,7 @@ export default class SingleSheet extends Component {
        }
        this.setState({ grid: thisSheet && thisSheet.grid || this.state.grid, title: thisSheet && thisSheet.title, index: sheets.findIndex(findObjectIndex) })
      })
-     .finally(() => {
+     .then(() => {
        this.$el = $(this.el);
        this.$el.jexcel({
          data: this.state.grid,

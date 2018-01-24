@@ -15,6 +15,9 @@ import MainSheets from './sheets/MainSheets';
 import SingleSheet from './sheets/SingleSheet';
 import TestSheet from './sheets/TestSheet';
 import DeleteSheet from './sheets/DeleteSheet';
+import MainContacts from './messages/MainContacts';
+import Contacts from './messages/Contacts';
+import Conversations from './messages/Conversations';
 import Export from './Export';
 import {
   isSignInPending,
@@ -60,6 +63,8 @@ export default class App extends Component {
             <Route exact path="/testsheet" component={TestSheet} />
             <Route exact path="/shared-sheets" component={SharedSheets} />
             <Route exact path="/export" component={Export} />
+            <Route exact path="/contacts" component={MainContacts} />
+            <Route exact path="/contacts/conversations/:id" component={Conversations} />
           </div>
         </BrowserRouter>
       </div>

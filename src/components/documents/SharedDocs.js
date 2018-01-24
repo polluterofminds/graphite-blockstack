@@ -155,14 +155,14 @@ export default class SharedDocs extends Component {
           this.setState({ title: doc.title, content: doc.content, receiverID: doc.receiverID })
           this.setState({ show: "hide", loading: "hide", hideButton: ""});
         })
+        .then(() => {
+          this.setState({ isLoading: false })
+        })
         .catch((error) => {
           console.log('could not fetch');
           this.setState({ loading: "hide" });
           Materialize.toast('Nothing shared', 2000);
           setTimeout(this.windowRefresh, 2000);
-        })
-        .finally(() => {
-          this.setState({ isLoading: false })
         })
     }
 

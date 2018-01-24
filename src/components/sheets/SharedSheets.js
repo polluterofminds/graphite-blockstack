@@ -149,7 +149,7 @@ export default class SharedSheets extends Component {
           Materialize.toast('Nothing shared', 2000);
           setTimeout(this.windowRefresh, 2000);
         })
-        .finally(() => {
+        .then(() => {
           this.setState({ isLoading: false })
         })
     }

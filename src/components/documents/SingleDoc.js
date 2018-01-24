@@ -188,7 +188,6 @@ export default class SingleDoc extends Component {
   }
 
   renderView() {
-    console.log(this.state.title);
 
     SingleDoc.modules = {
       toolbar: [

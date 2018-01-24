@@ -78,14 +78,12 @@ export default class Export extends Component {
   render() {
     const docs = this.state.value;
     const sheets = this.state.sheets;
-    console.log(this.state.sheets);
     var dataDocs = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(docs));
     $('<a href="data:' + dataDocs + '" download="docsdownload.json">Download Docs</a>').appendTo('#doccontainer');
-    var dataSheets = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(sheets));
+    var dataSheets = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.state.sheets));
     $('<a href="data:' + dataSheets + '" download="sheetsdownload.json">Download Sheets</a>').appendTo('#sheetcontainer');
 
     console.log(this.state.sheets);
-    console.log(this.state.value);
     const userData = blockstack.loadUserData();
     const person = new blockstack.Person(userData.profile);
     return (

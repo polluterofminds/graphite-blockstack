@@ -47,7 +47,7 @@ export default class AppPage extends Component {
                     <a href="#apps" className="btn white-text black">Get started</a>
                   </p>
                   <img className="splash" src="https://42f2671d685f51e10fc6-b9fcecea3e50b3b59bdc28dead054ebc.ssl.cf5.rackcdn.com/illustrations/files1_9ool.svg" alt="documents" />
-                  <p>Your documents, your files. They are all yours. Ecrypted and only available to others if you say they are.</p>
+                  <p>Your documents, your files. They are all yours. Encrypted and only available to others if you say they are.</p>
                 </div>
                 <div className="col s6">
                   <img className="" src="https://42f2671d685f51e10fc6-b9fcecea3e50b3b59bdc28dead054ebc.ssl.cf5.rackcdn.com/illustrations/working2_ce2b.svg" alt="work" />
@@ -56,7 +56,7 @@ export default class AppPage extends Component {
             </div>
             <div className="row app-list container">
               <div className="col s6">
-                <a href="/documents">
+                <a className="black-text" href="/documents">
                   <div id="apps" className="center-align card small app-card hoverable">
                     <p><i className="material-icons large blue-text text-darken-2">description</i></p>
                     <h3 className="app-headers">Documents</h3>
@@ -64,7 +64,7 @@ export default class AppPage extends Component {
                 </a>
               </div>
               <div className="col s6">
-                <a href="/sheets">
+                <a className="black-text" href="/sheets">
                   <div className="center-align card small app-card hoverable">
                     <p><i className="material-icons large green-text text-lighten-1">grid_on</i></p>
                     <h3 className="app-headers">Sheets</h3>

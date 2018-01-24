@@ -63,7 +63,7 @@ export default class TestSheet extends Component {
         console.log("Loaded");
         this.setState({ initialLoad: "hide" });
       })
-      .finally(() => {
+      .then(() => {
         this.$el = $(this.el);
         this.$el.jexcel({
           data: this.state.grid,
