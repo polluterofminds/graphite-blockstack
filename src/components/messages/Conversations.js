@@ -32,6 +32,7 @@ export default class Conversations extends Component {
     messages: [],
     sharedMessages: [],
     myMessages: [],
+    combined: [],
     filteredValue: [],
     tempDocId: "",
     redirect: false,
@@ -40,7 +41,8 @@ export default class Conversations extends Component {
     receiver: "",
     conversationUser: "",
     conversationUserImage: avatarFallbackImage,
-    userImg: avatarFallbackImage
+    userImg: avatarFallbackImage,
+    loading: true
   }
   this.handleaddItem = this.handleaddItem.bind(this);
   this.saveNewFile = this.saveNewFile.bind(this);
@@ -56,11 +58,11 @@ componentWillMount() {
 }
 
 componentDidMount() {
-  this.setState({receiver: loadUserData().username})
+  this.setState({receiver: loadUserData().username});
   let info = loadUserData().profile;
-  if(info) {
-    this.setState({ userImg: info.image[0].contentUrl})
-  }
+  // if(info) {
+  //   this.setState({ userImg: info.image[0].contentUrl});
+  // }
 
   getFile("contact.json", {decrypt: true})
      .then((fileContents) => {
@@ -74,30 +76,14 @@ componentDidMount() {
          console.log("No contacts");
        }
      })
-     // .then(() => {
-     //   // this.fetchData();
-     //   const fileName = this.state.conversationUser.slice(0, -3) + '.json';
-     //   getFile(fileName, {decrypt: true})
-     //    .then((fileContents) => {
-     //      if(fileContents) {
-     //        console.log("Messages are here");
-     //        this.setState({ messages: JSON.parse(fileContents || '{}').messages });
-     //        console.log(this.state.messages);
-     //      } else {
-     //        console.log("No saved files");
-     //      }
-     //    })
-     //     .catch(error => {
-     //       console.log(error);
-     //     });
-     // })
       .catch(error => {
         console.log(error);
       });
 
-
     this.refresh = setInterval(() => this.fetchMine(), 1000);
     this.refresh = setInterval(() => this.fetchData(), 1000);
+    // let combined = [{...this.state.myMessages, ...this.state.sharedMessages}]
+    // this.setState({ combined: combined});
 }
 
 fetchMine() {
@@ -182,11 +168,23 @@ handleMessage(e) {
   this.setState({ newMessage: e.target.value })
 }
 
+renderView() {
+  <div>
+    <div className="container">
+      <div className={loading}>
+        <div className="progress center-align">
+          <p>Loading...</p>
+          <div className="indeterminate"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
 
 render() {
   let myMessages = this.state.myMessages;
   let sharedMessages = this.state.sharedMessages;
-  console.log(this.state.sharedMessages);
   const userData = blockstack.loadUserData();
   const person = new blockstack.Person(userData.profile);
 
@@ -230,7 +228,7 @@ render() {
                   </div>
                   <div className="col s8">
                     <p>{message.content}</p>
-                    <p>{message.created}</p>
+                    <p className="muted">{message.created}</p>
                   </div>
                 </div>
               </div>
@@ -243,11 +241,11 @@ render() {
           })
         }
         </div>
-        <div className="message col s6">
+        <div className="message col s6 right-side">
         {myMessages.map(message => {
           if(message.sender == this.state.conversationUser || message.receiver == this.state.conversationUser){
             return (
-              <div key={message.id} className="right-side">
+              <div key={message.id} className="">
 
                   <div className="bubble sender container row">
                     <div className="col s8">
