@@ -86,12 +86,16 @@ body {
   background-color: #E5E5EA;
   color: #000;
   margin-top: 40px;
+  max-width: 60%;
+  margin-left: 20px;
 }
 
 .sender {
   background-color: #039BE3;
   color: #fff;
   margin-top: 40px;
+  max-width: 60%;
+  margin-right: 20px;
 }
 
 .right-side {
@@ -111,6 +115,7 @@ body {
 
 .sender-message-img {
   width: 35%;
+  float: right;
   /* margin-top: 33%; */
   /* margin-right: 15px; */
 }
@@ -121,6 +126,11 @@ body {
 
 .message-send {
   margin-left: 10px;
+}
+
+.bubble div p p a {
+  color: inherit;
+  text-decoration: underline;
 }
 
 /* Quill Editor */

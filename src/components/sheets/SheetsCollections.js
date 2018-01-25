@@ -148,6 +148,7 @@ export default class SheetsCollections extends Component {
             <ul id="dropdown2" className="dropdown-content">
               <li><a href="/documents"><i className="material-icons blue-text text-darken-2">description</i><br />Documents</a></li>
               <li><a href="/sheets"><i className="material-icons green-text text-lighten-1">grid_on</i><br />Sheets</a></li>
+              <li><a href="/contacts"><i className="material-icons text-lighten-1">email</i><br />Contacts</a></li>
             </ul>
               <li><a className="dropdown-button" href="#!" data-activates="dropdown2"><i className="material-icons apps">apps</i></a></li>
               <li><a className="dropdown-button" href="#!" data-activates="dropdown1"><img src={ person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage } className="img-rounded avatar" id="avatar-image" /><i className="material-icons right">arrow_drop_down</i></a></li>

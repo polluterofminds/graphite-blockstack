@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import ReactDOM from 'react-dom';
 import { Link } from 'react-router-dom';
 import Profile from "../Profile";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.bubble.css';
 import Signin from "../Signin";
 import Header from "../Header";
 import {
@@ -14,6 +16,7 @@ import {
   signUserOut
 } from 'blockstack';
 import update from 'immutability-helper';
+const Quill = ReactQuill.Quill;
 const blockstack = require("blockstack");
 const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
 
@@ -33,7 +36,7 @@ export default class Conversations extends Component {
     messages: [],
     sharedMessages: [],
     myMessages: [],
-    combined: [],
+    combinedMessages: [],
     filteredValue: [],
     tempDocId: "",
     redirect: false,
@@ -59,7 +62,6 @@ componentWillMount() {
 }
 
 componentDidMount() {
-  this.scrollToBottom();
   this.setState({receiver: loadUserData().username});
   let info = loadUserData().profile;
   if(info.image) {
@@ -90,9 +92,9 @@ componentDidMount() {
     // this.setState({ combined: combined});
 }
 
-componentDidUpdate() {
-  this.scrollToBottom();
-}
+// componentDidUpdate() {
+//   this.scrollToBottom();
+// }
 
 fetchMine() {
   const fileName = this.state.conversationUser.slice(0, -3) + '.json';
@@ -134,7 +136,9 @@ const username = this.state.conversationUser;
     .then((file) => {
       console.log("fetched!");
       this.setState({ sharedMessages: JSON.parse(file || '{}').messages });
+      this.setState({ combinedMessages: [...this.state.myMessages, ...this.state.sharedMessages] });
       this.setState({ loading: "hide", show: "" });
+      this.scrollToBottom();
     })
     .catch((error) => {
       console.log('could not fetch');
@@ -173,8 +177,8 @@ handleSignOut(e) {
   signUserOut(window.location.origin);
 }
 
-handleMessage(e) {
-  this.setState({ newMessage: e.target.value })
+handleMessage(value) {
+  this.setState({ newMessage: value })
 }
 
 scrollToBottom = () => {
@@ -182,13 +186,24 @@ scrollToBottom = () => {
 }
 
 render() {
+  let combinedMessages = this.state.combinedMessages;
+  function compare(a,b) {
+    if (a.id < b.id)
+      return -1;
+    if (a.id > b.id)
+      return 1;
+    return 0;
+  }
+  let messages = combinedMessages.sort(compare);
+
+
   let myMessages = this.state.myMessages;
   let sharedMessages = this.state.sharedMessages;
+
   const userData = blockstack.loadUserData();
   const person = new blockstack.Person(userData.profile);
   let loading = this.state.loading;
   let show = this.state.show;
-
 
   return (
     <div>
@@ -215,10 +230,25 @@ render() {
         </div>
       </div>
       <div className={show}>
-      <div className="messages row">
-        <div className="message col s6">
-        {sharedMessages.map(message => {
-          if(message.sender == loadUserData().username || message.receiver == loadUserData().username){
+      <div>
+      {messages.map(message => {
+        if(message.sender == loadUserData().username || message.receiver == loadUserData().username){
+          if(message.sender == loadUserData().username) {
+            return (
+              <div key={message.id} className="">
+
+                <div className="bubble sender container row">
+                  <div className="col s8">
+                    <p dangerouslySetInnerHTML={{ __html: message.content }} />
+                    <p className="muted">{message.created}</p>
+                  </div>
+                  <div className="col s4">
+                    <img className="responsive-img sender-message-img circle" src={this.state.userImg} alt="avatar" />
+                  </div>
+                </div>
+              </div>
+            )
+          } else {
             return (
               <div key={message.id} className="">
 
@@ -227,55 +257,40 @@ render() {
                     <img className="responsive-img receiver-message-img circle" src={this.state.conversationUserImage} alt="avatar" />
                   </div>
                   <div className="col s8">
-                    <p>{message.content}</p>
+                    <p dangerouslySetInnerHTML={{ __html: message.content }} />
                     <p className="muted">{message.created}</p>
                   </div>
                 </div>
               </div>
             )
-          }else {
-            return (
-              <div></div>
-            )
           }
-          })
+        }else {
+          return (
+            <div></div>
+          )
         }
-        </div>
-        <div className="message col s6 right-side">
-        {myMessages.map(message => {
-          if(message.sender == this.state.conversationUser || message.receiver == this.state.conversationUser){
-            return (
-              <div key={message.id} className="">
-
-                  <div className="bubble sender container row">
-                    <div className="col s8">
-                      <p>{message.content}</p>
-                      <p>{message.created}</p>
-                    </div>
-                    <div className="col s4 right-align">
-                      <img className="responsive-img sender-message-img circle" src={this.state.userImg} alt="avatar" />
-                    </div>
-                  </div>
-              </div>
-            )
-          }else {
-            return (
-              <div></div>
-            )
-          }
-          })
-        }
-        </div>
-        </div>
+        })
+      }
+      </div>
         <div style={{ float:"left", clear: "both" }}
           ref={(el) => { this.messagesEnd = el; }}>
         </div>
       </div>
       <div className="center-align message-input container white">
-        <p><input type="text" placeholder="Message here" value={this.state.newMessage} onChange={this.handleMessage} /><span className="message-send"><button onClick={this.handleaddItem} className="btn">Send</button></span></p>
+        <ReactQuill
+          id="textarea1"
+          className="materialize-textarea print-view"
+          placeholder="Send a message"
+          theme="bubble"
+          value={this.state.newMessage}
+          onChange={this.handleMessage} />
+
+        <button onClick={this.handleaddItem} className="btn">Send</button>
       </div>
 
     </div>
   );
 }
 }
+
+// <input type="text" placeholder="Message here" value={this.state.newMessage} onChange={this.handleMessage} />

@@ -30,6 +30,7 @@ export default class Contacts extends Component {
   	  	},
   	  },
       messages: [],
+      filteredContacts: [],
       contacts: [],
       redirect: false,
       newContact: "",
@@ -42,6 +43,7 @@ export default class Contacts extends Component {
     this.saveNewFile = this.saveNewFile.bind(this);
     this.handleNewContact = this.handleNewContact.bind(this);
     this.newContact = this.newContact.bind(this);
+    this.filterList = this.filterList.bind(this);
   }
 
   componentWillMount() {
@@ -58,6 +60,7 @@ export default class Contacts extends Component {
        if(fileContents) {
          console.log("Contacts are here");
          this.setState({ contacts: JSON.parse(fileContents || '{}').contacts });
+         this.setState({ filteredContacts: this.state.contacts });
        } else {
          console.log("No contacts");
        }
@@ -65,47 +68,7 @@ export default class Contacts extends Component {
       .catch(error => {
         console.log(error);
       });
-    // this.fetchData();
-    // this.refresh = setInterval(() => this.fetchData(), 30000);
   }
-
-  // fetchData() {
-  // const username = this.state.conversationUser;
-  //
-  //   lookupProfile(username)
-  //     .then((profile) => {
-  //       this.setState({
-  //         person: new Person(profile),
-  //         username: username
-  //       })
-  //     })
-  //     .catch((error) => {
-  //       console.log('could not resolve profile')
-  //     })
-  //     //TODO get params id to set username
-  //   const options = { username: this.state.conversationUser}
-  //   const fileName = loadUserData().username.slice(0, -3) + '.json';
-  //   getFile(fileName, options)
-  //     .then((file) => {
-  //       console.log("fetched!");
-  //       const message = JSON.parse(file || '{}');
-  //       const messages = message.messages;
-  //       const result = messages.map(a => a.id);
-  //       console.log(result);
-  //
-  //       this.setState({ messages: JSON.parse(file || '{}').messages });
-  //       // const object = {};
-  //       // object.content = message.content;
-  //       // object.id = Date.now();
-  //       // object.created = message.created;
-  //       // object.sender = message.sender;
-  //       // object.receiver = message.receiver;
-  //       // this.setState({ messages: [...this.state.messages, object] })
-  //     })
-  //     .catch((error) => {
-  //       console.log('could not fetch');
-  //     })
-  // }
 
   newContact() {
     this.setState({add: true});
@@ -129,6 +92,7 @@ export default class Contacts extends Component {
         object.img = this.state.newContactImg;
         console.log(object);
         this.setState({ contacts: [...this.state.contacts, object], add: false });
+        this.setState({ filteredContacts: [...this.state.contacts, object], add: false });
         setTimeout(this.saveNewFile, 500);
       })
       .catch((error) => {
@@ -156,9 +120,18 @@ export default class Contacts extends Component {
     this.setState({ newContact: e.target.value })
   }
 
+  filterList(event){
+    var updatedList = this.state.contacts;
+    updatedList = updatedList.filter(function(item){
+      return item.contact.toLowerCase().search(
+        event.target.value.toLowerCase()) !== -1;
+    });
+    this.setState({filteredContacts: updatedList});
+  }
+
 
   renderView() {
-    let contacts = this.state.contacts;
+    let contacts = this.state.filteredContacts;
     console.log(loadUserData().username);
     const userData = blockstack.loadUserData();
     const person = new blockstack.Person(userData.profile);
@@ -196,6 +169,13 @@ export default class Contacts extends Component {
     return (
       <div>
         <div className="docs">
+        <div className="search card">
+          <form className="searchform">
+          <fieldset className="form-group searchfield">
+          <input type="text" className="form-control form-control-lg searchinput" placeholder="Search" onChange={this.filterList}/>
+          </fieldset>
+          </form>
+        </div>
           <h3 className="center-align">Your Contacts</h3>
           <div className="row">
             <div className="col s6 m3">
@@ -247,7 +227,7 @@ export default class Contacts extends Component {
       <div className="navbar-fixed toolbar">
         <nav className="toolbar-nav">
           <div className="nav-wrapper">
-            <a href="/documents" className="brand-logo">Graphite.<img className="calculator" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9%0D%0AIjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik0wIDB2MWw0IDIgNC0ydi0xaC04em0w%0D%0AIDJ2NGg4di00bC00IDItNC0yeiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAxKSIgLz4KPC9zdmc+" alt="inbox" /></a>
+            <a href="/contacts" className="brand-logo">Graphite.<img className="calculator" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9%0D%0AIjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik0wIDB2MWw0IDIgNC0ydi0xaC04em0w%0D%0AIDJ2NGg4di00bC00IDItNC0yeiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAxKSIgLz4KPC9zdmc+" alt="inbox" /></a>
 
             <ul id="nav-mobile" className="right">
             <ul id="dropdown1" className="dropdown-content">
@@ -260,6 +240,7 @@ export default class Contacts extends Component {
             <ul id="dropdown2" className="dropdown-content">
               <li><a href="/documents"><i className="material-icons blue-text text-darken-2">description</i><br />Documents</a></li>
               <li><a href="/sheets"><i className="material-icons green-text text-lighten-1">grid_on</i><br />Sheets</a></li>
+              <li><a href="/contacts"><i className="material-icons text-lighten-1">email</i><br />Contacts</a></li>
             </ul>
               <li><a className="dropdown-button" href="#!" data-activates="dropdown2"><i className="material-icons apps">apps</i></a></li>
               <li><a className="dropdown-button" href="#!" data-activates="dropdown1"><img src={ person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage } className="img-rounded avatar" id="avatar-image" /><i className="material-icons right">arrow_drop_down</i></a></li>
