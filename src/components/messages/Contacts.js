@@ -77,7 +77,7 @@ export default class Contacts extends Component {
   handleaddItem() {
     this.setState({ loading: "", show: "hide" })
     let newContact = this.state.newContact
-    lookupProfile(newContact)
+    lookupProfile(newContact, "https://core.blockstack.org/v1/names")
       .then((profile) => {
         let image = profile.image;
         console.log(profile);

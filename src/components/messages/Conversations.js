@@ -35,6 +35,7 @@ export default class Conversations extends Component {
     contacts: [],
     messages: [],
     sharedMessages: [],
+    sharedCount: "",
     myMessages: [],
     combinedMessages: [],
     filteredValue: [],
@@ -116,7 +117,7 @@ fetchMine() {
 fetchData() {
 const username = this.state.conversationUser;
 
-  lookupProfile(username)
+  lookupProfile(username, "https://core.blockstack.org/v1/names")
     .then((profile) => {
       let image = profile.image;
       if(profile.image){
@@ -136,6 +137,7 @@ const username = this.state.conversationUser;
     .then((file) => {
       console.log("fetched!");
       this.setState({ sharedMessages: JSON.parse(file || '{}').messages });
+      this.setState({ sharedCount: this.state.sharedMessages.length });
       this.setState({ combinedMessages: [...this.state.myMessages, ...this.state.sharedMessages] });
       this.setState({ loading: "hide", show: "" });
       this.scrollToBottom();
@@ -186,6 +188,7 @@ scrollToBottom = () => {
 }
 
 render() {
+  console.log(this.state.sharedMessages.length);
   let combinedMessages = this.state.combinedMessages;
   function compare(a,b) {
     if (a.id < b.id)

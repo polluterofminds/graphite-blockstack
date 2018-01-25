@@ -132,7 +132,7 @@ export default class SharedDocs extends Component {
   fetchData() {
     const username = this.state.senderID;
 
-      lookupProfile(username)
+      lookupProfile(username, "https://core.blockstack.org/v1/names")
         .then((profile) => {
           this.setState({
             person: new Person(profile),
