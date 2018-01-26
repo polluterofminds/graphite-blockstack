@@ -146,7 +146,7 @@ export default class SharedDocs extends Component {
           setTimeout(this.windowRefresh, 2000);
         })
 
-      const options = { username: this.state.senderID}
+      const options = { username: this.state.senderID, zoneFileLookupURL: "https://core.blockstack.org/v1/names"}
 
       getFile('shared.json', options)
         .then((file) => {

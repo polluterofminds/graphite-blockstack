@@ -131,7 +131,7 @@ const username = this.state.conversationUser;
     .catch((error) => {
       console.log('could not resolve profile')
     })
-  const options = { username: this.state.conversationUser}
+  const options = { username: this.state.conversationUser, zoneFileLookupURL: "https://core.blockstack.org/v1/names" }
   const fileName = loadUserData().username.slice(0, -3) + '.json';
   getFile(fileName, options)
     .then((file) => {
