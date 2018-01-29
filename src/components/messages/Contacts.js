@@ -12,7 +12,8 @@ import {
   lookupProfile,
   signUserOut
 } from "blockstack";
-import Conversations from './Conversations';
+import SingleConversation from './SingleConversation';
+import axios from 'axios';
 
 const blockstack = require("blockstack");
 const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
@@ -55,6 +56,8 @@ export default class Contacts extends Component {
   }
 
   componentDidMount() {
+
+
     getFile("contact.json", {decrypt: true})
      .then((fileContents) => {
        if(fileContents) {
@@ -193,13 +196,14 @@ export default class Contacts extends Component {
                   <div key={contact.contact} className="col s6 m3">
 
                     <div className="card small renderedDocs">
-                    <Link to={'/contacts/conversations/'+ contact.contact} className="black-text">
+                    <Link to={'/contacts/Profile/'+ contact.contact} className="black-text">
                       <div className="center-align card-content">
                         <p><img className="responsive-img circle profile-img" src={contact.img} alt="profile" /></p>
                       </div>
                     </Link>
                       <div className="card-action">
-                        <Link to={'/contacts/conversations/'+ contact.contact}><a className="black-text">{contact.contact}</a></Link>
+
+                        <Link to={'/contacts/profile/'+ contact.contact}><a className="black-text">{contact.contact}</a></Link>
                         <Link to={'/contacts/delete/'+ contact.contact}>
 
                             <i className="modal-trigger material-icons red-text delete-button">delete</i>
@@ -227,7 +231,7 @@ export default class Contacts extends Component {
       <div className="navbar-fixed toolbar">
         <nav className="toolbar-nav">
           <div className="nav-wrapper">
-            <a href="/contacts" className="brand-logo">Graphite.<img className="calculator" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9%0D%0AIjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik0wIDB2MWw0IDIgNC0ydi0xaC04em0w%0D%0AIDJ2NGg4di00bC00IDItNC0yeiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAxKSIgLz4KPC9zdmc+" alt="inbox" /></a>
+            <a href="/contacts" className="brand-logo">Graphite.<img className="people" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9%0D%0AIjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik01LjUgMGMtLjUxIDAtLjk1LjM1LTEu%0D%0AMjIuODguNDUuNTQuNzIgMS4yOC43MiAyLjEzIDAgLjI5LS4wMy41NS0uMDkuODEuMTkuMTEuMzgu%0D%0AMTkuNTkuMTkuODMgMCAxLjUtLjkgMS41LTJzLS42Ny0yLTEuNS0yem0tMyAxYy0uODMgMC0xLjUu%0D%0AOS0xLjUgMnMuNjcgMiAxLjUgMiAxLjUtLjkgMS41LTItLjY3LTItMS41LTJ6bTQuNzUgMy4xNmMt%0D%0ALjQzLjUxLTEuMDIuODItMS42OS44NC4yNy4zOC40NC44NC40NCAxLjM0di42Nmgydi0xLjY2YzAt%0D%0ALjUyLS4zMS0uOTctLjc1LTEuMTl6bS02LjUgMWMtLjQ0LjIyLS43NS42Ny0uNzUgMS4xOXYxLjY2%0D%0AaDV2LTEuNjZjMC0uNTItLjMxLS45Ny0uNzUtMS4xOS0uNDUuNTMtMS4wNi44NC0xLjc1Ljg0cy0x%0D%0ALjMtLjMyLTEuNzUtLjg0eiIKICAvPgo8L3N2Zz4=" alt="inbox" /></a>
 
             <ul id="nav-mobile" className="right">
             <ul id="dropdown1" className="dropdown-content">

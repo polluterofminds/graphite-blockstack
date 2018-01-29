@@ -9,6 +9,8 @@ import Doc from './documents/Document';
 import TestDoc from './documents/TestDoc';
 import SingleDoc from './documents/SingleDoc';
 import DeleteDoc from './documents/DeleteDoc';
+import SharedCollection from './documents/SharedCollection';
+import SingleSharedDoc from './documents/SingleSharedDoc';
 import Admin from './documents/Admin';
 import SharedDocs from './documents/SharedDocs';
 import SharedSheets from './sheets/SharedSheets';
@@ -19,6 +21,8 @@ import DeleteSheet from './sheets/DeleteSheet';
 import MainContacts from './messages/MainContacts';
 import Contacts from './messages/Contacts';
 import Conversations from './messages/Conversations';
+import ContactsProfile from './messages/ContactsProfile';
+import SingleConversation from './messages/SingleConversation';
 import DeleteContact from './messages/DeleteContact';
 import Export from './Export';
 import {
@@ -57,6 +61,8 @@ export default class App extends Component {
             <Route exact path="/documents/doc/new" component={Doc} />
             <Route exact path="/documents/doc/:id" component={SingleDoc} />
             <Route exact path="/documents/doc/delete/:id" component={DeleteDoc} />
+            <Route exact path="/documents/shared/:id" component={SharedCollection} />
+            <Route exact path="/documents/single/shared/:id" component={SingleSharedDoc} />
             <Route exact path="/admin-docs" component={Admin} />
             <Route exact path="/profile" component={Profile} />
             <Route exact path="/shared-docs" component={SharedDocs} />
@@ -67,7 +73,9 @@ export default class App extends Component {
             <Route exact path="/shared-sheets" component={SharedSheets} />
             <Route exact path="/export" component={Export} />
             <Route exact path="/contacts" component={MainContacts} />
-            <Route exact path="/contacts/conversations/:id" component={Conversations} />
+            <Route exact path="/conversations" component={Conversations} />
+            <Route exact path="/contacts/profile/:id" component={ContactsProfile} />
+            <Route exact path="/contacts/conversations/:id" component={SingleConversation} />
             <Route exact path="/contacts/delete/:id" component={DeleteContact} />
           </div>
         </BrowserRouter>

@@ -38,7 +38,7 @@ export default class SingleDoc extends Component {
       autoSave: "Saved",
       receiverID: "",
       shareModal: "hide",
-      shareFile: "",
+      shareFile: [],
       show: ""
     }
     this.handleChange = this.handleChange.bind(this);
@@ -148,15 +148,33 @@ export default class SingleDoc extends Component {
   }
 
   sharedInfo(){
-    this.setState({ loading: "", show: "hide" });
-    const object = {};
-    object.title = this.state.title || "Untitled";
-    object.content = this.state.content;
-    object.id = Date.now();
-    object.receiverID = this.state.receiverID;
-    object.words = wordcount(this.state.content);
-    this.setState({ shareFile: object });
-    setTimeout(this.shareDoc, 700);
+    const user = this.state.receiverID;
+    const userShort = user.slice(0, -3);
+    const fileName = 'shareddocs.json'
+    const file = userShort + fileName;
+
+    getFile(file, true)
+     .then((fileContents) => {
+        this.setState({ shareFile: JSON.parse(fileContents || '{}') })
+        console.log("loaded share file");
+        this.setState({ loading: "", show: "hide" });
+        const today = new Date();
+        const day = today.getDate();
+        const month = today.getMonth() + 1;
+        const year = today.getFullYear();
+        const object = {};
+        object.title = this.state.title;
+        object.content = this.state.content;
+        object.id = Date.now();
+        object.receiverID = this.state.receiverID;
+        object.words = wordcount(this.state.content);
+        object.shared = month + "/" + day + "/" + year;
+        this.setState({ shareFile: [...this.state.shareFile, object] });
+        setTimeout(this.shareDoc, 700);
+     })
+      .catch(error => {
+        console.log(error);
+      });
   }
 
   hideModal() {
@@ -166,10 +184,13 @@ export default class SingleDoc extends Component {
   }
 
   shareDoc() {
-    const fileName = 'shared.json'
-    putFile(fileName, JSON.stringify(this.state.shareFile), true)
+    const user = this.state.receiverID;
+    const userShort = user.slice(0, -3);
+    const fileName = 'shareddocs.json'
+    const file = userShort + fileName;
+    putFile(file, JSON.stringify(this.state.shareFile), true)
       .then(() => {
-        console.log("Shared!");
+        console.log("Shared! " + file);
         this.setState({ shareModal: "hide", loading: "hide", show: "" });
         Materialize.toast('Document shared with ' + this.state.receiverID, 4000);
       })

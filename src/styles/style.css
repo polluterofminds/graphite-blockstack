@@ -113,6 +113,10 @@ body {
   margin-top: 25px!important;
 }
 
+.contact-page {
+  margin-top: 45px;
+}
+
 .sender-message-img {
   width: 35%;
   float: right;
@@ -335,6 +339,13 @@ nav ul a {
   transform: rotate(25deg);
 }
 
+.people {
+  height: 20px;
+  width: 20px;
+  margin-bottom: 8px;
+  margin-right: 3px;
+}
+
 .img-rounded {
   height: 35px;
   width: 35px;
@@ -474,6 +485,15 @@ nav ul a {
 .shared {
   padding: 20px;
   margin-top: 50px;
+}
+
+.shared-contacts {
+  margin-left: 45px;
+  margin-right: 45px;
+}
+
+.shared-img {
+  max-width: 15%!important;
 }
 
 .loading-thing {
