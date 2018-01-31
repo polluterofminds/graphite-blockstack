@@ -30,11 +30,15 @@ export default class Contacts extends Component {
   	  	  return avatarFallbackImage;
   	  	},
   	  },
+      results: [],
       messages: [],
       filteredContacts: [],
       contacts: [],
+      showFirstLink: "",
+      showSecondLink: "hide",
       redirect: false,
       newContact: "",
+      addContact: "",
       add: false,
       loading: "hide",
       show: "",
@@ -57,7 +61,6 @@ export default class Contacts extends Component {
 
   componentDidMount() {
 
-
     getFile("contact.json", {decrypt: true})
      .then((fileContents) => {
        if(fileContents) {
@@ -78,9 +81,10 @@ export default class Contacts extends Component {
   }
 
   handleaddItem() {
-    this.setState({ loading: "", show: "hide" })
-    let newContact = this.state.newContact
-    lookupProfile(newContact, "https://core.blockstack.org/v1/names")
+    this.setState({ showResults: "hide", loading: "", show: "hide" })
+    // let addContact = this.state.addContact
+    // console.log(this.state.addContact + '.id');
+    lookupProfile(this.state.addContact + '.id', "https://core.blockstack.org/v1/names")
       .then((profile) => {
         let image = profile.image;
         console.log(profile);
@@ -91,7 +95,7 @@ export default class Contacts extends Component {
         }
       }).then(() => {
         const object = {};
-        object.contact = this.state.newContact;
+        object.contact = this.state.addContact + '.id';
         object.img = this.state.newContactImg;
         console.log(object);
         this.setState({ contacts: [...this.state.contacts, object], add: false });
@@ -121,6 +125,17 @@ export default class Contacts extends Component {
 
   handleNewContact(e) {
     this.setState({ newContact: e.target.value })
+    let link = 'https://core.blockstack.org/v1/search?query=';
+    axios
+      .get(
+        link + this.state.newContact
+      )
+      .then(res => {
+        this.setState({ results: res.data.results });
+      })
+      .catch(error => {
+        console.log(error);
+      });
   }
 
   filterList(event){
@@ -139,7 +154,18 @@ export default class Contacts extends Component {
     const userData = blockstack.loadUserData();
     const person = new blockstack.Person(userData.profile);
     let show = this.state.show;
+    let showResults = "";
     let loading = this.state.loading;
+    let results = this.state.results;
+    let newContact = this.state.newContact;
+    let showFirstLink = this.state.showFirstLink;
+    let showSecondLink = this.state.showSecondLink;
+
+    if(newContact.length < 1) {
+      showResults = "hide";
+    } else {
+      showResults = "";
+    }
 
     if(this.state.add == true){
     return (
@@ -148,8 +174,42 @@ export default class Contacts extends Component {
           <div className="add-new">
             <label>Add a Contact</label>
             <input type="text" placeholder="Ex: JohnnyCash.id" onChange={this.handleNewContact} />
+            <div className={showResults}>
+            <ul className="collection">
+            {results.map(result => {
+              let profile = result.profile;
+              let image = profile.image;
+              let imageLink;
+              if(image !=null) {
+                if(image[0]){
+                  imageLink = image[0].contentUrl;
+                } else {
+                  imageLink = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
+                }
+              } else {
+                imageLink = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
+              }
+
+                return (
+                  <li key={result.username}className="collection-item avatar">
+                    <img src={imageLink} alt="avatar" className="circle" />
+                    <span className="title">{result.profile.name}</span>
+                    <p>{result.username}
+                    </p>
+                    <div className={showFirstLink}>
+                      <a onClick={() => this.setState({ addContact: result.username, showFirstLink: "hide", showSecondLink: "" })} className="secondary-content"><i className="material-icons">add</i></a>
+                    </div>
+                    <div className={showSecondLink}>
+                      <button onClick={this.handleaddItem} className="btn black secondary-content">Are you sure?</button>
+                    </div>
+                  </li>
+                )
+              })
+            }
+            </ul>
+
+            </div>
             <div className={show}>
-            <button className="btn" onClick={this.handleaddItem}>Add</button>
             </div>
             <div className={loading}>
               <div className="preloader-wrapper small active">
@@ -224,6 +284,7 @@ export default class Contacts extends Component {
   }
 
   render(){
+    console.log("Contact: " + this.state.addContact);
     const userData = blockstack.loadUserData();
     const person = new blockstack.Person(userData.profile);
     return(
