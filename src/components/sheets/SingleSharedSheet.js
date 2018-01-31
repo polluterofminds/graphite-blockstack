@@ -23,12 +23,13 @@ const Font = ReactQuill.Quill.import('formats/font');
 Font.whitelist = ['Ubuntu', 'Raleway', 'Roboto', 'Lato', 'Open Sans', 'Montserrat'] ; // allow ONLY these fonts and the default
 ReactQuill.Quill.register(Font, true);
 
-export default class SingleSharedDoc extends Component {
+export default class SingleSharedSheet extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: [],
+      sheets: [],
       sharedFile: [],
+      grid: [],
       title : "",
       user: "",
       content:"",
@@ -62,15 +63,14 @@ export default class SingleSharedDoc extends Component {
   }
 
   componentDidMount() {
-
-    getFile("documents.json", {decrypt: true})
+    getFile("spread.json", {decrypt: true})
      .then((fileContents) => {
        if(fileContents) {
-         this.setState({ value: JSON.parse(fileContents || '{}').value });
+         this.setState({ sheets: JSON.parse(fileContents || '{}').sheets });
          this.setState({ user: JSON.parse(fileContents || '{}').user });
          this.refresh = setInterval(() => this.getOther(), 1000);
        } else {
-         console.log("No docs");
+         console.log("No sheets");
        }
      })
       .catch(error => {
@@ -87,23 +87,24 @@ export default class SingleSharedDoc extends Component {
 
 getOther() {
   let fileID = loadUserData().username;
-  let fileString = 'shareddocs.json'
+  let fileString = 'sharedsheets.json'
   let file = fileID.slice(0, -3) + fileString;
-//TODO Figure out multi-player decryption
+  console.log("file: " + file);
+  //TODO Figure out multi-player decryption
   const options = { username: this.state.user, zoneFileLookupURL: "https://core.blockstack.org/v1/names"}
 getFile(file, options)
  .then((fileContents) => {
    console.log(JSON.parse(fileContents || '{}'));
     this.setState({ sharedFile: JSON.parse(fileContents || '{}') })
     console.log("loaded");
-    let docs = this.state.sharedFile;
-    const thisDoc = docs.find((doc) => { return doc.id == this.props.match.params.id});
-    let index = thisDoc && thisDoc.id;
+    let sheets = this.state.sharedFile;
+    const thisSheet = sheets.find((sheet) => { return sheet.id == this.props.match.params.id});
+    let index = thisSheet && thisSheet.id;
     console.log(index);
-    function findObjectIndex(doc) {
-        return doc.id == index;
+    function findObjectIndex(sheet) {
+        return sheet.id == index;
     }
-    this.setState({ content: thisDoc && thisDoc.content, title: thisDoc && thisDoc.title, index: docs.findIndex(findObjectIndex) })
+    this.setState({ grid: thisSheet && thisSheet.content, title: thisSheet && thisSheet.title, index: sheets.findIndex(findObjectIndex) })
  })
   .catch(error => {
     console.log(error);
@@ -133,11 +134,12 @@ getFile(file, options)
       const rando = Date.now();
       const object = {};
       object.title = this.state.title;
-      object.content = this.state.content;
+      object.content = this.state.grid;
       object.id = rando;
       object.created = month + "/" + day + "/" + year;
 
-      this.setState({ value: [...this.state.value, object] });
+      this.setState({ sheets: [...this.state.sheets, object] });
+      this.setState({ tempDocId: object.id });
       this.setState({ loading: "" });
       // this.setState({ confirm: true, cancel: false });
       setTimeout(this.saveNewFile, 500);
@@ -145,15 +147,14 @@ getFile(file, options)
     }
 
     saveNewFile() {
-      putFile("documents.json", JSON.stringify(this.state), {encrypt:true})
+      putFile("spread.json", JSON.stringify(this.state), {encrypt: true})
         .then(() => {
           console.log("Saved!");
-          window.location.replace("/documents");
+          window.location.replace("/sheets");
         })
         .catch(e => {
           console.log("e");
           console.log(e);
-          alert(e.message);
         });
     }
 
@@ -165,6 +166,7 @@ getFile(file, options)
   }
 
   renderView() {
+
     const words = wordcount(this.state.content);
     const loading = this.state.loading;
     const save = this.state.save;
@@ -189,14 +191,14 @@ getFile(file, options)
     <div className="navbar-fixed toolbar">
       <nav className="toolbar-nav">
         <div className="nav-wrapper">
-          <a href="/documents" className="brand-logo"><i className="material-icons">arrow_back</i></a>
+          <a href="/sheets" className="brand-logo"><i className="material-icons">arrow_back</i></a>
 
         </div>
       </nav>
     </div>
     <div className="container docs">
       <div className={hideButton}>
-        <button onClick={this.handleaddItem} className="btn black center-align">Add to Your Documents</button>
+        <button onClick={this.handleaddItem} className="btn black center-align">Add to Your Sheets</button>
       </div>
       <div className={loading}>
         <div className="preloader-wrapper small active">
@@ -212,16 +214,13 @@ getFile(file, options)
           </div>
         </div>
 
-      <div className="card doc-card">
+      <div className="card">
         <div className="double-space doc-margin">
           <p className="center-align print-view">
           {this.state.title}
           </p>
-          <div>
-            <div
-              className="print-view no-edit"
-              dangerouslySetInnerHTML={{ __html: this.state.content }}
-            />
+          <div className="center-align">
+            <i className="spreadsheet-icon large green-text text-lighten-1 material-icons">grid_on</i>
           </div>
           </div>
           </div>
@@ -232,7 +231,7 @@ getFile(file, options)
   }
 
   render() {
-    console.log(this.state.value);
+    console.log(this.state.receiverID);
 
     return (
       <div>

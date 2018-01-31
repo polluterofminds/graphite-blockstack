@@ -107,13 +107,14 @@ fetchMine() {
   getFile(fileName)
    .then((fileContents) => {
      if(fileContents) {
+       console.log("My files " + fileContents)
        this.setState({ myMessages: JSON.parse(fileContents || '{}').messages });
      } else {
        console.log("No saved files");
      }
    })
     .catch(error => {
-      console.log(error);
+      console.log("fetchmine failed " + error);
     });
 }
 
@@ -135,10 +136,12 @@ const username = this.state.conversationUser;
     .catch((error) => {
       console.log('could not resolve profile')
     })
-  const options = { username: this.state.conversationUser, zoneFileLookupURL: "https://core.blockstack.org/v1/names" }
+    //TODO Figure out multi-player decryption
+  const options = { username: this.state.conversationUser, zoneFileLookupURL: "https://core.blockstack.org/v1/names"}
   const fileName = loadUserData().username.slice(0, -3) + '.json';
   getFile(fileName, options)
     .then((file) => {
+      console.log(file);
       console.log("fetched!");
       this.setState({ sharedMessages: JSON.parse(file || '{}').messages });
       this.setState({ combinedMessages: [...this.state.myMessages, ...this.state.sharedMessages] });

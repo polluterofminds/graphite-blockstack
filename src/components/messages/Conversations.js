@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import Profile from "../Profile";
 import Signin from "../Signin";
 import Header from "../Header";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.bubble.css';
 import {
   isSignInPending,
   loadUserData,
@@ -12,6 +14,11 @@ import {
   lookupProfile,
   signUserOut
 } from "blockstack";
+import update from 'immutability-helper';
+const Quill = ReactQuill.Quill;
+const Font = ReactQuill.Quill.import('formats/font');
+Font.whitelist = ['Ubuntu', 'Raleway', 'Roboto', 'Lato', 'Open Sans', 'Montserrat'] ; // allow ONLY these fonts and the default
+ReactQuill.Quill.register(Font, true);
 import SingleConversation from './SingleConversation';
 import axios from 'axios';
 
@@ -31,6 +38,18 @@ export default class Conversations extends Component {
   	  	},
   	  },
       messages: [],
+      sharedMessages: [],
+      myMessages: [],
+      combinedMessages: [],
+      count: "",
+      filteredValue: [],
+      tempDocId: "",
+      redirect: false,
+      newMessage: "",
+      receiver: "",
+      conversationUser: "",
+      conversationUserImage: avatarFallbackImage,
+      userImg: avatarFallbackImage,
       filteredContacts: [],
       contacts: [],
       redirect: false,
@@ -45,6 +64,7 @@ export default class Conversations extends Component {
     this.handleNewContact = this.handleNewContact.bind(this);
     this.newContact = this.newContact.bind(this);
     this.filterList = this.filterList.bind(this);
+    this.handleMessage = this.handleMessage.bind(this);
   }
 
   componentWillMount() {
@@ -56,7 +76,13 @@ export default class Conversations extends Component {
   }
 
   componentDidMount() {
-
+    this.setState({receiver: loadUserData().username});
+    let info = loadUserData().profile;
+    if(info.image) {
+      this.setState({ userImg: info.image[0].contentUrl});
+    } else {
+      this.setState({ userImg: avatarFallbackImage});
+    }
 
     getFile("contact.json", {decrypt: true})
      .then((fileContents) => {
@@ -71,6 +97,61 @@ export default class Conversations extends Component {
       .catch(error => {
         console.log(error);
       });
+
+    this.refresh = setInterval(() => this.fetchMine(), 1000);
+    this.refresh = setInterval(() => this.fetchData(), 1000);
+  }
+
+  fetchMine() {
+    const fileName = this.state.conversationUser.slice(0, -3) + '.json';
+    //TODO decrypt this bad boy
+    getFile(fileName)
+     .then((fileContents) => {
+       if(fileContents) {
+         console.log("My files " + fileContents)
+         this.setState({ myMessages: JSON.parse(fileContents || '{}').messages });
+       } else {
+         console.log("No saved files");
+       }
+     })
+      .catch(error => {
+        console.log("fetchmine failed " + error);
+      });
+  }
+
+  fetchData() {
+  const username = this.state.conversationUser;
+
+    lookupProfile(username, "https://core.blockstack.org/v1/names")
+      .then((profile) => {
+        let image = profile.image;
+        console.log(image);
+        if(profile.image){
+          this.setState({conversationUserImage: image[0].contentUrl})
+        }
+        this.setState({
+          person: new Person(profile),
+          username: username
+        })
+      })
+      .catch((error) => {
+        console.log('could not resolve profile')
+      })
+      //TODO Figure out multi-player decryption
+    const options = { username: this.state.conversationUser, zoneFileLookupURL: "https://core.blockstack.org/v1/names"}
+    const fileName = loadUserData().username.slice(0, -3) + '.json';
+    getFile(fileName, options)
+      .then((file) => {
+        console.log(file);
+        console.log("fetched!");
+        this.setState({ sharedMessages: JSON.parse(file || '{}').messages });
+        this.setState({ combinedMessages: [...this.state.myMessages, ...this.state.sharedMessages] });
+        this.setState({ loading: "hide", show: "" });
+        this.scrollToBottom();
+      })
+      .catch((error) => {
+        console.log('could not fetch');
+      })
   }
 
   newContact() {
@@ -78,40 +159,37 @@ export default class Conversations extends Component {
   }
 
   handleaddItem() {
-    this.setState({ loading: "", show: "hide" })
-    let newContact = this.state.newContact
-    lookupProfile(newContact, "https://core.blockstack.org/v1/names")
-      .then((profile) => {
-        let image = profile.image;
-        console.log(profile);
-        if(profile.image){
-          this.setState({newContactImg: image[0].contentUrl})
-        } else {
-          this.setState({ newContactImg: avatarFallbackImage })
-        }
-      }).then(() => {
-        const object = {};
-        object.contact = this.state.newContact;
-        object.img = this.state.newContactImg;
-        console.log(object);
-        this.setState({ contacts: [...this.state.contacts, object], add: false });
-        this.setState({ filteredContacts: [...this.state.contacts, object], add: false });
-        setTimeout(this.saveNewFile, 500);
-      })
-      .catch((error) => {
-        console.log('could not resolve profile')
-      })
+    const today = new Date();
+    const rando = Date.now();
+    const object = {};
+    object.content = this.state.newMessage;
+    object.id = rando;
+    object.created = today.toString();
+    object.sender = loadUserData().username;
+    object.receiver = this.state.conversationUser;
+
+    this.setState({ messages: [...this.state.myMessages, object] });
+    this.setState({newMessage: ""});
+    setTimeout(this.saveNewFile, 500);
+    // setTimeout(this.handleGo, 700);
   }
 
   saveNewFile() {
-    putFile("contact.json", JSON.stringify(this.state), {encrypt: true})
+    const fileName = this.state.conversationUser.slice(0, -3) + '.json';
+    putFile(fileName, JSON.stringify(this.state))
       .then(() => {
         console.log("Saved!");
-        this.setState({loading: "hide", show: "" });
       })
       .catch(e => {
         console.log(e);
       });
+  }
+  scrollToBottom = () => {
+    this.messagesEnd.scrollIntoView({ behavior: "smooth" });
+  }
+
+  handleMessage(value) {
+    this.setState({ newMessage: value })
   }
 
   handleSignOut(e) {
@@ -138,100 +216,137 @@ export default class Conversations extends Component {
     console.log(loadUserData().username);
     const userData = blockstack.loadUserData();
     const person = new blockstack.Person(userData.profile);
+    let combinedMessages = this.state.combinedMessages;
+    function compare(a,b) {
+      return a.id - b.id
+    }
+    let messages = combinedMessages.sort(compare);
+    let myMessages = this.state.myMessages;
+    let sharedMessages = this.state.sharedMessages;
     let show = this.state.show;
     let loading = this.state.loading;
+    if(this.state.conversationUser === "") {
+      return(
+        <h5 className="center-align">Select a contact to start or continue a conversation.</h5>
+      );
+    } else {
+      SingleConversation.modules = {
+        toolbar: [
+          [{ 'header': '1'}, {'header': '2'}, { 'font': Font.whitelist }],,
+          [{size: []}],
+          ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+          [{'list': 'ordered'}, {'list': 'bullet'},
+           {'indent': '-1'}, {'indent': '+1'}],
+          ['link', 'image', 'video'],
+          ['clean']
+        ],
+        clipboard: {
+          // toggle to add extra line breaks when pasting HTML:
+          matchVisual: false,
+        }
+      }
+      /*
+       * Quill editor formats
+       * See https://quilljs.com/docs/formats/
+       */
+      SingleConversation.formats = [
+        'header', 'font', 'size',
+        'bold', 'italic', 'underline', 'strike', 'blockquote',
+        'list', 'bullet', 'indent',
+        'link', 'image', 'video'
+      ]
 
-    if(this.state.add == true){
-    return (
-      <div className="add-contact">
-        <div className="card card-add">
-          <div className="add-new">
-            <label>Add a Contact</label>
-            <input type="text" placeholder="Ex: JohnnyCash.id" onChange={this.handleNewContact} />
-            <div className={show}>
-            <button className="btn" onClick={this.handleaddItem}>Add</button>
-            </div>
+      return (
+        <div>
+          <div className="container loader">
             <div className={loading}>
-              <div className="preloader-wrapper small active">
-                <div className="spinner-layer spinner-green-only">
-                  <div className="circle-clipper left">
-                    <div className="circle"></div>
-                  </div><div className="gap-patch">
-                    <div className="circle"></div>
-                  </div><div className="circle-clipper right">
-                    <div className="circle"></div>
-                  </div>
-                </div>
+              <div className="progress center-align">
+                <p>Loading...</p>
+                <div className="indeterminate"></div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    );
-  } else {
-    return (
-      <div>
-        <div className="docs">
-        <div className="search card">
-          <form className="searchform">
-          <fieldset className="form-group searchfield">
-          <input type="text" className="form-control form-control-lg searchinput" placeholder="Search" onChange={this.filterList}/>
-          </fieldset>
-          </form>
-        </div>
-          <h3 className="center-align">Your Contacts</h3>
-          <div className="row">
-            <div className="col s6 m3">
-              <a onClick={this.newContact}><div className="card small">
-                <div className="center-align card-content">
-                  <p><i className="addDoc large material-icons">add</i></p>
-                </div>
-                <div className="card-action">
-                  <a className="black-text">New Contact</a>
-                </div>
-              </div></a>
-            </div>
-            {contacts.slice(0).reverse().map(contact => {
+          <div className={show}>
+          <div>
+          {messages.map(message => {
+            if(message.sender == loadUserData().username || message.receiver == loadUserData().username){
+              if(message.sender == loadUserData().username) {
                 return (
-                  <div key={contact.contact} className="col s6 m3">
+                  <div key={message.id} className="main-covo">
 
-                    <div className="card small renderedDocs">
-                    <Link to={'/contacts/Profile/'+ contact.contact} className="black-text">
-                      <div className="center-align card-content">
-                        <p><img className="responsive-img circle profile-img" src={contact.img} alt="profile" /></p>
+                    <div className="bubble sender container row">
+                      <div className="col s8">
+                        <p dangerouslySetInnerHTML={{ __html: message.content }} />
+                        <p className="muted">{message.created}</p>
                       </div>
-                    </Link>
-                      <div className="card-action">
-
-                        <Link to={'/contacts/profile/'+ contact.contact}><a className="black-text">{contact.contact}</a></Link>
-                        <Link to={'/contacts/delete/'+ contact.contact}>
-
-                            <i className="modal-trigger material-icons red-text delete-button">delete</i>
-
-                        </Link>
+                      <div className="col s4">
+                        <img className="responsive-img sender-message-img circle" src={this.state.userImg} alt="avatar" />
                       </div>
                     </div>
                   </div>
                 )
-              })
+              } else {
+                return (
+                  <div key={message.id} className="">
+
+                    <div className="bubble receiver container row">
+                      <div className="col s4">
+                        <img className="responsive-img receiver-message-img circle" src={this.state.conversationUserImage} alt="avatar" />
+                      </div>
+                      <div className="col s8">
+                        <p dangerouslySetInnerHTML={{ __html: message.content }} />
+                        <p className="muted">{message.created}</p>
+                      </div>
+                    </div>
+                  </div>
+                )
+              }
+            }else {
+              return (
+                <div></div>
+              )
             }
+            })
+          }
+          </div>
+            <div style={{ float:"left", clear: "both" }}
+              ref={(el) => { this.messagesEnd = el; }}>
             </div>
           </div>
+          <div className="center-align message-input container white">
+            <ReactQuill
+              id="textarea1"
+              className="materialize-textarea print-view"
+              placeholder="Send a message"
+              theme="bubble"
+              value={this.state.newMessage}
+              onChange={this.handleMessage}
+              modules={SingleConversation.modules}
+              formats={SingleConversation.formats}
+              />
 
-      </div>
-    );
+            <button onClick={this.handleaddItem} className="btn">Send</button>
+          </div>
+
+        </div>
+      );
+    }
   }
-  }
+
 
   render(){
+    let contacts = this.state.filteredContacts;
+    console.log(this.state.user);
     const userData = blockstack.loadUserData();
     const person = new blockstack.Person(userData.profile);
+    let show = this.state.show;
+    let loading = this.state.loading;
     return(
       <div>
       <div className="navbar-fixed toolbar">
         <nav className="toolbar-nav">
           <div className="nav-wrapper">
-            <a href="/contacts" className="brand-logo">Graphite.<img className="people" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9%0D%0AIjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik01LjUgMGMtLjUxIDAtLjk1LjM1LTEu%0D%0AMjIuODguNDUuNTQuNzIgMS4yOC43MiAyLjEzIDAgLjI5LS4wMy41NS0uMDkuODEuMTkuMTEuMzgu%0D%0AMTkuNTkuMTkuODMgMCAxLjUtLjkgMS41LTJzLS42Ny0yLTEuNS0yem0tMyAxYy0uODMgMC0xLjUu%0D%0AOS0xLjUgMnMuNjcgMiAxLjUgMiAxLjUtLjkgMS41LTItLjY3LTItMS41LTJ6bTQuNzUgMy4xNmMt%0D%0ALjQzLjUxLTEuMDIuODItMS42OS44NC4yNy4zOC40NC44NC40NCAxLjM0di42Nmgydi0xLjY2YzAt%0D%0ALjUyLS4zMS0uOTctLjc1LTEuMTl6bS02LjUgMWMtLjQ0LjIyLS43NS42Ny0uNzUgMS4xOXYxLjY2%0D%0AaDV2LTEuNjZjMC0uNTItLjMxLS45Ny0uNzUtMS4xOS0uNDUuNTMtMS4wNi44NC0xLjc1Ljg0cy0x%0D%0ALjMtLjMyLTEuNzUtLjg0eiIKICAvPgo8L3N2Zz4=" alt="inbox" /></a>
+            <a href="/contacts" className="brand-logo">Graphite.<img className="people" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9%0D%0AIjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik0wIDB2NWwxLTFoMXYtM2gzdi0xaC01%0D%0Aem0zIDJ2NGg0bDEgMXYtNWgtNXoiIC8+Cjwvc3ZnPg==" alt="chat bubble" /></a>
 
             <ul id="nav-mobile" className="right">
             <ul id="dropdown1" className="dropdown-content">
@@ -242,9 +357,10 @@ export default class Conversations extends Component {
               <li><a href="#" onClick={ this.handleSignOut }>Sign out</a></li>
             </ul>
             <ul id="dropdown2" className="dropdown-content">
-              <li><a href="/documents"><i className="material-icons blue-text text-darken-2">description</i><br />Documents</a></li>
-              <li><a href="/sheets"><i className="material-icons green-text text-lighten-1">grid_on</i><br />Sheets</a></li>
-              <li className="hide"><a href="/contacts"><i className="material-icons text-lighten-1">email</i><br />Contacts</a></li>
+            <li><a href="/documents"><i className="material-icons blue-text text-darken-2">description</i><br />Documents</a></li>
+            <li><a href="/sheets"><i className="material-icons green-text text-lighten-1">grid_on</i><br />Sheets</a></li>
+            <li><a href="/contacts"><i className="material-icons purple-text lighten-3">contacts</i><br />Contacts</a></li>
+            <li><a href="/conversations"><i className="material-icons orange-text accent-2">chat</i><br />Conversations</a></li>
             </ul>
               <li><a className="dropdown-button" href="#!" data-activates="dropdown2"><i className="material-icons apps">apps</i></a></li>
               <li><a className="dropdown-button" href="#!" data-activates="dropdown1"><img src={ person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage } className="img-rounded avatar" id="avatar-image" /><i className="material-icons right">arrow_drop_down</i></a></li>
@@ -252,7 +368,47 @@ export default class Conversations extends Component {
           </div>
         </nav>
         </div>
-        {this.renderView()}
+        <div>
+            <div className="row">
+              <div className="col s3 convo-left">
+                <Link to={'/contacts'}><div className="card">
+                  <div className="center-align card-content">
+                    <p><i className="medium material-icons">add</i></p>
+                  </div>
+                  <div className="card-action">
+                    <a className="black-text">New Contact</a>
+                  </div>
+                </div></Link>
+                {contacts.slice(0).reverse().map(contact => {
+                    return (
+                      <div key={contact.contact}>
+
+                        <div className="card renderedDocs">
+                        <a onClick={() => this.setState({ conversationUser: contact.contact, combinedMessages: [], conversationUserImage: avatarFallbackImage })} className="conversation-click black-text">
+                          <div className="card-action center-align">
+                            <a className="conversation-click" onClick={() => this.setState({ user: contact.contact, combinedMessages: [], conversationUserImage: avatarFallbackImage })}><img className="responsive-img circle conversations-img" src={contact.img} alt="profile" /></a>
+                          </div>
+                        </a>
+                          <div className="card-action">
+
+                            <a onClick={() => this.setState({ conversationUser: contact.contact, combinedMessages: [], conversationUserImage: avatarFallbackImage })} className="conversation-click black-text">{contact.contact}</a>
+                            <a onClick={() => this.setState({ conversationUser: contact.contact, combinedMessages: [], conversationUserImage: avatarFallbackImage })}><i className="conversation-click modal-trigger material-icons right orange-text accent-2">send</i></a>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })
+                }
+              </div>
+              <div className="col s9 convo-right">
+                <div className="card convo-card">
+                  {this.renderView()}
+                </div>
+              </div>
+              </div>
+
+
+        </div>
       </div>
     )
   }

@@ -29,6 +29,8 @@ export default class SharedSheets extends Component {
   	  	},
   	  },
       username: "",
+      contacts: [],
+      filteredContacts: [],
       title : "",
       grid: [
         []
@@ -63,6 +65,20 @@ export default class SharedSheets extends Component {
   }
 
   componentDidMount() {
+    getFile("contact.json", {decrypt: true})
+     .then((fileContents) => {
+       if(fileContents) {
+         console.log("Contacts are here");
+         this.setState({ contacts: JSON.parse(fileContents || '{}').contacts });
+         this.setState({ filteredContacts: this.state.contacts });
+       } else {
+         console.log("No contacts");
+       }
+     })
+      .catch(error => {
+        console.log(error);
+      });
+
     getFile("spread.json", {decrypt: true})
      .then((fileContents) => {
        if(fileContents) {
@@ -133,7 +149,7 @@ export default class SharedSheets extends Component {
           Materialize.toast('Could not find user', 2000);
           setTimeout(this.windowRefresh, 2000);
         })
-
+      //TODO Figure out multi-player decryption
       const options = { username: this.state.senderID, zoneFileLookupURL: "https://core.blockstack.org/v1/names"}
 
       getFile('sharedsheet.json', options)
@@ -189,118 +205,144 @@ export default class SharedSheets extends Component {
     this.setState({ hideButton: "hide", loading: "" });
   }
 
-  renderView() {
-
-    const loading = this.state.loading;
-    const save = this.state.save;
-    const hide = this.state.hide;
-    const autoSave = this.state.autoSave;
-    const shareModal = this.state.shareModal;
-    const hideButton = this.state.hideButton;
-
-
-    if(this.state.receiverID == loadUserData().username) {
-      return(
-        <div>
-        <div className="navbar-fixed toolbar">
-          <nav className="toolbar-nav">
-            <div className="nav-wrapper">
-              <a href="/sheets" className="brand-logo"><i className="material-icons">arrow_back</i></a>
-
-            </div>
-          </nav>
-        </div>
-        <div className="">
-          <div className={loading}>
-            <div className="preloader-wrapper small active">
-                <div className="spinner-layer spinner-green-only">
-                  <div className="circle-clipper left">
-                    <div className="circle"></div>
-                  </div><div className="gap-patch">
-                    <div className="circle"></div>
-                  </div><div className="circle-clipper right">
-                    <div className="circle"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          <div className="card sharedSheet">
-            <div className="center-align">
-            <div className={hideButton}>
-              <button onClick={this.handleaddItem} className="btn addButton black center-align">Add to Your Sheets</button>
-            </div>
-              <p className="center-align print-view">
-              {this.state.title}
-              </p>
-              <p>
-              <i className="spreadsheet-icon large green-text text-lighten-1 material-icons">grid_on</i>
-              </p>
-              <p>
-              Created by {this.state.senderID}
-              </p>
-              </div>
-              </div>
-        </div>
-
-        </div>
-      );
-    } else {
-      return(
-        <div>
-          <div className="navbar-fixed toolbar">
-            <nav className="toolbar-nav">
-              <div className="nav-wrapper">
-                <a href="/sheets" className="brand-logo"><i className="material-icons">arrow_back</i></a>
-
-              </div>
-            </nav>
-          </div>
-            <h4 className="center-align">Nothing shared</h4>
-        </div>
-      );
-    }
-
-  }
+  // renderView() {
+  //
+  //   const loading = this.state.loading;
+  //   const save = this.state.save;
+  //   const hide = this.state.hide;
+  //   const autoSave = this.state.autoSave;
+  //   const shareModal = this.state.shareModal;
+  //   const hideButton = this.state.hideButton;
+  //
+  //
+  //   if(this.state.receiverID == loadUserData().username) {
+  //     return(
+  //       <div>
+  //       <div className="navbar-fixed toolbar">
+  //         <nav className="toolbar-nav">
+  //           <div className="nav-wrapper">
+  //             <a href="/sheets" className="brand-logo"><i className="material-icons">arrow_back</i></a>
+  //
+  //           </div>
+  //         </nav>
+  //       </div>
+  //       <div className="">
+  //         <div className={loading}>
+  //           <div className="preloader-wrapper small active">
+  //               <div className="spinner-layer spinner-green-only">
+  //                 <div className="circle-clipper left">
+  //                   <div className="circle"></div>
+  //                 </div><div className="gap-patch">
+  //                   <div className="circle"></div>
+  //                 </div><div className="circle-clipper right">
+  //                   <div className="circle"></div>
+  //                 </div>
+  //               </div>
+  //             </div>
+  //           </div>
+  //
+  //         <div className="card sharedSheet">
+  //           <div className="center-align">
+  //           <div className={hideButton}>
+  //             <button onClick={this.handleaddItem} className="btn addButton black center-align">Add to Your Sheets</button>
+  //           </div>
+  //             <p className="center-align print-view">
+  //             {this.state.title}
+  //             </p>
+  //             <p>
+  //             <i className="spreadsheet-icon large green-text text-lighten-1 material-icons">grid_on</i>
+  //             </p>
+  //             <p>
+  //             Created by {this.state.senderID}
+  //             </p>
+  //             </div>
+  //             </div>
+  //       </div>
+  //
+  //       </div>
+  //     );
+  //   } else {
+  //     return(
+  //       <div>
+  //         <div className="navbar-fixed toolbar">
+  //           <nav className="toolbar-nav">
+  //             <div className="nav-wrapper">
+  //               <a href="/sheets" className="brand-logo"><i className="material-icons">arrow_back</i></a>
+  //
+  //             </div>
+  //           </nav>
+  //         </div>
+  //           <h4 className="center-align">Nothing shared</h4>
+  //       </div>
+  //     );
+  //   }
+  //
+  // }
 
 
   render() {
-    const show = this.state.show;
-    const hideButton = this.state.hideButton;
-    let value = this.state.value;
-    console.log(loadUserData().username);
-    const loading = this.state.loading;
+      const show = this.state.show;
+      const hideButton = this.state.hideButton;
+      let value = this.state.value;
+      console.log(loadUserData().username);
+      const loading = this.state.loading;
+      let contacts = this.state.filteredContacts;
+      let link = '/sheets/shared/';
+      let user = this.state.senderID;
+      let fullLink = link + user;
 
-    return (
-      <div>
-      <div className={show}>
-        <div className="container">
-          <div className="card center-align shared">
-            <h6>Enter the Blockstack user ID of the person who shared the file with you</h6>
-            <input className="" placeholder="Ex: JohnnyCash.id" type="text" onChange={this.handleIDChange} />
-            <div className={hideButton}>
-              <button onClick={this.pullData} className="btn black">Find File</button>
-            </div>
-            <div className={loading}>
-              <div className="preloader-wrapper small active">
-                  <div className="spinner-layer spinner-green-only">
-                    <div className="circle-clipper left">
-                      <div className="circle"></div>
-                    </div><div className="gap-patch">
-                      <div className="circle"></div>
-                    </div><div className="circle-clipper right">
-                      <div className="circle"></div>
+      return (
+        <div>
+        <div className={show}>
+          <div className="container">
+            <h3 className="center-align">Shared Sheets</h3>
+            <div className="card center-align shared">
+              <h6>Enter the Blockstack user ID of the person who shared the file(s) with you</h6>
+              <input className="" placeholder="Ex: JohnnyCash.id" type="text" onChange={this.handleIDChange} />
+              <div className={hideButton}>
+                <Link to={fullLink}><button className="btn black">Find Files</button></Link>
+              </div>
+              <div className={loading}>
+                <div className="preloader-wrapper small active">
+                    <div className="spinner-layer spinner-green-only">
+                      <div className="circle-clipper left">
+                        <div className="circle"></div>
+                      </div><div className="gap-patch">
+                        <div className="circle"></div>
+                      </div><div className="circle-clipper right">
+                        <div className="circle"></div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+            </div>
+          </div>
+          <h5 className="center-align">Or select from your contacts</h5>
+          <div className="shared-contacts row">
+          {contacts.slice(0).reverse().map(contact => {
+              return (
+                <div key={contact.contact} className="col s6 m3">
+
+                  <div className="card small renderedDocs">
+                  <Link to={'/sheets/shared/'+ contact.contact} className="black-text">
+                    <div className="center-align card-content">
+                      <p><img className="responsive-img circle profile-img" src={contact.img} alt="profile" /></p>
+                    </div>
+                  </Link>
+                    <div className="card-action">
+
+                      <Link to={'/sheets/shared/'+ contact.contact}><a className="black-text">{contact.contact}</a></Link>
+                    </div>
+                  </div>
+                </div>
+              )
+            })
+          }
           </div>
         </div>
-      </div>
-        {this.renderView()}
-      </div>
-    );
-  }
+        </div>
+      );
+    }
 
   componentWillMount() {
     if (isSignInPending()) {

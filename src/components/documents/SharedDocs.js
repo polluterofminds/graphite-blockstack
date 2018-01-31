@@ -348,10 +348,10 @@ export default class SharedDocs extends Component {
         <div className="container">
           <h3 className="center-align">Shared Documents</h3>
           <div className="card center-align shared">
-            <h6>Enter the Blockstack user ID of the person who shared the file with you</h6>
+            <h6>Enter the Blockstack user ID of the person who shared the file(s) with you</h6>
             <input className="" placeholder="Ex: JohnnyCash.id" type="text" onChange={this.handleIDChange} />
             <div className={hideButton}>
-              <Link to={fullLink}><button className="btn black">Find File</button></Link>
+              <Link to={fullLink}><button className="btn black">Find Files</button></Link>
             </div>
             <div className={loading}>
               <div className="preloader-wrapper small active">

@@ -153,7 +153,7 @@ export default class SingleDoc extends Component {
     const fileName = 'shareddocs.json'
     const file = userShort + fileName;
 
-    getFile(file, true)
+    getFile(file, {decrypt: true})
      .then((fileContents) => {
         this.setState({ shareFile: JSON.parse(fileContents || '{}') })
         console.log("loaded share file");
@@ -188,7 +188,7 @@ export default class SingleDoc extends Component {
     const userShort = user.slice(0, -3);
     const fileName = 'shareddocs.json'
     const file = userShort + fileName;
-    putFile(file, JSON.stringify(this.state.shareFile), true)
+    putFile(file, JSON.stringify(this.state.shareFile))
       .then(() => {
         console.log("Shared! " + file);
         this.setState({ shareModal: "hide", loading: "hide", show: "" });

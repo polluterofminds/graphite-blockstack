@@ -69,8 +69,9 @@ export default class SharedCollection extends Component {
     let fileString = 'shareddocs.json'
     let file = fileID.slice(0, -3) + fileString;
     this.setState({ user: this.props.match.params.id });
-
-    const options = { username: this.props.match.params.id, zoneFileLookupURL: "https://core.blockstack.org/v1/names"}
+    const user = this.props.match.params.id;
+    //TODO Figure out multi-player decryption
+    const options = { username: user, zoneFileLookupURL: "https://core.blockstack.org/v1/names"}
 
     getFile(file, options)
      .then((fileContents) => {

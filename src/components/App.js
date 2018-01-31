@@ -18,6 +18,8 @@ import MainSheets from './sheets/MainSheets';
 import SingleSheet from './sheets/SingleSheet';
 import TestSheet from './sheets/TestSheet';
 import DeleteSheet from './sheets/DeleteSheet';
+import SharedSheetsCollection from './sheets/SharedSheetsCollection';
+import SingleSharedSheet from './sheets/SingleSharedSheet';
 import MainContacts from './messages/MainContacts';
 import Contacts from './messages/Contacts';
 import Conversations from './messages/Conversations';
@@ -69,6 +71,8 @@ export default class App extends Component {
             <Route exact path="/sheets" component={MainSheets} />
             <Route exact path="/sheets/sheet/:id" component={SingleSheet} />
             <Route exact path="/sheets/sheet/delete/:id" component={DeleteSheet} />
+            <Route exact path="/sheets/shared/:id" component={SharedSheetsCollection} />
+            <Route exact path="/sheets/single/shared/:id" component={SingleSharedSheet} />
             <Route exact path="/testsheet" component={TestSheet} />
             <Route exact path="/shared-sheets" component={SharedSheets} />
             <Route exact path="/export" component={Export} />

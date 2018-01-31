@@ -131,27 +131,16 @@ render() {
     <div className="navbar-fixed toolbar">
       <nav className="toolbar-nav">
         <div className="nav-wrapper">
-          <a href="/contacts" className="brand-logo">Graphite.<img className="people" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9%0D%0AIjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik01LjUgMGMtLjUxIDAtLjk1LjM1LTEu%0D%0AMjIuODguNDUuNTQuNzIgMS4yOC43MiAyLjEzIDAgLjI5LS4wMy41NS0uMDkuODEuMTkuMTEuMzgu%0D%0AMTkuNTkuMTkuODMgMCAxLjUtLjkgMS41LTJzLS42Ny0yLTEuNS0yem0tMyAxYy0uODMgMC0xLjUu%0D%0AOS0xLjUgMnMuNjcgMiAxLjUgMiAxLjUtLjkgMS41LTItLjY3LTItMS41LTJ6bTQuNzUgMy4xNmMt%0D%0ALjQzLjUxLTEuMDIuODItMS42OS44NC4yNy4zOC40NC44NC40NCAxLjM0di42Nmgydi0xLjY2YzAt%0D%0ALjUyLS4zMS0uOTctLjc1LTEuMTl6bS02LjUgMWMtLjQ0LjIyLS43NS42Ny0uNzUgMS4xOXYxLjY2%0D%0AaDV2LTEuNjZjMC0uNTItLjMxLS45Ny0uNzUtMS4xOS0uNDUuNTMtMS4wNi44NC0xLjc1Ljg0cy0x%0D%0ALjMtLjMyLTEuNzUtLjg0eiIKICAvPgo8L3N2Zz4=" alt="inbox" /></a>
+          <a href="/contacts" className="brand-logo"><i className="material-icons">arrow_back</i></a>
 
-          <ul id="nav-mobile" className="right">
-          <ul id="dropdown1" className="dropdown-content">
-            <li><a href="/profile">Profile</a></li>
-            <li><a href="/shared-docs">Shared Files</a></li>
-            <li><a href="/export">Export All Data</a></li>
-            <li className="divider"></li>
-            <li><a href="#" onClick={ this.handleSignOut }>Sign out</a></li>
-          </ul>
-          <ul id="dropdown2" className="dropdown-content">
-            <li><a href="/documents"><i className="material-icons blue-text text-darken-2">description</i><br />Documents</a></li>
-            <li><a href="/sheets"><i className="material-icons green-text text-lighten-1">grid_on</i><br />Sheets</a></li>
-            <li className="hide"><a href="/contacts"><i className="material-icons text-lighten-1">email</i><br />Contacts</a></li>
-          </ul>
-            <li><a className="dropdown-button" href="#!" data-activates="dropdown2"><i className="material-icons apps">apps</i></a></li>
-            <li><a className="dropdown-button" href="#!" data-activates="dropdown1"><img src={ person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage } className="img-rounded avatar" id="avatar-image" /><i className="material-icons right">arrow_drop_down</i></a></li>
-          </ul>
+
+            <ul className="left toolbar-menu">
+              <li><a>Back to Contacts</a></li>
+            </ul>
+
         </div>
       </nav>
-      </div>
+    </div>
     <div className="container contact-page">
 
     <div className="col s12 m7">
@@ -168,7 +157,7 @@ render() {
         <div className="card-action">
           <Link to={'/contacts/conversations/' + this.state.username}><i className="material-icons orange-text accent-2 small">chat</i></Link>
           <Link to={fullLink}><i className="material-icons blue-text text-darken-2 small">description</i></Link>
-          <Link to={'/shared-sheets/' + this.state.username}><i className="material-icons green-text text-lighten-1 small">grid_on</i></Link>
+          <Link to={'/sheets/shared/' + this.state.username}><i className="material-icons green-text text-lighten-1 small">grid_on</i></Link>
         </div>
       </div>
     </div>

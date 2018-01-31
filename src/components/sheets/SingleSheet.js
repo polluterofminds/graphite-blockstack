@@ -19,6 +19,7 @@ export default class SingleSheet extends Component {
         [],
       ],
       title: "",
+      shareFile: [],
       index: "",
       save: "",
       loading: "hide",
@@ -34,7 +35,7 @@ export default class SingleSheet extends Component {
     this.autoSave = this.autoSave.bind(this);
     this.shareModal = this.shareModal.bind(this);
     this.hideModal = this.hideModal.bind(this);
-    this.shareDoc = this.shareDoc.bind(this);
+    this.shareSheet = this.shareSheet.bind(this);
     this.sharedInfo = this.sharedInfo.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
     this.handleAddItem = this.handleAddItem.bind(this);
@@ -152,14 +153,32 @@ shareModal() {
 }
 
 sharedInfo(){
-  this.setState({ loading: "", show: "hide" });
-  const object = {};
-  object.title = this.state.title || "Untitled";
-  object.content = this.state.grid;
-  object.id = Date.now();
-  object.receiverID = this.state.receiverID;
-  this.setState({ shareFile: object });
-  setTimeout(this.shareDoc, 700);
+  const user = this.state.receiverID;
+  const userShort = user.slice(0, -3);
+  const fileName = 'sharedsheets.json'
+  const file = userShort + fileName;
+
+  getFile(file, {decrypt: true})
+   .then((fileContents) => {
+      this.setState({ shareFile: JSON.parse(fileContents || '{}') })
+      console.log("loaded share file");
+      this.setState({ loading: "", show: "hide" });
+      const today = new Date();
+      const day = today.getDate();
+      const month = today.getMonth() + 1;
+      const year = today.getFullYear();
+      const object = {};
+      object.title = this.state.title;
+      object.content = this.state.grid;
+      object.id = Date.now();
+      object.receiverID = this.state.receiverID;
+      object.shared = month + "/" + day + "/" + year;
+      this.setState({ shareFile: [...this.state.shareFile, object] });
+      setTimeout(this.shareSheet, 700);
+   })
+    .catch(error => {
+      console.log(error);
+    });
 }
 
 hideModal() {
@@ -168,20 +187,20 @@ hideModal() {
   });
 }
 
-shareDoc() {
-  const fileName = 'sharedsheet.json'
-  putFile(fileName, JSON.stringify(this.state.shareFile), true)
+shareSheet() {
+  const user = this.state.receiverID;
+  const userShort = user.slice(0, -3);
+  const fileName = 'sharedsheets.json'
+  const file = userShort + fileName;
+  putFile(file, JSON.stringify(this.state.shareFile))
     .then(() => {
-      console.log("Shared!");
+      console.log("Shared! " + file);
       this.setState({ shareModal: "hide", loading: "hide", show: "" });
-      Materialize.toast('Sheet shared with ' + this.state.receiverID, 4000);
+      Materialize.toast('Document shared with ' + this.state.receiverID, 4000);
     })
     .catch(e => {
-      console.log("e");
       console.log(e);
-      alert(e.message);
     });
-
 }
 
 print(){

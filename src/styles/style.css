@@ -113,6 +113,46 @@ body {
   margin-top: 25px!important;
 }
 
+.conversations-img {
+  max-width: 18%!important;
+}
+
+.convo-card {
+  padding-top: 25px;
+}
+
+.convo-card h5{
+  padding: 100px;
+}
+
+.loader {
+  margin-top: 70px;
+}
+
+.conversation-click {
+  cursor: pointer;
+}
+
+.main-covo {
+  padding-top: 35px;
+}
+
+.convo-left {
+  position: absolute;
+  top: 75px;
+  bottom: 0;
+  left: 0!important;
+  overflow-y: scroll;
+}
+
+.convo-right {
+  position: absolute;
+  top: 75px;
+  bottom: 0;
+  right: 0!important;
+  overflow-y: scroll;
+}
+
 .contact-page {
   margin-top: 45px;
 }
