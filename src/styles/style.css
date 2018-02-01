@@ -5,6 +5,10 @@ body {
   background-color: #C4C4C4;
 }
 
+a {
+  cursor: pointer!important;
+}
+
 .app-card {
   padding: 30px;
 }
@@ -376,7 +380,6 @@ nav ul a {
   width: 20px;
   margin-bottom: 8px;
   margin-right: 3px;
-  transform: rotate(25deg);
 }
 
 .people {

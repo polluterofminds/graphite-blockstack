@@ -23,6 +23,7 @@ import SingleConversation from './SingleConversation';
 import axios from 'axios';
 
 const blockstack = require("blockstack");
+const { encryptECIES, decryptECIES } = require('blockstack/lib/encryption');
 const { getPublicKeyFromPrivate } = require('blockstack');
 const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
 
@@ -40,6 +41,7 @@ export default class Conversations extends Component {
   	  },
       messages: [],
       sharedMessages: [],
+      tempMessages: [],
       myMessages: [],
       combinedMessages: [],
       count: "",
@@ -86,7 +88,7 @@ export default class Conversations extends Component {
       .catch(e => {
         console.log(e);
       });
-      
+
     this.setState({receiver: loadUserData().username});
     let info = loadUserData().profile;
     if(info.image) {
@@ -115,11 +117,10 @@ export default class Conversations extends Component {
 
   fetchMine() {
     const fileName = this.state.conversationUser.slice(0, -3) + '.json';
-    //TODO decrypt this bad boy
-    getFile(fileName)
+    getFile(fileName, {decrypt: true})
      .then((fileContents) => {
        if(fileContents) {
-         console.log("My files " + fileContents)
+         console.log("loaded")
          this.setState({ myMessages: JSON.parse(fileContents || '{}').messages });
        } else {
          console.log("No saved files");
@@ -132,11 +133,19 @@ export default class Conversations extends Component {
 
   fetchData() {
   const username = this.state.conversationUser;
+  const options = { username: username, zoneFileLookupURL: "https://core.blockstack.org/v1/names"}
+  getFile('key.json', options)
+    .then((file) => {
+      this.setState({ pubKey: JSON.parse(file)})
+      console.log("Step One: PubKey Loaded");
+    })
+      .catch(error => {
+        console.log(error);
+      });
 
     lookupProfile(username, "https://core.blockstack.org/v1/names")
       .then((profile) => {
         let image = profile.image;
-        console.log(image);
         if(profile.image){
           this.setState({conversationUserImage: image[0].contentUrl})
         }
@@ -149,19 +158,24 @@ export default class Conversations extends Component {
         console.log('could not resolve profile')
       })
       //TODO Figure out multi-player decryption
-    const options = { username: this.state.conversationUser, zoneFileLookupURL: "https://core.blockstack.org/v1/names"}
     const fileName = loadUserData().username.slice(0, -3) + '.json';
-    getFile(fileName, options)
+    const privateKey = loadUserData().appPrivateKey;
+    const directory = '/shared/' + fileName;
+    getFile(directory, options)
       .then((file) => {
-        console.log(file);
+        console.log("Shared file: " + file);
+        // console.log("Shared messages: " + JSON.parse(decryptECIES(privateKey, JSON.parse(file))));
         console.log("fetched!");
-        this.setState({ sharedMessages: JSON.parse(file || '{}').messages });
+
+        this.setState({ tempMessages: JSON.parse(decryptECIES(privateKey, JSON.parse(file))) });
+        let temp = this.state.tempMessages;
+        this.setState({ sharedMessages: temp.messages});
         this.setState({ combinedMessages: [...this.state.myMessages, ...this.state.sharedMessages] });
         this.setState({ loading: "hide", show: "" });
         this.scrollToBottom();
       })
       .catch((error) => {
-        console.log('could not fetch');
+        console.log('could not fetch shared messages: ' + error);
       })
   }
 
@@ -187,14 +201,31 @@ export default class Conversations extends Component {
 
   saveNewFile() {
     const fileName = this.state.conversationUser.slice(0, -3) + '.json';
-    putFile(fileName, JSON.stringify(this.state))
+    putFile(fileName, JSON.stringify(this.state), {encrypt: true})
       .then(() => {
         console.log("Saved!");
+        this.saveShared();
       })
       .catch(e => {
         console.log(e);
       });
   }
+
+  saveShared() {
+    const fileName = this.state.conversationUser.slice(0, -3) + '.json';
+    const publicKey = this.state.pubKey;
+    const data = this.state;
+    const encryptedData = JSON.stringify(encryptECIES(publicKey, JSON.stringify(data)));
+    const directory = '/shared/' + fileName;
+    putFile(directory, encryptedData)
+      .then(() => {
+        console.log("Shared encrypted file " + directory);
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  }
+
   scrollToBottom = () => {
     this.messagesEnd.scrollIntoView({ behavior: "smooth" });
   }
@@ -223,11 +254,16 @@ export default class Conversations extends Component {
 
 
   renderView() {
+    console.log(this.state.combinedMessages);
     let contacts = this.state.filteredContacts;
-    console.log(loadUserData().username);
     const userData = blockstack.loadUserData();
     const person = new blockstack.Person(userData.profile);
-    let combinedMessages = this.state.combinedMessages;
+    let combinedMessages;
+    if(this.state.combinedMessages.length <1) {
+      combinedMessages = this.state.myMessages;
+    } else {
+      combinedMessages = this.state.combinedMessages;
+    }
     function compare(a,b) {
       return a.id - b.id
     }
@@ -347,7 +383,6 @@ export default class Conversations extends Component {
 
   render(){
     let contacts = this.state.filteredContacts;
-    console.log(this.state.user);
     const userData = blockstack.loadUserData();
     const person = new blockstack.Person(userData.profile);
     let show = this.state.show;
@@ -403,7 +438,7 @@ export default class Conversations extends Component {
                           <div className="card-action">
 
                             <a onClick={() => this.setState({ conversationUser: contact.contact, combinedMessages: [], conversationUserImage: avatarFallbackImage })} className="conversation-click black-text">{contact.contact}</a>
-                            <a onClick={() => this.setState({ conversationUser: contact.contact, combinedMessages: [], conversationUserImage: avatarFallbackImage })}><i className="conversation-click modal-trigger material-icons right orange-text accent-2">send</i></a>
+                            <a onClick={() => this.setState({ conversationUser: contact.contact, combinedMessages: [], conversationUserImage: avatarFallbackImage })}><i className="conversation-click modal-trigger material-icons right orange-text accent-2">chat</i></a>
                           </div>
                         </div>
                       </div>

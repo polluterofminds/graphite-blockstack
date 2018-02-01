@@ -40,6 +40,7 @@ export default class Contacts extends Component {
       redirect: false,
       newContact: "",
       addContact: "",
+      confirmAdd: false,
       add: false,
       loading: "hide",
       show: "",
@@ -87,12 +88,19 @@ export default class Contacts extends Component {
       });
   }
 
+  componentDidUpdate() {
+    if(this.state.confirmAdd == true) {
+      this.handleaddItem();
+    }
+  }
+
   newContact() {
     this.setState({add: true});
   }
 
   handleaddItem() {
-    this.setState({ showResults: "hide", loading: "", show: "hide" })
+    console.log("adding...");
+    this.setState({ showResults: "hide", loading: "", show: "hide", confirmAdd: false })
     // let addContact = this.state.addContact
     // console.log(this.state.addContact + '.id');
     lookupProfile(this.state.addContact + '.id', "https://core.blockstack.org/v1/names")
@@ -181,10 +189,11 @@ export default class Contacts extends Component {
     if(this.state.add == true){
     return (
       <div className="add-contact">
+        <h3 className="center-align">Add a new contact</h3>
         <div className="card card-add">
           <div className="add-new">
-            <label>Add a Contact</label>
-            <input type="text" placeholder="Ex: JohnnyCash.id" onChange={this.handleNewContact} />
+            <label>Search for a Contact</label>
+            <input type="text" placeholder="Ex: Johnny Cash" onChange={this.handleNewContact} />
             <div className={showResults}>
             <ul className="collection">
             {results.map(result => {
@@ -208,11 +217,9 @@ export default class Contacts extends Component {
                     <p>{result.username}
                     </p>
                     <div className={showFirstLink}>
-                      <a onClick={() => this.setState({ addContact: result.username, showFirstLink: "hide", showSecondLink: "" })} className="secondary-content"><i className="material-icons">add</i></a>
+                      <a onClick={() => this.setState({ addContact: result.username, confirmAdd: true })} className="secondary-content"><i className="blue-text text-darken-2 material-icons">add</i></a>
                     </div>
-                    <div className={showSecondLink}>
-                      <button onClick={this.handleaddItem} className="btn black secondary-content">Are you sure?</button>
-                    </div>
+
                   </li>
                 )
               })

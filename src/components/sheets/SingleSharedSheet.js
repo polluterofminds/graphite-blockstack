@@ -214,8 +214,8 @@ getOther() {
         <div className="nav-wrapper">
           <a href="/shared-sheets" className="brand-logo"><i className="material-icons">arrow_back</i></a>
           <ul className="left toolbar-menu">
-            <li className="black-text">{this.state.title}</li>
-            <li className={hideButton}><a onClick={this.handleaddItem}>Add to Sheets</a></li>
+            
+            <li className={hideButton}><button className="btn black" onClick={this.handleaddItem}>Add to Sheets</button></li>
           </ul>
         </div>
       </nav>
