@@ -15,6 +15,7 @@ import {
 } from 'blockstack';
 
 const blockstack = require("blockstack");
+const { getPublicKeyFromPrivate } = require('blockstack');
 const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
 
 export default class Collections extends Component {
@@ -50,6 +51,16 @@ export default class Collections extends Component {
   }
 
   componentDidMount() {
+    const publicKey = getPublicKeyFromPrivate(loadUserData().appPrivateKey)
+    putFile('key.json', JSON.stringify(publicKey))
+    .then(() => {
+        console.log("Saved!");
+        console.log(JSON.stringify(publicKey));
+      })
+      .catch(e => {
+        console.log(e);
+      });
+
     getFile("documents.json", {decrypt: true})
      .then((fileContents) => {
        if(fileContents) {

@@ -9,6 +9,9 @@ import {
   lookupProfile
 } from 'blockstack';
 import update from 'immutability-helper';
+const blockstack = require("blockstack");
+const { encryptECIES, decryptECIES } = require('blockstack/lib/encryption');
+const { getPublicKeyFromPrivate } = require('blockstack');
 
 export default class SingleSheet extends Component {
   constructor(props) {
@@ -29,7 +32,8 @@ export default class SingleSheet extends Component {
       shareModal: "hide",
       shareFile: "",
       initialLoad: "",
-      show: ""
+      show: "",
+      pubKey: ""
     }
     this.handleChange = this.handleChange.bind(this);
     this.autoSave = this.autoSave.bind(this);
@@ -50,12 +54,14 @@ export default class SingleSheet extends Component {
      }).then(() =>{
        let sheets = this.state.sheets;
        const thisSheet = sheets.find((sheet) => { return sheet.id == this.props.match.params.id});
+       // console.log(thisSheet);
        let index = thisSheet && thisSheet.id;
        console.log(index);
        function findObjectIndex(sheet) {
            return sheet.id == index;
        }
-       this.setState({ grid: thisSheet && thisSheet.grid || this.state.grid, title: thisSheet && thisSheet.title, index: sheets.findIndex(findObjectIndex) })
+       this.setState({ grid: thisSheet && thisSheet.content || this.state.grid, title: thisSheet && thisSheet.title, index: sheets.findIndex(findObjectIndex) })
+       console.log(this.state.grid);
      })
      .then(() => {
        this.$el = $(this.el);
@@ -102,18 +108,13 @@ export default class SingleSheet extends Component {
       const year = today.getFullYear();
       const object = {};
       object.title = this.state.title;
-      object.grid = this.state.grid;
+      object.content = this.state.grid;
       object.id = parseInt(this.props.match.params.id);
       object.updated = month + "/" + day + "/" + year;
       const index = this.state.index;
       const updatedSheet = update(this.state.sheets, {$splice: [[index, 1, object]]});  // array.splice(start, deleteCount, item1)
       this.setState({sheets: updatedSheet});
       this.autoSave();
-      // this.setState({ filteredValue: [...this.state.filteredValue, object] });
-      // this.setState({ tempDocId: object.id });
-      // this.setState({ confirm: true, cancel: false });
-      // setTimeout(this.saveFile, 500);
-      // setTimeout(this.handleGo, 700);
     }
 
     handleTitleChange(e) {
@@ -155,13 +156,52 @@ shareModal() {
 sharedInfo(){
   const user = this.state.receiverID;
   const userShort = user.slice(0, -3);
+  const fileName = 'shareddocs.json'
+  const file = userShort + fileName;
+  const options = { username: user, zoneFileLookupURL: "https://core.blockstack.org/v1/names"}
+
+  getFile('key.json', options)
+    .then((file) => {
+      this.setState({ pubKey: JSON.parse(file)})
+      console.log("Step One: PubKey Loaded");
+    })
+      .then(() => {
+        this.loadMyFile();
+      })
+      .catch(error => {
+        console.log(error);
+      });
+}
+
+loadMyFile() {
+  const user = this.state.receiverID;
+  const userShort = user.slice(0, -3);
   const fileName = 'sharedsheets.json'
   const file = userShort + fileName;
+  const options = { username: user, zoneFileLookupURL: "https://core.blockstack.org/v1/names"}
 
   getFile(file, {decrypt: true})
    .then((fileContents) => {
       this.setState({ shareFile: JSON.parse(fileContents || '{}') })
-      console.log("loaded share file");
+      console.log("Step Two: Loaded share file");
+      this.setState({ loading: "", show: "hide" });
+      const today = new Date();
+      const day = today.getDate();
+      const month = today.getMonth() + 1;
+      const year = today.getFullYear();
+      const object = {};
+      object.title = this.state.title;
+      object.content = this.state.grid;
+      object.id = Date.now();
+      object.receiverID = this.state.receiverID;
+      object.shared = month + "/" + day + "/" + year;
+      this.setState({ shareFile: [...this.state.shareFile, object] });
+      console.log("Read this!: " + this.state.shareFile);
+      setTimeout(this.shareSheet, 700);
+   })
+    .catch(error => {
+      console.log(error);
+      console.log("Step Two: No share file yet, moving on");
       this.setState({ loading: "", show: "hide" });
       const today = new Date();
       const day = today.getDate();
@@ -175,9 +215,6 @@ sharedInfo(){
       object.shared = month + "/" + day + "/" + year;
       this.setState({ shareFile: [...this.state.shareFile, object] });
       setTimeout(this.shareSheet, 700);
-   })
-    .catch(error => {
-      console.log(error);
     });
 }
 
@@ -192,15 +229,27 @@ shareSheet() {
   const userShort = user.slice(0, -3);
   const fileName = 'sharedsheets.json'
   const file = userShort + fileName;
-  putFile(file, JSON.stringify(this.state.shareFile))
+  putFile(file, JSON.stringify(this.state.shareFile), {encrypt: true})
     .then(() => {
-      console.log("Shared! " + file);
+      console.log("Step Three: File Shared: " + file);
       this.setState({ shareModal: "hide", loading: "hide", show: "" });
       Materialize.toast('Document shared with ' + this.state.receiverID, 4000);
     })
     .catch(e => {
+      console.log("e");
       console.log(e);
     });
+    const publicKey = this.state.pubKey;
+    const data = this.state;
+    const encryptedData = JSON.stringify(encryptECIES(publicKey, JSON.stringify(data)));
+    const directory = '/shared/' + file;
+    putFile(directory, encryptedData)
+      .then(() => {
+        console.log("Shared encrypted file " + directory);
+      })
+      .catch(e => {
+        console.log(e);
+      });
 }
 
 print(){

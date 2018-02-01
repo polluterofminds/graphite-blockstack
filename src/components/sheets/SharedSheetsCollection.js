@@ -15,6 +15,8 @@ import {
 } from 'blockstack';
 
 const blockstack = require("blockstack");
+const { encryptECIES, decryptECIES } = require('blockstack/lib/encryption');
+const { getPublicKeyFromPrivate } = require('blockstack');
 const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
 
 export default class SharedSheetsCollection extends Component {
@@ -30,6 +32,7 @@ export default class SharedSheetsCollection extends Component {
   	  	},
   	  },
       sharedSheets: [],
+      shareFile: [],
       sheets: [],
       filteredSheets: [],
       tempSheetId: "",
@@ -72,10 +75,10 @@ export default class SharedSheetsCollection extends Component {
     let fileString = 'sharedsheets.json'
     let file = fileID.slice(0, -3) + fileString;
     this.setState({ user: this.props.match.params.id });
-//TODO Figure out multi-player decryption
+    const directory = '/shared/' + file;
     const options = { username: this.props.match.params.id, zoneFileLookupURL: "https://core.blockstack.org/v1/names"}
-
-    getFile(file, options)
+    const privateKey = loadUserData().appPrivateKey;
+    getFile(directory, options)
      .then((fileContents) => {
        lookupProfile(this.state.user, "https://core.blockstack.org/v1/names")
          .then((profile) => {
@@ -90,8 +93,7 @@ export default class SharedSheetsCollection extends Component {
          .catch((error) => {
            console.log('could not resolve profile')
          })
-        console.log(fileContents);
-        this.setState({ sharedSheets: JSON.parse(fileContents || '{}') })
+        this.setState({ shareFile: JSON.parse(decryptECIES(privateKey, JSON.parse(fileContents))) })
         console.log("loaded");
         this.save();
      })
@@ -115,47 +117,17 @@ export default class SharedSheetsCollection extends Component {
     signUserOut(window.location.origin);
   }
 
-  // handleaddItem() {
-  //   this.setState({ show: "hide" });
-  //   this.setState({ hideButton: "hide", loading: "" })
-  //   const today = new Date();
-  //   const day = today.getDate();
-  //   const month = today.getMonth() + 1;
-  //   const year = today.getFullYear();
-  //   const rando = Date.now();
-  //   const object = {};
-  //   object.title = this.state.title;
-  //   object.content = this.state.content;
-  //   object.id = rando;
-  //   object.created = month + "/" + day + "/" + year;
-  //
-  //   this.setState({ value: [...this.state.value, object] });
-  //   // this.setState({ filteredValue: [...this.state.filteredValue, object] });
-  //   this.setState({ tempDocId: object.id });
-  //   this.setState({ loading: "" });
-  //   // this.setState({ confirm: true, cancel: false });
-  //   setTimeout(this.saveNewFile, 500);
-  //   // setTimeout(this.handleGo, 700);
-  // }
-  //
-  // saveNewFile() {
-  //   putFile("documents.json", JSON.stringify(this.state), {encrypt:true})
-  //     .then(() => {
-  //       console.log("Saved!");
-  //       window.location.replace("/sheets");
-  //     })
-  //     .catch(e => {
-  //       console.log(e);
-  //     });
-  // }
-
   renderView() {
-    let sheets = this.state.sharedSheets;
+    let sheets = this.state.shareFile;
+    console.log(sheets.shareFile);
+    let sheetLoop = sheets.shareFile;
+
     const loading = this.state.loading;
+
     const userData = blockstack.loadUserData();
     const person = new blockstack.Person(userData.profile);
     const img = this.state.img;
-    if (sheets.length > 0) {
+    if (sheetLoop) {
       return (
         <div>
           <div className="navbar-fixed toolbar">
@@ -177,7 +149,7 @@ export default class SharedSheetsCollection extends Component {
               <img className="shared-img responsive-img circle" src={img} alt="profile" />
             </div>
             <h3 className="center-align">Sheets {this.state.user} shared with you</h3>
-          {sheets.slice(0).reverse().map(sheet => {
+          {sheetLoop.slice(0).reverse().map(sheet => {
               return (
                 <div key={sheet.id} className="col s6 m3">
 
@@ -208,7 +180,7 @@ export default class SharedSheetsCollection extends Component {
         <div className="navbar-fixed toolbar">
           <nav className="toolbar-nav">
             <div className="nav-wrapper">
-              <a href="/documents" className="brand-logo"><i className="material-icons">arrow_back</i></a>
+              <a href="/sheets" className="brand-logo"><i className="material-icons">arrow_back</i></a>
 
 
                 <ul className="left toolbar-menu">

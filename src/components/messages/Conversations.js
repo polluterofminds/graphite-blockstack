@@ -23,6 +23,7 @@ import SingleConversation from './SingleConversation';
 import axios from 'axios';
 
 const blockstack = require("blockstack");
+const { getPublicKeyFromPrivate } = require('blockstack');
 const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
 
 export default class Conversations extends Component {
@@ -76,6 +77,16 @@ export default class Conversations extends Component {
   }
 
   componentDidMount() {
+    const publicKey = getPublicKeyFromPrivate(loadUserData().appPrivateKey)
+    putFile('key.json', JSON.stringify(publicKey))
+    .then(() => {
+        console.log("Saved!");
+        console.log(JSON.stringify(publicKey));
+      })
+      .catch(e => {
+        console.log(e);
+      });
+      
     this.setState({receiver: loadUserData().username});
     let info = loadUserData().profile;
     if(info.image) {

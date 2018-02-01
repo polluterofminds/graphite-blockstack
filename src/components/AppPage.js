@@ -9,7 +9,10 @@ import {
   redirectToSignIn,
   handlePendingSignIn,
   signUserOut,
+  putFile,
+  loadUserData
 } from 'blockstack';
+
 
 export default class AppPage extends Component {
 

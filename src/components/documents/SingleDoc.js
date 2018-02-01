@@ -19,6 +19,8 @@ const wordcount = require("wordcount");
 const blockstack = require("blockstack");
 const Quill = ReactQuill.Quill;
 const Font = ReactQuill.Quill.import('formats/font');
+const { encryptECIES, decryptECIES } = require('blockstack/lib/encryption');
+const { getPublicKeyFromPrivate } = require('blockstack');
 Font.whitelist = ['Ubuntu', 'Raleway', 'Roboto', 'Lato', 'Open Sans', 'Montserrat'] ; // allow ONLY these fonts and the default
 ReactQuill.Quill.register(Font, true);
 
@@ -39,7 +41,8 @@ export default class SingleDoc extends Component {
       receiverID: "",
       shareModal: "hide",
       shareFile: [],
-      show: ""
+      show: "",
+      pubKey: ""
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
@@ -152,11 +155,32 @@ export default class SingleDoc extends Component {
     const userShort = user.slice(0, -3);
     const fileName = 'shareddocs.json'
     const file = userShort + fileName;
+    const options = { username: user, zoneFileLookupURL: "https://core.blockstack.org/v1/names"}
+
+    getFile('key.json', options)
+      .then((file) => {
+        this.setState({ pubKey: JSON.parse(file)})
+        console.log("Step One: PubKey Loaded");
+      })
+        .then(() => {
+          this.loadMyFile();
+        })
+        .catch(error => {
+          console.log(error);
+        });
+  }
+
+  loadMyFile() {
+    const user = this.state.receiverID;
+    const userShort = user.slice(0, -3);
+    const fileName = 'shareddocs.json'
+    const file = userShort + fileName;
+    const options = { username: user, zoneFileLookupURL: "https://core.blockstack.org/v1/names"}
 
     getFile(file, {decrypt: true})
      .then((fileContents) => {
         this.setState({ shareFile: JSON.parse(fileContents || '{}') })
-        console.log("loaded share file");
+        console.log("Step Two: Loaded share file");
         this.setState({ loading: "", show: "hide" });
         const today = new Date();
         const day = today.getDate();
@@ -174,6 +198,21 @@ export default class SingleDoc extends Component {
      })
       .catch(error => {
         console.log(error);
+        console.log("Step Two: No share file yet, moving on");
+        this.setState({ loading: "", show: "hide" });
+        const today = new Date();
+        const day = today.getDate();
+        const month = today.getMonth() + 1;
+        const year = today.getFullYear();
+        const object = {};
+        object.title = this.state.title;
+        object.content = this.state.content;
+        object.id = Date.now();
+        object.receiverID = this.state.receiverID;
+        object.words = wordcount(this.state.content);
+        object.shared = month + "/" + day + "/" + year;
+        this.setState({ shareFile: [...this.state.shareFile, object] });
+        setTimeout(this.shareDoc, 700);
       });
   }
 
@@ -188,18 +227,27 @@ export default class SingleDoc extends Component {
     const userShort = user.slice(0, -3);
     const fileName = 'shareddocs.json'
     const file = userShort + fileName;
-    putFile(file, JSON.stringify(this.state.shareFile))
+    putFile(file, JSON.stringify(this.state.shareFile), {encrypt: true})
       .then(() => {
-        console.log("Shared! " + file);
+        console.log("Step Three: File Shared: " + file);
         this.setState({ shareModal: "hide", loading: "hide", show: "" });
         Materialize.toast('Document shared with ' + this.state.receiverID, 4000);
       })
       .catch(e => {
         console.log("e");
         console.log(e);
-        alert(e.message);
       });
-
+      const publicKey = this.state.pubKey;
+      const data = this.state.shareFile;
+      const encryptedData = JSON.stringify(encryptECIES(publicKey, JSON.stringify(data)));
+      const directory = '/shared/' + file;
+      putFile(directory, encryptedData)
+        .then(() => {
+          console.log("Shared encrypted file " + directory);
+        })
+        .catch(e => {
+          console.log(e);
+        });
   }
 
   print(){

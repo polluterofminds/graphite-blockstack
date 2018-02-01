@@ -15,6 +15,8 @@ import {
 } from 'blockstack';
 
 const blockstack = require("blockstack");
+const { encryptECIES, decryptECIES } = require('blockstack/lib/encryption');
+const { getPublicKeyFromPrivate } = require('blockstack');
 const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
 
 export default class SharedCollection extends Component {
@@ -68,12 +70,12 @@ export default class SharedCollection extends Component {
     let fileID = loadUserData().username;
     let fileString = 'shareddocs.json'
     let file = fileID.slice(0, -3) + fileString;
+    const directory = '/shared/' + file;
     this.setState({ user: this.props.match.params.id });
     const user = this.props.match.params.id;
-    //TODO Figure out multi-player decryption
     const options = { username: user, zoneFileLookupURL: "https://core.blockstack.org/v1/names"}
 
-    getFile(file, options)
+    getFile(directory, options)
      .then((fileContents) => {
        lookupProfile(this.state.user, "https://core.blockstack.org/v1/names")
          .then((profile) => {
@@ -89,7 +91,8 @@ export default class SharedCollection extends Component {
            console.log('could not resolve profile')
          })
         console.log(fileContents);
-        this.setState({ docs: JSON.parse(fileContents || '{}') })
+        let privateKey = loadUserData().appPrivateKey;
+        this.setState({ docs: JSON.parse(decryptECIES(privateKey, JSON.parse(fileContents))) })
         console.log("loaded");
         this.save();
      })

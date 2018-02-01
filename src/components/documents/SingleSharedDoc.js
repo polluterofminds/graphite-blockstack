@@ -17,6 +17,8 @@ import {
 import update from 'immutability-helper';
 const wordcount = require("wordcount");
 const blockstack = require("blockstack");
+const { encryptECIES, decryptECIES } = require('blockstack/lib/encryption');
+const { getPublicKeyFromPrivate } = require('blockstack');
 const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
 const Quill = ReactQuill.Quill;
 const Font = ReactQuill.Quill.import('formats/font');
@@ -89,12 +91,12 @@ getOther() {
   let fileID = loadUserData().username;
   let fileString = 'shareddocs.json'
   let file = fileID.slice(0, -3) + fileString;
-//TODO Figure out multi-player decryption
+  const directory = '/shared/' + file;
   const options = { username: this.state.user, zoneFileLookupURL: "https://core.blockstack.org/v1/names"}
-getFile(file, options)
+getFile(directory, options)
  .then((fileContents) => {
-   console.log(JSON.parse(fileContents || '{}'));
-    this.setState({ sharedFile: JSON.parse(fileContents || '{}') })
+   let privateKey = loadUserData().appPrivateKey;
+    this.setState({ sharedFile: JSON.parse(decryptECIES(privateKey, JSON.parse(fileContents))) })
     console.log("loaded");
     let docs = this.state.sharedFile;
     const thisDoc = docs.find((doc) => { return doc.id == this.props.match.params.id});

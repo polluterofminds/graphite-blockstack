@@ -17,6 +17,8 @@ import {
 import update from 'immutability-helper';
 const wordcount = require("wordcount");
 const blockstack = require("blockstack");
+const { encryptECIES, decryptECIES } = require('blockstack/lib/encryption');
+const { getPublicKeyFromPrivate } = require('blockstack');
 const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
 const Quill = ReactQuill.Quill;
 const Font = ReactQuill.Quill.import('formats/font');
@@ -89,15 +91,16 @@ getOther() {
   let fileID = loadUserData().username;
   let fileString = 'sharedsheets.json'
   let file = fileID.slice(0, -3) + fileString;
-  console.log("file: " + file);
-  //TODO Figure out multi-player decryption
+  const directory = '/shared/' + file;
   const options = { username: this.state.user, zoneFileLookupURL: "https://core.blockstack.org/v1/names"}
-getFile(file, options)
- .then((fileContents) => {
-   console.log(JSON.parse(fileContents || '{}'));
-    this.setState({ sharedFile: JSON.parse(fileContents || '{}') })
+  getFile(directory, options)
+  .then((fileContents) => {
+   let privateKey = loadUserData().appPrivateKey;
+    this.setState({ shareFile: JSON.parse(decryptECIES(privateKey, JSON.parse(fileContents))) })
     console.log("loaded");
-    let sheets = this.state.sharedFile;
+    let allSheets = this.state.shareFile;
+    let sheets = allSheets.shareFile;
+    console.log("Check: " + sheets);
     const thisSheet = sheets.find((sheet) => { return sheet.id == this.props.match.params.id});
     let index = thisSheet && thisSheet.id;
     console.log(index);
@@ -105,7 +108,25 @@ getFile(file, options)
         return sheet.id == index;
     }
     this.setState({ grid: thisSheet && thisSheet.content, title: thisSheet && thisSheet.title, index: sheets.findIndex(findObjectIndex) })
- })
+  })
+  .then(() => {
+    this.$el = $(this.el);
+    this.$el.jexcel({
+      data: this.state.grid,
+      onchange: this.handleChange,
+      minDimensions:[40,100],
+      colWidths: [ ]
+    });
+    this.$el.jexcel('updateSettings', {
+      cells: function (cell, col, row) {
+          if (col > 0) {
+              value = $('#my').jexcel('getValue', $(cell));
+              val = numeral($(cell).text()).format('0,0.00');
+              $(cell).html('' + val);
+          }
+      }
+    });
+  })
   .catch(error => {
     console.log(error);
   });
@@ -191,15 +212,15 @@ getFile(file, options)
     <div className="navbar-fixed toolbar">
       <nav className="toolbar-nav">
         <div className="nav-wrapper">
-          <a href="/sheets" className="brand-logo"><i className="material-icons">arrow_back</i></a>
-
+          <a href="/shared-sheets" className="brand-logo"><i className="material-icons">arrow_back</i></a>
+          <ul className="left toolbar-menu">
+            <li className="black-text">{this.state.title}</li>
+            <li className={hideButton}><a onClick={this.handleaddItem}>Add to Sheets</a></li>
+          </ul>
         </div>
       </nav>
     </div>
-    <div className="container docs">
-      <div className={hideButton}>
-        <button onClick={this.handleaddItem} className="btn black center-align">Add to Your Sheets</button>
-      </div>
+    <div className="">
       <div className={loading}>
         <div className="preloader-wrapper small active">
             <div className="spinner-layer spinner-green-only">
@@ -213,25 +234,17 @@ getFile(file, options)
             </div>
           </div>
         </div>
-
-      <div className="card">
-        <div className="double-space doc-margin">
-          <p className="center-align print-view">
-          {this.state.title}
-          </p>
-          <div className="center-align">
-            <i className="spreadsheet-icon large green-text text-lighten-1 material-icons">grid_on</i>
+          <div ref={el => this.el = el} id="mytable">
           </div>
-          </div>
-          </div>
-    </div>
-
-    </div>
+        </div>
+        </div>
       );
   }
 
   render() {
-    console.log(this.state.receiverID);
+    console.log(this.state.title);
+    console.log(this.state.grid);
+
 
     return (
       <div>
