@@ -15,6 +15,7 @@ import {
   lookupProfile,
   signUserOut
 } from 'blockstack';
+import axios from 'axios';
 import update from 'immutability-helper';
 const Quill = ReactQuill.Quill;
 const blockstack = require("blockstack");
@@ -75,20 +76,13 @@ componentDidMount() {
         console.log(error);
       });
     this.fetchData();
-    // this.refresh = setInterval(() => this.fetchMine(), 1000);
     this.refresh = setInterval(() => this.fetchData(), 1000);
-    // let combined = [{...this.state.myMessages, ...this.state.sharedMessages}]
-    // this.setState({ combined: combined});
 }
-
-// componentDidUpdate() {
-//   this.scrollToBottom();
-// }
 
 fetchData() {
 const username = this.state.conversationUser;
 
-  lookupProfile(username, "https://core.technofractal.com/v1/names")
+  lookupProfile(username, "https://core.blockstack.org/v1/names")
     .then((profile) => {
       console.log(profile);
       let image = profile.image;
@@ -121,9 +115,6 @@ render() {
   let facebook = 'https://facebook.com/'
   let github = 'https://github.com/'
   let accounts = this.state.accounts;
-  let link = '/documents/shared/';
-  let user = this.state.username;
-  let fullLink = link + user;
   const userData = blockstack.loadUserData();
   const person = new blockstack.Person(userData.profile);
   return (
@@ -135,7 +126,7 @@ render() {
 
 
             <ul className="left toolbar-menu">
-              <li><a>Back to Contacts</a></li>
+              <li><a href='/contacts'>Back to Contacts</a></li>
             </ul>
 
         </div>
@@ -155,8 +146,8 @@ render() {
           <p>{this.state.description}</p>
         </div>
         <div className="card-action">
-          <Link to={'/contacts/conversations/' + this.state.username}><i className="material-icons orange-text accent-2 small">chat</i></Link>
-          <Link to={fullLink}><i className="material-icons blue-text text-darken-2 small">description</i></Link>
+          <a href='/conversations'><i className="material-icons orange-text accent-2 small">chat</i></a>
+          <Link to={'/documents/shared/' + this.state.username}><i className="material-icons blue-text text-darken-2 small">description</i></Link>
           <Link to={'/sheets/shared/' + this.state.username}><i className="material-icons green-text text-lighten-1 small">grid_on</i></Link>
         </div>
       </div>

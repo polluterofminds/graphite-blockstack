@@ -149,6 +149,36 @@ a {
   overflow-y: scroll;
 }
 
+.modal {
+  display: block!important;
+  position: fixed;
+  left: 0;
+  right: 0;
+  background-color: #fafafa;
+  padding: 0;
+  height: 75%!important;
+  width: 55%;
+  margin: auto;
+  overflow-y: auto;
+  border-radius: 2px;
+  will-change: top, opacity;
+}
+
+.contacts-share {
+  margin-top: 25px;
+}
+
+.modal.bottom-sheet {
+    top: auto;
+    bottom: 0!important;
+    margin: 0;
+    width: 100%;
+    max-height: 75%!important;
+    border-radius: 0;
+    will-change: bottom, opacity;
+    z-index: 999!important;
+  }
+
 .convo-right {
   position: absolute;
   top: 75px;

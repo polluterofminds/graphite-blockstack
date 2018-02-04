@@ -29,6 +29,7 @@ export default class SingleDoc extends Component {
     super(props);
     this.state = {
       value: [],
+      contacts: [],
       title : "",
       content:"",
       updated: "",
@@ -63,6 +64,20 @@ export default class SingleDoc extends Component {
   }
 
   componentDidMount() {
+    getFile("contact.json", {decrypt: true})
+     .then((fileContents) => {
+       if(fileContents) {
+         console.log("Contacts are here");
+         this.setState({ contacts: JSON.parse(fileContents || '{}').contacts });
+       } else {
+         console.log("No contacts");
+       }
+     })
+      .catch(error => {
+        console.log(error);
+      });
+
+
     getFile("documents.json", {decrypt: true})
      .then((fileContents) => {
         this.setState({ value: JSON.parse(fileContents || '{}').value })
@@ -166,7 +181,9 @@ export default class SingleDoc extends Component {
           this.loadMyFile();
         })
         .catch(error => {
-          console.log(error);
+          console.log("No key: " + error);
+          Materialize.toast(this.state.receiverID + " has not logged into Graphite yet. Ask them to log in before you share.", 4000);
+          this.setState({ shareModal: "hide", loading: "hide", show: "" });
         });
   }
 
@@ -291,6 +308,7 @@ export default class SingleDoc extends Component {
     const autoSave = this.state.autoSave;
     const shareModal = this.state.shareModal;
     const show = this.state.show;
+    const contacts = this.state.contacts;
     var content = "<p style='text-align: center;'>" + this.state.title + "</p>" + "<div style='text-indent: 30px;'>" + this.state.content + "</div>";
 
     var htmlString = $('<html xmlns:office="urn:schemas-microsoft-com:office:office" xmlns:word="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">').html('<body>' +
@@ -324,30 +342,53 @@ export default class SingleDoc extends Component {
           </nav>
         </div>
         <div className={shareModal}>
-          <div className="container">
-            <div className="card share grey white-text center-align">
-              <h6>Enter the Blockstack user ID of the person to share with</h6>
-              <input className="share-input white grey-text" placeholder="Ex: JohnnyCash.id" type="text" onChange={this.handleIDChange} />
+
+          <div id="modal1" className="modal bottom-sheet">
+            <div className="modal-content">
+              <h4>Share</h4>
+              <p>Enter the Blockstack user ID of the person to share with.</p>
+              <p>Or select from your contacts.</p>
+              <input className="share-input white grey-text" placeholder="Ex: JohnnyCash.id" type="text" value ={this.state.receiverID} onChange={this.handleIDChange} />
               <div className={show}>
-                <button onClick={this.sharedInfo} className="btn white black-text">Share</button>
-                <button onClick={this.hideModal} className="btn">Cancel</button>
+                <button onClick={this.sharedInfo} className="btn black white-text">Share</button>
+                <button onClick={this.hideModal} className="btn grey">Cancel</button>
               </div>
-              <div className={loading}>
-                <div className="preloader-wrapper small active">
-                  <div className="spinner-layer spinner-green-only">
-                    <div className="circle-clipper left">
-                      <div className="circle"></div>
-                    </div><div className="gap-patch">
-                      <div className="circle"></div>
-                    </div><div className="circle-clipper right">
-                      <div className="circle"></div>
-                    </div>
+              <div className={show}>
+                <div className="container">
+                  <h4 className="contacts-share center-align">Your Contacts</h4>
+                  <ul className="collection">
+                  {contacts.slice(0).reverse().map(contact => {
+                      return (
+                        <li key={contact.contact}className="collection-item avatar">
+                          <img src={contact.img} alt="avatar" className="circle" />
+                          <span className="title black-text">{contact.contact}</span>
+                          <div>
+                            <a onClick={() => this.setState({ receiverID: contact.contact })} className="secondary-content"><i className="blue-text text-darken-2 material-icons">add</i></a>
+                          </div>
+
+                        </li>
+                      )
+                    })
+                  }
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div className={loading}>
+              <div className="preloader-wrapper small active">
+                <div className="spinner-layer spinner-green-only">
+                  <div className="circle-clipper left">
+                    <div className="circle"></div>
+                  </div><div className="gap-patch">
+                    <div className="circle"></div>
+                  </div><div className="circle-clipper right">
+                    <div className="circle"></div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+          </div>
         <div className="container docs">
           <div className="card doc-card">
             <div className="double-space doc-margin">

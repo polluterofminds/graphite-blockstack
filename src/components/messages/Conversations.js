@@ -141,6 +141,8 @@ export default class Conversations extends Component {
     })
       .catch(error => {
         console.log(error);
+        Materialize.toast(this.state.conversationUser + " has not logged into Graphite yet. Ask them to log in before you share.", 4000);
+        this.setState({ conversationUser: "" });
       });
 
     lookupProfile(username, "https://core.blockstack.org/v1/names")
@@ -160,10 +162,10 @@ export default class Conversations extends Component {
       //TODO Figure out multi-player decryption
     const fileName = loadUserData().username.slice(0, -3) + '.json';
     const privateKey = loadUserData().appPrivateKey;
-    const directory = '/shared/' + fileName;
+    const directory = '/shared/messages/' + fileName;
     getFile(directory, options)
       .then((file) => {
-        console.log("Shared file: " + file);
+        console.log("Shared file: " + decryptECIES(privateKey, JSON.parse(file)));
         // console.log("Shared messages: " + JSON.parse(decryptECIES(privateKey, JSON.parse(file))));
         console.log("fetched!");
 
@@ -216,7 +218,7 @@ export default class Conversations extends Component {
     const publicKey = this.state.pubKey;
     const data = this.state;
     const encryptedData = JSON.stringify(encryptECIES(publicKey, JSON.stringify(data)));
-    const directory = '/shared/' + fileName;
+    const directory = '/shared/messages/' + fileName;
     putFile(directory, encryptedData)
       .then(() => {
         console.log("Shared encrypted file " + directory);
@@ -392,12 +394,10 @@ export default class Conversations extends Component {
       <div className="navbar-fixed toolbar">
         <nav className="toolbar-nav">
           <div className="nav-wrapper">
-            <a href="/contacts" className="brand-logo">Graphite.<img className="people" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9%0D%0AIjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik0wIDB2NWwxLTFoMXYtM2gzdi0xaC01%0D%0Aem0zIDJ2NGg0bDEgMXYtNWgtNXoiIC8+Cjwvc3ZnPg==" alt="chat bubble" /></a>
+            <a href="/conversations" className="brand-logo">Graphite.<img className="people" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9%0D%0AIjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik0wIDB2NWwxLTFoMXYtM2gzdi0xaC01%0D%0Aem0zIDJ2NGg0bDEgMXYtNWgtNXoiIC8+Cjwvc3ZnPg==" alt="chat bubble" /></a>
 
             <ul id="nav-mobile" className="right">
             <ul id="dropdown1" className="dropdown-content">
-              <li><a href="/profile">Profile</a></li>
-              <li><a href="/shared-docs">Shared Files</a></li>
               <li><a href="/export">Export All Data</a></li>
               <li className="divider"></li>
               <li><a href="#" onClick={ this.handleSignOut }>Sign out</a></li>
