@@ -168,6 +168,18 @@ a {
   margin-top: 25px;
 }
 
+button:active, button:focus {
+  background: inherit!important;
+  color: inherit!important;
+}
+
+.ql-bubble {
+  box-sizing: border-box;
+  border: 1px solid #eee!important;
+  border-radius: 10px!important;
+  margin-bottom: 10px!important;
+}
+
 .modal.bottom-sheet {
     top: auto;
     bottom: 0!important;

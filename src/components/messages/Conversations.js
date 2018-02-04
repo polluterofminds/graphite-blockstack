@@ -186,18 +186,43 @@ export default class Conversations extends Component {
   }
 
   handleaddItem() {
-    const today = new Date();
-    const rando = Date.now();
-    const object = {};
-    object.content = this.state.newMessage;
-    object.id = rando;
-    object.created = today.toString();
-    object.sender = loadUserData().username;
-    object.receiver = this.state.conversationUser;
+    axios
+      .get(
+        "https://min-api.cryptocompare.com/data/pricemultifull?fsyms=BTC&tsyms=USD"
+      )
+      .then(res => {
+        this.setState({ dateStamp: res.data.RAW.BTC.USD.LASTUPDATE})
+      })
+      .then(() => {
+        const today = new Date();
+        const rando = this.state.dateStamp;
+        const object = {};
+        object.content = this.state.newMessage;
+        object.id = rando;
+        object.created = today.toString();
+        object.sender = loadUserData().username;
+        object.receiver = this.state.conversationUser;
 
-    this.setState({ messages: [...this.state.myMessages, object] });
-    this.setState({newMessage: ""});
-    setTimeout(this.saveNewFile, 500);
+        this.setState({ messages: [...this.state.myMessages, object] });
+        this.setState({newMessage: ""});
+        setTimeout(this.saveNewFile, 500);
+      })
+      .catch(error => {
+        console.log(error);
+        const today = new Date();
+        const rando = Date.now();
+        const object = {};
+        object.content = this.state.newMessage;
+        object.id = rando;
+        object.created = today.toString();
+        object.sender = loadUserData().username;
+        object.receiver = this.state.conversationUser;
+
+        this.setState({ messages: [...this.state.myMessages, object] });
+        this.setState({newMessage: ""});
+        setTimeout(this.saveNewFile, 500);
+      });
+
     // setTimeout(this.handleGo, 700);
   }
 
@@ -374,7 +399,7 @@ export default class Conversations extends Component {
               formats={SingleConversation.formats}
               />
 
-            <button onClick={this.handleaddItem} className="btn">Send</button>
+            <button onClick={this.handleaddItem} className="waves-effect waves-light btn">Send</button>
           </div>
 
         </div>

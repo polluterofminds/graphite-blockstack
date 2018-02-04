@@ -46,6 +46,12 @@ module.exports = {
       { test: /\.(png|jpg)$/, loader: 'url-loader?limit=8192' }
     ]
   },
+  node: {
+    fs: 'empty',
+    tls: 'empty',
+    dgram: 'empty',
+    ws: 'empty',
+  },  
   plugins: [
     HtmlWebpackPluginConfig,
     ManifestAssetPlugin,
