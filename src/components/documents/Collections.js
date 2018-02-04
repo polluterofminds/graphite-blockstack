@@ -13,7 +13,6 @@ import {
   lookupProfile,
   signUserOut,
 } from 'blockstack';
-
 const blockstack = require("blockstack");
 const { getPublicKeyFromPrivate } = require('blockstack');
 const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
@@ -34,12 +33,13 @@ export default class Collections extends Component {
       filteredValue: [],
       tempDocId: "",
       redirect: false,
-      loading: ""
+      loading: "",
+      alert: ""
     }
     this.handleaddItem = this.handleaddItem.bind(this);
     this.saveNewFile = this.saveNewFile.bind(this);
     this.filterList = this.filterList.bind(this);
-
+    this.handleClick = this.handleClick.bind(this);
   }
 
   componentWillMount() {
@@ -123,8 +123,13 @@ export default class Collections extends Component {
     signUserOut(window.location.origin);
   }
 
+  handleClick() {
+    this.setState({ alert: "hide" })
+  }
+
 
   render() {
+    const alert = this.state.alert;
     let value = this.state.filteredValue;
     const loading = this.state.loading;
     const link = '/documents/doc/' + this.state.tempDocId;
@@ -163,6 +168,14 @@ export default class Collections extends Component {
           </div>
         </nav>
         </div>
+
+        <div className={alert}>
+          <div className="alert-message">
+            <p>Graphite will update to SSL for enhanced security on Friday, February 9, 2018 at 10:00am Central Standard Time. Please <a href="/export">export your data</a> if you'd like to retain anything you've done so far in Graphite.</p>
+            <a className="btn" onClick={this.handleClick}>Close message</a>
+          </div>
+        </div>
+
         <div className="docs">
         <div className="search card">
           <form className="searchform">

@@ -83,7 +83,6 @@ export default class Conversations extends Component {
     putFile('key.json', JSON.stringify(publicKey))
     .then(() => {
         console.log("Saved!");
-        console.log(JSON.stringify(publicKey));
       })
       .catch(e => {
         console.log(e);
@@ -165,8 +164,6 @@ export default class Conversations extends Component {
     const directory = '/shared/messages/' + fileName;
     getFile(directory, options)
       .then((file) => {
-        console.log("Shared file: " + decryptECIES(privateKey, JSON.parse(file)));
-        // console.log("Shared messages: " + JSON.parse(decryptECIES(privateKey, JSON.parse(file))));
         console.log("fetched!");
 
         this.setState({ tempMessages: JSON.parse(decryptECIES(privateKey, JSON.parse(file))) });
@@ -186,45 +183,19 @@ export default class Conversations extends Component {
   }
 
   handleaddItem() {
-    axios
-      .get(
-        "https://min-api.cryptocompare.com/data/pricemultifull?fsyms=BTC&tsyms=USD"
-      )
-      .then(res => {
-        this.setState({ dateStamp: res.data.RAW.BTC.USD.LASTUPDATE})
-      })
-      .then(() => {
-        const today = new Date();
-        const rando = this.state.dateStamp;
-        const object = {};
-        object.content = this.state.newMessage;
-        object.id = rando;
-        object.created = today.toString();
-        object.sender = loadUserData().username;
-        object.receiver = this.state.conversationUser;
+    const today = new Date();
+    const rando = Date.now();
+    const object = {};
+    object.content = this.state.newMessage;
+    object.id = rando;
+    object.created = today.toString();
+    object.sender = loadUserData().username;
+    object.receiver = this.state.conversationUser;
 
-        this.setState({ messages: [...this.state.myMessages, object] });
-        this.setState({newMessage: ""});
-        setTimeout(this.saveNewFile, 500);
-      })
-      .catch(error => {
-        console.log(error);
-        const today = new Date();
-        const rando = Date.now();
-        const object = {};
-        object.content = this.state.newMessage;
-        object.id = rando;
-        object.created = today.toString();
-        object.sender = loadUserData().username;
-        object.receiver = this.state.conversationUser;
-
-        this.setState({ messages: [...this.state.myMessages, object] });
-        this.setState({newMessage: ""});
-        setTimeout(this.saveNewFile, 500);
-      });
-
-    // setTimeout(this.handleGo, 700);
-  }
+    this.setState({ messages: [...this.state.myMessages, object] });
+    this.setState({newMessage: ""});
+    setTimeout(this.saveNewFile, 500);
+}
 
   saveNewFile() {
     const fileName = this.state.conversationUser.slice(0, -3) + '.json';
@@ -281,7 +252,6 @@ export default class Conversations extends Component {
 
 
   renderView() {
-    console.log(this.state.combinedMessages);
     let contacts = this.state.filteredContacts;
     const userData = blockstack.loadUserData();
     const person = new blockstack.Person(userData.profile);

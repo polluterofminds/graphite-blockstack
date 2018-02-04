@@ -34,13 +34,14 @@ export default class SheetsCollections extends Component {
       filteredSheets: [],
       tempSheetId: "",
       redirect: false,
-      loading: ""
+      loading: "",
+      alert: ""
     }
     this.handleaddItem = this.handleaddItem.bind(this);
     this.saveNewFile = this.saveNewFile.bind(this);
     this.filterList = this.filterList.bind(this);
     this.handleSignOut = this.handleSignOut.bind(this);
-
+    this.handleClick = this.handleClick.bind(this);
   }
 
   componentWillMount() {
@@ -129,8 +130,13 @@ export default class SheetsCollections extends Component {
       });
   }
 
+  handleClick() {
+    this.setState({ alert: "hide" })
+  }
+
 
   render() {
+    const alert = this.state.alert;
     console.log(this.state.sheets);
     let sheets = this.state.filteredSheets;
     const loading = this.state.loading;
@@ -169,6 +175,14 @@ export default class SheetsCollections extends Component {
           </div>
         </nav>
       </div>
+
+      <div className={alert}>
+        <div className="alert-message">
+          <p>Graphite will update to SSL for enhanced security on Friday, February 9, 2018 at 10:00am Central Standard Time. Please <a href="/export">export your data</a> if you'd like to retain anything you've done so far in Graphite.</p>
+          <a className="btn" onClick={this.handleClick}>Close message</a>
+        </div>
+      </div>
+
         <div className="docs">
         <div className="search card">
           <form className="searchform">
