@@ -199,7 +199,9 @@ export default class Conversations extends Component {
     console.log(ids);
     if(ids.length > 0) {
       console.log(true);
-      let newID = ids.slice(-1)[0]*1.05;
+      let random = Math.random()*0.08;
+      let calc = 1 + random;
+      let newID = ids.slice(-1)[0]*calc;
       console.log("Calculated ID");
       object.id = parseInt(newID.toFixed(0));
     } else {
