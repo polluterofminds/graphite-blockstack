@@ -184,10 +184,29 @@ export default class Conversations extends Component {
 
   handleaddItem() {
     const today = new Date();
-    const rando = Date.now();
     const object = {};
+    let combinedMessages;
+    if(this.state.combinedMessages.length <1) {
+      combinedMessages = this.state.myMessages;
+    } else {
+      combinedMessages = this.state.combinedMessages;
+    }
+    function compare(a,b) {
+      return a.id - b.id
+    }
+    let messages = combinedMessages.sort(compare);
+    var ids = messages.map(a => a.id);
+    console.log(ids);
+    if(ids.length > 0) {
+      console.log(true);
+      let newID = ids.slice(-1)[0]*1.05;
+      console.log("Calculated ID");
+      object.id = parseInt(newID.toFixed(0));
+    } else {
+      object.id = Date.now();
+      console.log("Datestamp ID");
+    }
     object.content = this.state.newMessage;
-    object.id = rando;
     object.created = today.toString();
     object.sender = loadUserData().username;
     object.receiver = this.state.conversationUser;
