@@ -301,8 +301,7 @@ export default class SingleDoc extends Component {
       'list', 'bullet', 'indent',
       'link', 'image', 'video'
     ]
-
-    const words = wordcount(this.state.content);
+    const words = wordcount(this.state.content.replace(/<(?:.|\n)*?>/gm, ''));
     const loading = this.state.loading;
     const save = this.state.save;
     const autoSave = this.state.autoSave;
@@ -437,7 +436,7 @@ export default class SingleDoc extends Component {
                 modules={SingleDoc.modules}
                 formats={SingleDoc.formats}
                 id="textarea1"
-                className="materialize-textarea print-view"
+                className="materialize-textarea"
                 placeholder="Write something great"
                 value={this.state.content}
                 onChange={this.handleChange} />
@@ -469,7 +468,6 @@ export default class SingleDoc extends Component {
   }
 
   render() {
-    console.log(this.state.receiverID);
 
     return (
       <div>
