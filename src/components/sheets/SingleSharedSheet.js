@@ -15,6 +15,7 @@ import {
   lookupProfile
 } from 'blockstack';
 import update from 'immutability-helper';
+const formula = require('excel-formula');
 const wordcount = require("wordcount");
 const blockstack = require("blockstack");
 const { encryptECIES, decryptECIES } = require('blockstack/lib/encryption');
@@ -214,7 +215,7 @@ getOther() {
         <div className="nav-wrapper">
           <a href="/shared-sheets" className="brand-logo"><i className="material-icons">arrow_back</i></a>
           <ul className="left toolbar-menu">
-            
+
             <li className={hideButton}><button className="btn black" onClick={this.handleaddItem}>Add to Sheets</button></li>
           </ul>
         </div>

@@ -9,6 +9,7 @@ import {
   lookupProfile
 } from 'blockstack';
 import update from 'immutability-helper';
+const formula = require('excel-formula');
 const blockstack = require("blockstack");
 const { encryptECIES, decryptECIES } = require('blockstack/lib/encryption');
 const { getPublicKeyFromPrivate } = require('blockstack');
