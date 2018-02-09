@@ -60,7 +60,10 @@ export default class Conversations extends Component {
       add: false,
       loading: "hide",
       show: "",
-      newContactImg: avatarFallbackImage
+      newContactImg: avatarFallbackImage,
+      oldMessageCount: "",
+      messageCount: "",
+      alert: false
     }
     this.handleaddItem = this.handleaddItem.bind(this);
     this.saveNewFile = this.saveNewFile.bind(this);
@@ -158,7 +161,13 @@ export default class Conversations extends Component {
       .catch((error) => {
         console.log('could not resolve profile')
       })
-      //TODO Figure out multi-player decryption
+    getFile('/shared/messages/count' + this.state.conversationUser.slice(0, -3) + '.json', {decrypt: true})
+      .then((file) => {
+        console.log("old message count loaded");
+        this.setState({oldMessageCount: JSON.parse(file)})
+        console.log(this.state.oldMessageCount);
+      })
+
     const fileName = loadUserData().username.slice(0, -3) + '.json';
     const privateKey = loadUserData().appPrivateKey;
     const directory = '/shared/messages/' + fileName;
@@ -169,9 +178,20 @@ export default class Conversations extends Component {
         this.setState({ tempMessages: JSON.parse(decryptECIES(privateKey, JSON.parse(file))) });
         let temp = this.state.tempMessages;
         this.setState({ sharedMessages: temp.messages});
+        this.setState({ messageCount: temp.messages.length })
+        console.log("Message count = " + this.state.messageCount)
         this.setState({ combinedMessages: [...this.state.myMessages, ...this.state.sharedMessages] });
         this.setState({ loading: "hide", show: "" });
         this.scrollToBottom();
+      })
+      .then(() => {
+        putFile('/shared/messages/count' + this.state.conversationUser.slice(0, -3) + '.json', JSON.stringify(this.state.messageCount), { encrypt: true })
+          .then(() => {
+            console.log("Message count saved");
+          })
+          .catch(e => {
+            console.log(e);
+          });
       })
       .catch((error) => {
         console.log('could not fetch shared messages: ' + error);
