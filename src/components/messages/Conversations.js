@@ -21,7 +21,6 @@ Font.whitelist = ['Ubuntu', 'Raleway', 'Roboto', 'Lato', 'Open Sans', 'Montserra
 ReactQuill.Quill.register(Font, true);
 import SingleConversation from './SingleConversation';
 import axios from 'axios';
-
 const blockstack = require("blockstack");
 const { encryptECIES, decryptECIES } = require('blockstack/lib/encryption');
 const { getPublicKeyFromPrivate } = require('blockstack');
@@ -60,10 +59,10 @@ export default class Conversations extends Component {
       add: false,
       loading: "hide",
       show: "",
-      newContactImg: avatarFallbackImage,
-      oldMessageCount: "",
       messageCount: "",
-      alert: false
+      newCount: "",
+      newContactImg: avatarFallbackImage,
+      audio: false
     }
     this.handleaddItem = this.handleaddItem.bind(this);
     this.saveNewFile = this.saveNewFile.bind(this);
@@ -85,12 +84,11 @@ export default class Conversations extends Component {
     const publicKey = getPublicKeyFromPrivate(loadUserData().appPrivateKey)
     putFile('key.json', JSON.stringify(publicKey))
     .then(() => {
-        console.log("Saved!");
+        console.log("Saved");
       })
       .catch(e => {
         console.log(e);
       });
-
     this.setState({receiver: loadUserData().username});
     let info = loadUserData().profile;
     if(info.image) {
@@ -112,9 +110,8 @@ export default class Conversations extends Component {
       .catch(error => {
         console.log(error);
       });
-
-    this.refresh = setInterval(() => this.fetchMine(), 1000);
-    this.refresh = setInterval(() => this.fetchData(), 1000);
+    this.refresh = setInterval(() => this.fetchMine(), 2000);
+    this.refresh = setInterval(() => this.fetchData(), 2000);
   }
 
   fetchMine() {
@@ -134,68 +131,56 @@ export default class Conversations extends Component {
   }
 
   fetchData() {
-  const username = this.state.conversationUser;
-  const options = { username: username, zoneFileLookupURL: "https://core.blockstack.org/v1/names"}
-  getFile('key.json', options)
-    .then((file) => {
-      this.setState({ pubKey: JSON.parse(file)})
-      console.log("Step One: PubKey Loaded");
-    })
-      .catch(error => {
-        console.log(error);
-        Materialize.toast(this.state.conversationUser + " has not logged into Graphite yet. Ask them to log in before you share.", 4000);
-        this.setState({ conversationUser: "" });
-      });
-
-    lookupProfile(username, "https://core.blockstack.org/v1/names")
-      .then((profile) => {
-        let image = profile.image;
-        if(profile.image){
-          this.setState({conversationUserImage: image[0].contentUrl})
-        }
-        this.setState({
-          person: new Person(profile),
-          username: username
-        })
-      })
-      .catch((error) => {
-        console.log('could not resolve profile')
-      })
-    getFile('/shared/messages/count' + this.state.conversationUser.slice(0, -3) + '.json', {decrypt: true})
+    const username = this.state.conversationUser;
+    const options = { username: username, zoneFileLookupURL: "https://core.blockstack.org/v1/names"}
+    getFile('key.json', options)
       .then((file) => {
-        console.log("old message count loaded");
-        this.setState({oldMessageCount: JSON.parse(file)})
-        console.log(this.state.oldMessageCount);
+        this.setState({ pubKey: JSON.parse(file)})
+        console.log("Step One: PubKey Loaded");
       })
+        .catch(error => {
+          console.log(error);
+          Materialize.toast(this.state.conversationUser + " has not logged into Graphite yet. Ask them to log in before you share.", 4000);
+          this.setState({ conversationUser: "" });
+        });
 
-    const fileName = loadUserData().username.slice(0, -3) + '.json';
-    const privateKey = loadUserData().appPrivateKey;
-    const directory = '/shared/messages/' + fileName;
-    getFile(directory, options)
-      .then((file) => {
-        console.log("fetched!");
-
-        this.setState({ tempMessages: JSON.parse(decryptECIES(privateKey, JSON.parse(file))) });
-        let temp = this.state.tempMessages;
-        this.setState({ sharedMessages: temp.messages});
-        this.setState({ messageCount: temp.messages.length })
-        console.log("Message count = " + this.state.messageCount)
-        this.setState({ combinedMessages: [...this.state.myMessages, ...this.state.sharedMessages] });
-        this.setState({ loading: "hide", show: "" });
-        this.scrollToBottom();
-      })
-      .then(() => {
-        putFile('/shared/messages/count' + this.state.conversationUser.slice(0, -3) + '.json', JSON.stringify(this.state.messageCount), { encrypt: true })
-          .then(() => {
-            console.log("Message count saved");
+      lookupProfile(username, "https://core.blockstack.org/v1/names")
+        .then((profile) => {
+          let image = profile.image;
+          if(profile.image){
+            this.setState({conversationUserImage: image[0].contentUrl})
+          }
+          this.setState({
+            person: new Person(profile),
+            username: username
           })
-          .catch(e => {
-            console.log(e);
-          });
-      })
-      .catch((error) => {
-        console.log('could not fetch shared messages: ' + error);
-      })
+        })
+        .catch((error) => {
+          console.log('could not resolve profile')
+        })
+      const fileName = loadUserData().username.slice(0, -3) + '.json';
+      const privateKey = loadUserData().appPrivateKey;
+      const directory = '/shared/messages/' + fileName;
+      getFile(directory, options)
+        .then((file) => {
+          console.log("fetched!");
+          this.setState({ tempMessages: JSON.parse(decryptECIES(privateKey, JSON.parse(file))) });
+          let temp = this.state.tempMessages;
+          this.setState({ sharedMessages: temp.messages});
+          this.setState({ newCount: temp.messages.length })
+          if(this.state.newCount > this.state.messageCount && this.state.audio == true) {
+            var audio = new Audio('https://notificationsounds.com/soundfiles/a86c450b76fb8c371afead6410d55534/file-sounds-1108-slow-spring-board.mp3');
+            audio.play();
+            this.setState({audio: false})
+          }
+          console.log(this.state.newCount);
+          this.setState({ combinedMessages: [...this.state.myMessages, ...this.state.sharedMessages] });
+          this.setState({ loading: "hide", show: "" });
+          this.scrollToBottom();
+        })
+        .catch((error) => {
+          console.log('could not fetch shared messages: ' + error);
+        })
   }
 
   newContact() {
@@ -203,6 +188,8 @@ export default class Conversations extends Component {
   }
 
   handleaddItem() {
+    let temp = this.state.tempMessages;
+    this.setState({messageCount: temp.messages.length, audio: true})
     const today = new Date();
     const object = {};
     let combinedMessages;
@@ -293,6 +280,8 @@ export default class Conversations extends Component {
 
 
   renderView() {
+    console.log("Old Count: " + this.state.messageCount);
+    console.log("New COunt: " + this.state.newCount);
     let contacts = this.state.filteredContacts;
     const userData = blockstack.loadUserData();
     const person = new blockstack.Person(userData.profile);
