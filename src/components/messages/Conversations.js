@@ -15,6 +15,7 @@ import {
   signUserOut
 } from "blockstack";
 import update from 'immutability-helper';
+const iconNew = 'http://www.iconj.com/ico/0/o/0o93qd5dr7.ico';
 const Quill = ReactQuill.Quill;
 const Font = ReactQuill.Quill.import('formats/font');
 Font.whitelist = ['Ubuntu', 'Raleway', 'Roboto', 'Lato', 'Open Sans', 'Montserrat'] ; // allow ONLY these fonts and the default
@@ -113,7 +114,6 @@ export default class Conversations extends Component {
       .catch(error => {
         console.log(error);
       });
-
     this.refresh = setInterval(() => this.fetchData(), 2000);
     this.refresh = setInterval(() => this.fetchMine(), 2000);
 
@@ -126,16 +126,6 @@ export default class Conversations extends Component {
        if(fileContents) {
          console.log("loaded")
          this.setState({ myMessages: JSON.parse(fileContents || '{}').messages });
-         let messages = this.state.myMessages;
-         if(this.state.messageCount < 1) {
-           this.setState({ messageCount: messages.messages.length })
-         } else {
-           if(this.state.newCount < temp.messages.length) {
-             this.setState({ messageCount: this.state.newCount + messages.messages.length })
-           } else {
-             this.setState({ messageCount: this.state.messageCount});
-           }
-         }
        } else {
          console.log("No saved files");
        }
@@ -190,9 +180,15 @@ export default class Conversations extends Component {
               this.setState({ newCount: this.state.newCount + newMessageCount })
               var audio = new Audio('https://notificationsounds.com/soundfiles/a86c450b76fb8c371afead6410d55534/file-sounds-1108-slow-spring-board.mp3');
               audio.play();
+              if(document.hidden){
+                this.changeFavicon();
+              }
             } else {
               this.setState({ newCount: this.state.newCount});
             }
+          }
+          if(document.hidden == false) {
+            this.favBack();
           }
           this.setState({ combinedMessages: [...this.state.myMessages, ...this.state.sharedMessages] });
           this.setState({ loading: "hide", show: "" });
@@ -297,8 +293,16 @@ export default class Conversations extends Component {
     this.setState({filteredContacts: updatedList});
   }
 
+changeFavicon() {
+  document.getElementById('favicon').href = iconNew;
+}
+favBack() {
+  document.getElementById('favicon').href = 'http://www.graphitedocs.com/favicon.ico';
+}
+
 
   renderView() {
+    console.log( document.hidden );
     if(this.state.newCount > 0 && this.state.scroll == true) {
       this.scrollToBottom();
     }
@@ -429,8 +433,6 @@ export default class Conversations extends Component {
 
 
   render(){
-    console.log("NewCount: " + this.state.newCount);
-    console.log("MyCount: " + this.state.messageCount);
     let contacts = this.state.filteredContacts;
     const userData = blockstack.loadUserData();
     const person = new blockstack.Person(userData.profile);
