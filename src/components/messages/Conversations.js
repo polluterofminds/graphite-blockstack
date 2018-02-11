@@ -60,7 +60,9 @@ export default class Conversations extends Component {
       loading: "hide",
       show: "",
       messageCount: "",
+      sharedCount: "",
       newCount: "",
+      scroll: true,
       newContactImg: avatarFallbackImage,
       audio: false
     }
@@ -70,6 +72,7 @@ export default class Conversations extends Component {
     this.newContact = this.newContact.bind(this);
     this.filterList = this.filterList.bind(this);
     this.handleMessage = this.handleMessage.bind(this);
+    this.noScroll = this.noScroll.bind(this);
   }
 
   componentWillMount() {
@@ -110,8 +113,10 @@ export default class Conversations extends Component {
       .catch(error => {
         console.log(error);
       });
-    this.refresh = setInterval(() => this.fetchMine(), 2000);
+
     this.refresh = setInterval(() => this.fetchData(), 2000);
+    this.refresh = setInterval(() => this.fetchMine(), 2000);
+
   }
 
   fetchMine() {
@@ -121,6 +126,16 @@ export default class Conversations extends Component {
        if(fileContents) {
          console.log("loaded")
          this.setState({ myMessages: JSON.parse(fileContents || '{}').messages });
+         let messages = this.state.myMessages;
+         if(this.state.messageCount < 1) {
+           this.setState({ messageCount: messages.messages.length })
+         } else {
+           if(this.state.newCount < temp.messages.length) {
+             this.setState({ messageCount: this.state.newCount + messages.messages.length })
+           } else {
+             this.setState({ messageCount: this.state.messageCount});
+           }
+         }
        } else {
          console.log("No saved files");
        }
@@ -167,16 +182,20 @@ export default class Conversations extends Component {
           this.setState({ tempMessages: JSON.parse(decryptECIES(privateKey, JSON.parse(file))) });
           let temp = this.state.tempMessages;
           this.setState({ sharedMessages: temp.messages});
-          this.setState({ newCount: temp.messages.length })
-          if(this.state.newCount > this.state.messageCount && this.state.audio == true) {
-            var audio = new Audio('https://notificationsounds.com/soundfiles/a86c450b76fb8c371afead6410d55534/file-sounds-1108-slow-spring-board.mp3');
-            audio.play();
-            this.setState({audio: false})
+          if(this.state.newCount < 1) {
+            this.setState({ newCount: temp.messages.length })
+          } else {
+            if(this.state.newCount < temp.messages.length) {
+              let newMessageCount = temp.messages.length - this.state.newCount;
+              this.setState({ newCount: this.state.newCount + newMessageCount })
+              var audio = new Audio('https://notificationsounds.com/soundfiles/a86c450b76fb8c371afead6410d55534/file-sounds-1108-slow-spring-board.mp3');
+              audio.play();
+            } else {
+              this.setState({ newCount: this.state.newCount});
+            }
           }
-          console.log(this.state.newCount);
           this.setState({ combinedMessages: [...this.state.myMessages, ...this.state.sharedMessages] });
           this.setState({ loading: "hide", show: "" });
-          this.scrollToBottom();
         })
         .catch((error) => {
           console.log('could not fetch shared messages: ' + error);
@@ -189,7 +208,6 @@ export default class Conversations extends Component {
 
   handleaddItem() {
     let temp = this.state.tempMessages;
-    this.setState({messageCount: temp.messages.length, audio: true})
     const today = new Date();
     const object = {};
     let combinedMessages;
@@ -203,17 +221,13 @@ export default class Conversations extends Component {
     }
     let messages = combinedMessages.sort(compare);
     var ids = messages.map(a => a.id);
-    console.log(ids);
     if(ids.length > 0) {
-      console.log(true);
       let random = Math.random()*0.08;
       let calc = 1 + random;
       let newID = ids.slice(-1)[0]*calc;
-      console.log("Calculated ID");
       object.id = parseInt(newID.toFixed(0));
     } else {
       object.id = Date.now();
-      console.log("Datestamp ID");
     }
     object.content = this.state.newMessage;
     object.created = today.toString();
@@ -253,7 +267,12 @@ export default class Conversations extends Component {
   }
 
   scrollToBottom = () => {
-    this.messagesEnd.scrollIntoView({ behavior: "smooth" });
+    this.messagesEnd.scrollIntoView({ behavior: "instant" });
+    setTimeout(this.noScroll, 3000);
+  }
+
+  noScroll() {
+    this.setState({scroll: false});
   }
 
   handleMessage(value) {
@@ -280,8 +299,9 @@ export default class Conversations extends Component {
 
 
   renderView() {
-    console.log("Old Count: " + this.state.messageCount);
-    console.log("New COunt: " + this.state.newCount);
+    if(this.state.newCount > 0 && this.state.scroll == true) {
+      this.scrollToBottom();
+    }
     let contacts = this.state.filteredContacts;
     const userData = blockstack.loadUserData();
     const person = new blockstack.Person(userData.profile);
@@ -311,7 +331,7 @@ export default class Conversations extends Component {
           ['bold', 'italic', 'underline', 'strike', 'blockquote'],
           [{'list': 'ordered'}, {'list': 'bullet'},
            {'indent': '-1'}, {'indent': '+1'}],
-          ['link', 'image', 'video'],
+          ['link', 'video'],
           ['clean']
         ],
         clipboard: {
@@ -409,6 +429,8 @@ export default class Conversations extends Component {
 
 
   render(){
+    console.log("NewCount: " + this.state.newCount);
+    console.log("MyCount: " + this.state.messageCount);
     let contacts = this.state.filteredContacts;
     const userData = blockstack.loadUserData();
     const person = new blockstack.Person(userData.profile);
@@ -455,15 +477,15 @@ export default class Conversations extends Component {
                       <div key={contact.contact}>
 
                         <div className="card renderedDocs">
-                        <a onClick={() => this.setState({ conversationUser: contact.contact, combinedMessages: [], conversationUserImage: avatarFallbackImage })} className="conversation-click black-text">
+                        <a onClick={() => this.setState({ scroll: true, conversationUser: contact.contact, newCount: 0, combinedMessages: [], conversationUserImage: avatarFallbackImage, myMessages: [] })} className="conversation-click black-text">
                           <div className="card-action center-align">
                             <a className="conversation-click" onClick={() => this.setState({ user: contact.contact, combinedMessages: [], conversationUserImage: avatarFallbackImage })}><img className="responsive-img circle conversations-img" src={contact.img} alt="profile" /></a>
                           </div>
                         </a>
                           <div className="card-action">
 
-                            <a onClick={() => this.setState({ conversationUser: contact.contact, combinedMessages: [], conversationUserImage: avatarFallbackImage })} className="conversation-click black-text">{contact.contact}</a>
-                            <a onClick={() => this.setState({ conversationUser: contact.contact, combinedMessages: [], conversationUserImage: avatarFallbackImage })}><i className="conversation-click modal-trigger material-icons right orange-text accent-2">chat</i></a>
+                            <a onClick={() => this.setState({ scroll: true, conversationUser: contact.contact, newCount: 0, combinedMessages: [], conversationUserImage: avatarFallbackImage, myMessages: [] })} className="conversation-click black-text">{contact.contact}</a>
+                            <a onClick={() => this.setState({ scroll: true, conversationUser: contact.contact, newCount: 0, combinedMessages: [], conversationUserImage: avatarFallbackImage, myMessages: [] })}><i className="conversation-click modal-trigger material-icons right orange-text accent-2">chat</i></a>
                           </div>
                         </div>
                       </div>
