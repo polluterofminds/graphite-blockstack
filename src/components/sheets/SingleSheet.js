@@ -8,11 +8,15 @@ import {
   putFile,
   lookupProfile
 } from 'blockstack';
+import ReactDOM from 'react-dom';
+import HotTable from 'react-handsontable';
 import update from 'immutability-helper';
+import {CSVLink, CSVDownload} from 'react-csv';
 const formula = require('excel-formula');
 const blockstack = require("blockstack");
 const { encryptECIES, decryptECIES } = require('blockstack/lib/encryption');
 const { getPublicKeyFromPrivate } = require('blockstack');
+const timeout = null;
 
 export default class SingleSheet extends Component {
   constructor(props) {
@@ -23,10 +27,14 @@ export default class SingleSheet extends Component {
       grid: [
         [],
       ],
+      checkGrid: [
+        [],
+      ],
       title: "",
       shareFile: [],
       index: "",
       save: "",
+      saveNow: false,
       loading: "hide",
       printPreview: false,
       autoSave: "Saved",
@@ -37,7 +45,6 @@ export default class SingleSheet extends Component {
       show: "",
       pubKey: ""
     }
-    this.handleChange = this.handleChange.bind(this);
     this.autoSave = this.autoSave.bind(this);
     this.shareModal = this.shareModal.bind(this);
     this.hideModal = this.hideModal.bind(this);
@@ -79,24 +86,6 @@ export default class SingleSheet extends Component {
        this.setState({ grid: thisSheet && thisSheet.content || this.state.grid, title: thisSheet && thisSheet.title, index: sheets.findIndex(findObjectIndex) })
        console.log(this.state.grid);
      })
-     .then(() => {
-       this.$el = $(this.el);
-       this.$el.jexcel({
-         data: this.state.grid,
-         onchange: this.handleChange,
-         minDimensions:[40,100],
-         colWidths: [ ]
-       });
-       this.$el.jexcel('updateSettings', {
-         cells: function (cell, col, row) {
-             if (col > 0) {
-                 value = $('#my').jexcel('getValue', $(cell));
-                 val = numeral($(cell).text()).format('0,0.00');
-                 $(cell).html('' + val);
-             }
-         }
-       });
-     })
       .catch(error => {
         console.log(error);
       });
@@ -107,16 +96,11 @@ export default class SingleSheet extends Component {
           this.setState({printPreview: true});
         }
       }
-      this.download = () => {
-        this.$el.jexcel('download');
-      }
+      console.clear();
       setTimeout(this.handleAddItem,1000);
-      this.refresh = setInterval(() => this.handleAddItem(), 3000);
+      // this.refresh = setInterval(() => this.handleAddItem(), 5000);
     }
 
-    componentWillUnmount() {
-      // this.$el.jexcel({ data: data, colWidths: [ 300, 80, 100 ] })('destroy');
-    }
     handleAddItem() {
       const today = new Date();
       const day = today.getDate();
@@ -133,17 +117,14 @@ export default class SingleSheet extends Component {
       this.autoSave();
     }
 
-    handleTitleChange(e) {
-      this.setState({
-        title: e.target.value
-      });
-    }
-
-handleChange(instance, cell, value) {
-    var cellName = $(instance).jexcel('getColumnNameFromId', $(cell).prop('id'));
-    console.log('New change on cell ' + cellName + ' to: ' + value + '<br>');
-    console.log(this.state.grid);
-}
+  handleTitleChange(e) {
+    this.setState({
+      title: e.target.value
+    });
+    clearTimeout(this.timeout);
+    this.timeout = setTimeout(this.handleAddItem, 1000);
+    // setTimeout(this.handleAddItem, 1500);
+  }
 
 handleIDChange(e) {
     this.setState({ receiverID: e.target.value })
@@ -159,7 +140,6 @@ autoSave() {
     .catch(e => {
       console.log("e");
       console.log(e);
-      alert(e.message);
     });
 }
 
@@ -251,7 +231,7 @@ shareSheet() {
     .then(() => {
       console.log("Step Three: File Shared: " + file);
       this.setState({ shareModal: "hide", loading: "hide", show: "" });
-      Materialize.toast('Document shared with ' + this.state.receiverID, 4000);
+      Materialize.toast('Sheet shared with ' + this.state.receiverID, 4000);
     })
     .catch(e => {
       console.log("e");
@@ -280,7 +260,7 @@ print(){
 
 
 renderView() {
-
+  console.clear();
   const loading = this.state.loading;
   const save = this.state.save;
   const autoSave = this.state.autoSave;
@@ -288,7 +268,6 @@ renderView() {
   const show = this.state.show;
   const initialLoad = this.state.initialLoad;
   const contacts = this.state.contacts;
-  console.log(this.state.sheets);
 
   if(this.state.initialLoad === "") {
     return (
@@ -302,7 +281,7 @@ renderView() {
               <ul className="left toolbar-menu">
                 <li><input className="black-text" type="text" placeholder="Sheet Title" value={this.state.title} onChange={this.handleTitleChange} /></li>
                 <li><a onClick={this.print}><i className="material-icons">local_printshop</i></a></li>
-                <li><a ref={el => this.el = el} onClick={this.download}><img className="csvlogo" src="https://d30y9cdsu7xlg0.cloudfront.net/png/605579-200.png" /></a></li>
+                <li><CSVLink data={this.state.grid} filename={this.state.title + '.csv'} ><img className="csvlogo" src="https://d30y9cdsu7xlg0.cloudfront.net/png/605579-200.png" /></CSVLink></li>
                 <li><a onClick={this.shareModal}><i className="material-icons">share</i></a></li>
               </ul>
               <ul className="right toolbar-menu auto-save">
@@ -339,7 +318,7 @@ renderView() {
               <ul className="left toolbar-menu">
                 <li><input className="black-text" type="text" placeholder="Sheet Title" value={this.state.title} onChange={this.handleTitleChange} /></li>
                 <li><a onClick={this.print}><i className="material-icons">local_printshop</i></a></li>
-                <li><a ref={el => this.el = el} onClick={this.download}><img className="csvlogo" src="https://d30y9cdsu7xlg0.cloudfront.net/png/605579-200.png" /></a></li>
+                <li><CSVLink data={this.state.grid} filename={this.state.title + '.csv'}><img className="csvlogo" src="https://d30y9cdsu7xlg0.cloudfront.net/png/605579-200.png" /></CSVLink></li>
                 <li><a onClick={this.shareModal}><i className="material-icons">share</i></a></li>
               </ul>
               <ul className="right toolbar-menu auto-save">
@@ -399,9 +378,36 @@ renderView() {
         </div>
         <div>
           <div>
-            <div>
-              <div ref={el => this.el = el} id="mytable">
-              </div>
+            <div className="spreadsheet-table">
+              <HotTable root="hot" settings={{
+                data: this.state.grid,
+                stretchH: 'all',
+                manualRowResize: true,
+                manualColumnResize: true,
+                colHeaders: true,
+                rowHeaders: true,
+                colWidths: 100,
+                rowHeights: 30,
+                minCols: 26,
+                minRows: 100,
+                contextMenu: true,
+                formulas: true,
+                columnSorting: true,
+                contextMenu: true,
+                autoRowSize: true,
+                manualColumnMove: true,
+                manualRowMove: true,
+                ref: "hot",
+                fixedRowsTop: 0,
+                minSpareRows: 1,
+                comments: true,
+                onAfterChange: (changes, source) => {if(changes){
+                  clearTimeout(this.timeout);
+                  this.timeout = setTimeout(this.handleAddItem, 1000)
+                }}
+              }}
+               />
+
             </div>
           </div>
         </div>

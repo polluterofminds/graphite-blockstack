@@ -14,7 +14,9 @@ import {
   putFile,
   lookupProfile
 } from 'blockstack';
+import HotTable from 'react-handsontable';
 import update from 'immutability-helper';
+import {CSVLink, CSVDownload} from 'react-csv';
 const formula = require('excel-formula');
 const wordcount = require("wordcount");
 const blockstack = require("blockstack");
@@ -32,7 +34,7 @@ export default class SingleSharedSheet extends Component {
     this.state = {
       sheets: [],
       sharedFile: [],
-      grid: [],
+      grid: [[]],
       title : "",
       user: "",
       content:"",
@@ -110,24 +112,6 @@ getOther() {
     }
     this.setState({ grid: thisSheet && thisSheet.content, title: thisSheet && thisSheet.title, index: sheets.findIndex(findObjectIndex) })
   })
-  .then(() => {
-    this.$el = $(this.el);
-    this.$el.jexcel({
-      data: this.state.grid,
-      onchange: this.handleChange,
-      minDimensions:[40,100],
-      colWidths: [ ]
-    });
-    this.$el.jexcel('updateSettings', {
-      cells: function (cell, col, row) {
-          if (col > 0) {
-              value = $('#my').jexcel('getValue', $(cell));
-              val = numeral($(cell).text()).format('0,0.00');
-              $(cell).html('' + val);
-          }
-      }
-    });
-  })
   .catch(error => {
     console.log(error);
   });
@@ -188,7 +172,9 @@ getOther() {
   }
 
   renderView() {
-
+    let allSheets = this.state.shareFile;
+    let sheets = allSheets.shareFile;
+    console.log(sheets)
     const words = wordcount(this.state.content);
     const loading = this.state.loading;
     const save = this.state.save;
@@ -196,18 +182,8 @@ getOther() {
     const shareModal = this.state.shareModal;
     const hideButton = this.state.hideButton;
     const show = this.state.show;
-    var content = "<p style='text-align: center;'>" + this.state.title + "</p>" + "<div style='text-indent: 30px;'>" + this.state.content + "</div>";
 
-    var htmlString = $('<html xmlns:office="urn:schemas-microsoft-com:office:office" xmlns:word="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">').html('<body>' +
 
-    content +
-
-    '</body>'
-
-    ).get().outerHTML;
-
-    var htmlDocument = '<html xmlns:office="urn:schemas-microsoft-com:office:office" xmlns:word="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><xml><word:WordDocument><word:View>Print</word:View><word:Zoom>90</word:Zoom><word:DoNotOptimizeForBrowser/></word:WordDocument></xml></head><body>' + content + '</body></html>';
-    var dataUri = 'data:text/html,' + encodeURIComponent(htmlDocument);
     return(
     <div>
     <div className="navbar-fixed toolbar">
@@ -235,17 +211,38 @@ getOther() {
             </div>
           </div>
         </div>
-          <div ref={el => this.el = el} id="mytable">
-          </div>
+        <div>
+        <HotTable root="hot" settings={{
+          data: this.state.grid,
+          stretchH: 'all',
+          manualRowResize: true,
+          manualColumnResize: true,
+          colHeaders: true,
+          rowHeaders: true,
+          colWidths: 100,
+          rowHeights: 30,
+          minCols: 26,
+          minRows: 100,
+          contextMenu: true,
+          formulas: true,
+          columnSorting: true,
+          contextMenu: true,
+          autoRowSize: true,
+          manualColumnMove: true,
+          manualRowMove: true,
+          ref: "hot",
+          fixedRowsTop: 0,
+          minSpareRows: 1
+          }}
+         />
+         </div>
+
         </div>
         </div>
       );
   }
 
   render() {
-    console.log(this.state.title);
-    console.log(this.state.grid);
-
 
     return (
       <div>

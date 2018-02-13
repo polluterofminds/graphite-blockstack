@@ -46,12 +46,17 @@ module.exports = {
       { test: /\.(png|jpg)$/, loader: 'url-loader?limit=8192' }
     ]
   },
+  resolve: {
+    alias: {
+      handsontable: path.resolve(__dirname, 'node_modules/handsontable-pro')
+    }
+  },
   node: {
     fs: 'empty',
     tls: 'empty',
     dgram: 'empty',
     ws: 'empty',
-  },  
+  },
   plugins: [
     HtmlWebpackPluginConfig,
     ManifestAssetPlugin,

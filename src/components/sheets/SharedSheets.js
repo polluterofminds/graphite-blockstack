@@ -14,6 +14,7 @@ import {
 } from 'blockstack';
 import update from 'immutability-helper';
 const blockstack = require("blockstack");
+const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
 
 export default class SharedSheets extends Component {
 
@@ -205,80 +206,6 @@ export default class SharedSheets extends Component {
     this.setState({ hideButton: "hide", loading: "" });
   }
 
-  // renderView() {
-  //
-  //   const loading = this.state.loading;
-  //   const save = this.state.save;
-  //   const hide = this.state.hide;
-  //   const autoSave = this.state.autoSave;
-  //   const shareModal = this.state.shareModal;
-  //   const hideButton = this.state.hideButton;
-  //
-  //
-  //   if(this.state.receiverID == loadUserData().username) {
-  //     return(
-  //       <div>
-  //       <div className="navbar-fixed toolbar">
-  //         <nav className="toolbar-nav">
-  //           <div className="nav-wrapper">
-  //             <a href="/sheets" className="brand-logo"><i className="material-icons">arrow_back</i></a>
-  //
-  //           </div>
-  //         </nav>
-  //       </div>
-  //       <div className="">
-  //         <div className={loading}>
-  //           <div className="preloader-wrapper small active">
-  //               <div className="spinner-layer spinner-green-only">
-  //                 <div className="circle-clipper left">
-  //                   <div className="circle"></div>
-  //                 </div><div className="gap-patch">
-  //                   <div className="circle"></div>
-  //                 </div><div className="circle-clipper right">
-  //                   <div className="circle"></div>
-  //                 </div>
-  //               </div>
-  //             </div>
-  //           </div>
-  //
-  //         <div className="card sharedSheet">
-  //           <div className="center-align">
-  //           <div className={hideButton}>
-  //             <button onClick={this.handleaddItem} className="btn addButton black center-align">Add to Your Sheets</button>
-  //           </div>
-  //             <p className="center-align print-view">
-  //             {this.state.title}
-  //             </p>
-  //             <p>
-  //             <i className="spreadsheet-icon large green-text text-lighten-1 material-icons">grid_on</i>
-  //             </p>
-  //             <p>
-  //             Created by {this.state.senderID}
-  //             </p>
-  //             </div>
-  //             </div>
-  //       </div>
-  //
-  //       </div>
-  //     );
-  //   } else {
-  //     return(
-  //       <div>
-  //         <div className="navbar-fixed toolbar">
-  //           <nav className="toolbar-nav">
-  //             <div className="nav-wrapper">
-  //               <a href="/sheets" className="brand-logo"><i className="material-icons">arrow_back</i></a>
-  //
-  //             </div>
-  //           </nav>
-  //         </div>
-  //           <h4 className="center-align">Nothing shared</h4>
-  //       </div>
-  //     );
-  //   }
-  //
-  // }
-
 
   render() {
       const show = this.state.show;
@@ -290,9 +217,36 @@ export default class SharedSheets extends Component {
       let link = '/sheets/shared/';
       let user = this.state.senderID;
       let fullLink = link + user;
+      const userData = blockstack.loadUserData();
+      const person = new blockstack.Person(userData.profile);
 
       return (
         <div>
+        <div className="navbar-fixed toolbar">
+          <nav className="toolbar-nav">
+            <div className="nav-wrapper">
+              <a href="/sheets" className="brand-logo">Graphite.<img className="calculator" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9%0D%0AIjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik0uMDkgMGMtLjA2IDAtLjA5LjA0LS4w%0D%0AOS4wOXY3LjgxYzAgLjA1LjA0LjA5LjA5LjA5aDYuODFjLjA1IDAgLjA5LS4wNC4wOS0uMDl2LTcu%0D%0AODFjMC0uMDYtLjA0LS4wOS0uMDktLjA5aC02Ljgxem0uOTEgMWg1djJoLTV2LTJ6bTAgM2gxdjFo%0D%0ALTF2LTF6bTIgMGgxdjFoLTF2LTF6bTIgMGgxdjNoLTF2LTN6bS00IDJoMXYxaC0xdi0xem0yIDBo%0D%0AMXYxaC0xdi0xeiIgLz4KPC9zdmc+" alt="calculator" /></a>
+
+              <ul id="nav-mobile" className="right">
+              <ul id="dropdown1" className="dropdown-content">
+                <li><a href="/profile">Profile</a></li>
+                <li><a href="/shared-sheets">Shared Files</a></li>
+                <li><a href="/export">Export All Data</a></li>
+                <li className="divider"></li>
+                <li><a href="#" onClick={ this.handleSignOut }>Sign out</a></li>
+              </ul>
+              <ul id="dropdown2" className="dropdown-content">
+              <li><a href="/documents"><i className="material-icons blue-text text-darken-2">description</i><br />Documents</a></li>
+              <li><a href="/sheets"><i className="material-icons green-text text-lighten-1">grid_on</i><br />Sheets</a></li>
+              <li><a href="/contacts"><i className="material-icons purple-text lighten-3">contacts</i><br />Contacts</a></li>
+              <li><a href="/conversations"><i className="material-icons orange-text accent-2">chat</i><br />Conversations</a></li>
+              </ul>
+                <li><a className="dropdown-button" href="#!" data-activates="dropdown2"><i className="material-icons apps">apps</i></a></li>
+                <li><a className="dropdown-button" href="#!" data-activates="dropdown1"><img src={ person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage } className="img-rounded avatar" id="avatar-image" /><i className="material-icons right">arrow_drop_down</i></a></li>
+              </ul>
+            </div>
+          </nav>
+        </div>
         <div className={show}>
           <div className="container">
             <h3 className="center-align">Shared Sheets</h3>

@@ -734,6 +734,14 @@ input:focus {
   margin-left: 20px;
 }
 
+#hot-display-license-info {
+  display: none!important;
+}
+
+.ht_clone_left {
+  position: relative!important;
+}
+
 .ql-toolbar.ql-snow {
     border: none;
     box-sizing: border-box;

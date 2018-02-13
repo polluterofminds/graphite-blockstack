@@ -178,7 +178,7 @@ export default class Conversations extends Component {
             if(this.state.newCount < temp.messages.length) {
               let newMessageCount = temp.messages.length - this.state.newCount;
               this.setState({ newCount: this.state.newCount + newMessageCount })
-              var audio = new Audio('https://notificationsounds.com/soundfiles/a86c450b76fb8c371afead6410d55534/file-sounds-1108-slow-spring-board.mp3');
+              var audio = new Audio('https://notificationsounds.com/soundfiles/0fcbc61acd0479dc77e3cccc0f5ffca7/file-sounds-1078-case-closed.mp3');
               audio.play();
               if(document.hidden){
                 this.changeFavicon();
