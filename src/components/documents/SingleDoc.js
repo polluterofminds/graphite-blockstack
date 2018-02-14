@@ -21,6 +21,7 @@ const Quill = ReactQuill.Quill;
 const Font = ReactQuill.Quill.import('formats/font');
 const { encryptECIES, decryptECIES } = require('blockstack/lib/encryption');
 const { getPublicKeyFromPrivate } = require('blockstack');
+const timeout = null;
 Font.whitelist = ['Ubuntu', 'Raleway', 'Roboto', 'Lato', 'Open Sans', 'Montserrat'] ; // allow ONLY these fonts and the default
 ReactQuill.Quill.register(Font, true);
 
@@ -46,6 +47,7 @@ export default class SingleDoc extends Component {
       pubKey: ""
     }
     this.handleChange = this.handleChange.bind(this);
+    this.handleAutoAdd = this.handleAutoAdd.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
     this.handleIDChange = this.handleIDChange.bind(this);
     this.shareModal = this.shareModal.bind(this);
@@ -101,8 +103,8 @@ export default class SingleDoc extends Component {
           this.setState({printPreview: true});
         }
       }
-      setTimeout(this.handleAutoAdd, 1000);
-      this.refresh = setInterval(() => this.handleAutoAdd(), 3000);
+      // setTimeout(this.handleAutoAdd, 1000);
+      // this.refresh = setInterval(() => this.handleAutoAdd(), 3000);
     }
 
 
@@ -110,9 +112,13 @@ export default class SingleDoc extends Component {
     this.setState({
       title: e.target.value
     });
+    clearTimeout(this.timeout);
+    this.timeout = setTimeout(this.handleAutoAdd, 1500)
   }
   handleChange(value) {
-      this.setState({ content: value })
+      this.setState({ content: value });
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(this.handleAutoAdd, 1500)
     }
 
   handleIDChange(e) {

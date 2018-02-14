@@ -153,7 +153,7 @@ export default class SheetsCollections extends Component {
       <div className="navbar-fixed toolbar">
         <nav className="toolbar-nav">
           <div className="nav-wrapper">
-            <a href="/sheets" className="brand-logo">Graphite.<img className="calculator" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9%0D%0AIjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik0uMDkgMGMtLjA2IDAtLjA5LjA0LS4w%0D%0AOS4wOXY3LjgxYzAgLjA1LjA0LjA5LjA5LjA5aDYuODFjLjA1IDAgLjA5LS4wNC4wOS0uMDl2LTcu%0D%0AODFjMC0uMDYtLjA0LS4wOS0uMDktLjA5aC02Ljgxem0uOTEgMWg1djJoLTV2LTJ6bTAgM2gxdjFo%0D%0ALTF2LTF6bTIgMGgxdjFoLTF2LTF6bTIgMGgxdjNoLTF2LTN6bS00IDJoMXYxaC0xdi0xem0yIDBo%0D%0AMXYxaC0xdi0xeiIgLz4KPC9zdmc+" alt="calculator" /></a>
+            <a href="/" className="brand-logo">Graphite.<img className="calculator" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9%0D%0AIjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik0uMDkgMGMtLjA2IDAtLjA5LjA0LS4w%0D%0AOS4wOXY3LjgxYzAgLjA1LjA0LjA5LjA5LjA5aDYuODFjLjA1IDAgLjA5LS4wNC4wOS0uMDl2LTcu%0D%0AODFjMC0uMDYtLjA0LS4wOS0uMDktLjA5aC02Ljgxem0uOTEgMWg1djJoLTV2LTJ6bTAgM2gxdjFo%0D%0ALTF2LTF6bTIgMGgxdjFoLTF2LTF6bTIgMGgxdjNoLTF2LTN6bS00IDJoMXYxaC0xdi0xem0yIDBo%0D%0AMXYxaC0xdi0xeiIgLz4KPC9zdmc+" alt="calculator" /></a>
 
             <ul id="nav-mobile" className="right">
             <ul id="dropdown1" className="dropdown-content">

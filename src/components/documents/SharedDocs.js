@@ -265,69 +265,6 @@ export default class SharedDocs extends Component {
     var htmlDocument = '<html xmlns:office="urn:schemas-microsoft-com:office:office" xmlns:word="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><xml><word:WordDocument><word:View>Print</word:View><word:Zoom>90</word:Zoom><word:DoNotOptimizeForBrowser/></word:WordDocument></xml></head><body>' + content + '</body></html>';
     var dataUri = 'data:text/html,' + encodeURIComponent(htmlDocument);
 
-
-  //   if(this.state.receiverID == loadUserData().username) {
-  //     return(
-  //       <div>
-  //       <div className="navbar-fixed toolbar">
-  //         <nav className="toolbar-nav">
-  //           <div className="nav-wrapper">
-  //             <a href="/documents" className="brand-logo"><i className="material-icons">arrow_back</i></a>
-  //
-  //           </div>
-  //         </nav>
-  //       </div>
-  //       <div className="container docs">
-  //         <div className={hideButton}>
-  //           <button onClick={this.handleaddItem} className="btn black center-align">Add to Your Documents</button>
-  //         </div>
-  //         <div className={loading}>
-  //           <div className="preloader-wrapper small active">
-  //               <div className="spinner-layer spinner-green-only">
-  //                 <div className="circle-clipper left">
-  //                   <div className="circle"></div>
-  //                 </div><div className="gap-patch">
-  //                   <div className="circle"></div>
-  //                 </div><div className="circle-clipper right">
-  //                   <div className="circle"></div>
-  //                 </div>
-  //               </div>
-  //             </div>
-  //           </div>
-  //
-  //         <div className="card doc-card">
-  //           <div className="double-space doc-margin">
-  //             <p className="center-align print-view">
-  //             {this.state.title}
-  //             </p>
-  //             <div>
-  //               <div
-  //                 className="print-view no-edit"
-  //                 dangerouslySetInnerHTML={{ __html: this.state.content }}
-  //               />
-  //             </div>
-  //             </div>
-  //             </div>
-  //       </div>
-  //
-  //       </div>
-  //     );
-  //   } else {
-  //     return(
-  //       <div>
-  //         <div className="navbar-fixed toolbar">
-  //           <nav className="toolbar-nav">
-  //             <div className="nav-wrapper">
-  //               <a href="/documents" className="brand-logo"><i className="material-icons">arrow_back</i></a>
-  //
-  //             </div>
-  //           </nav>
-  //         </div>
-  //           <h4 className="center-align">Nothing shared</h4>
-  //       </div>
-  //     );
-  //   }
-  //
   }
 
 

@@ -114,8 +114,15 @@ export default class Conversations extends Component {
       .catch(error => {
         console.log(error);
       });
-    this.refresh = setInterval(() => this.fetchData(), 2000);
-    this.refresh = setInterval(() => this.fetchMine(), 2000);
+
+      this.fetchMine();
+      if(this.state.myMessages.length == 0) {
+        this.refresh = setInterval(() => this.fetchMine(), 1000);
+      }
+
+      this.refresh = setInterval(() => this.fetchData(), 2000);
+
+
 
   }
 
@@ -302,7 +309,6 @@ favBack() {
 
 
   renderView() {
-    console.log( document.hidden );
     if(this.state.newCount > 0 && this.state.scroll == true) {
       this.scrollToBottom();
     }
@@ -443,7 +449,7 @@ favBack() {
       <div className="navbar-fixed toolbar">
         <nav className="toolbar-nav">
           <div className="nav-wrapper">
-            <a href="/conversations" className="brand-logo">Graphite.<img className="people" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9%0D%0AIjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik0wIDB2NWwxLTFoMXYtM2gzdi0xaC01%0D%0Aem0zIDJ2NGg0bDEgMXYtNWgtNXoiIC8+Cjwvc3ZnPg==" alt="chat bubble" /></a>
+            <a href="/" className="brand-logo">Graphite.<img className="people" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9%0D%0AIjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik0wIDB2NWwxLTFoMXYtM2gzdi0xaC01%0D%0Aem0zIDJ2NGg0bDEgMXYtNWgtNXoiIC8+Cjwvc3ZnPg==" alt="chat bubble" /></a>
 
             <ul id="nav-mobile" className="right">
             <ul id="dropdown1" className="dropdown-content">
