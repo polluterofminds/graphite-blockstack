@@ -65,7 +65,8 @@ export default class Conversations extends Component {
       newCount: "",
       scroll: true,
       newContactImg: avatarFallbackImage,
-      audio: false
+      audio: false,
+      deleteShow: "hide"
     }
     this.handleaddItem = this.handleaddItem.bind(this);
     this.saveNewFile = this.saveNewFile.bind(this);
@@ -247,6 +248,7 @@ export default class Conversations extends Component {
     putFile(fileName, JSON.stringify(this.state), {encrypt: true})
       .then(() => {
         console.log("Saved!");
+        this.setState({deleteShow: "hide"});
         this.saveShared();
       })
       .catch(e => {
@@ -370,6 +372,7 @@ favBack() {
               </div>
             </div>
           </div>
+
           <div className={show}>
           <div>
           {messages.map(message => {
@@ -381,7 +384,7 @@ favBack() {
                     <div className="bubble sender container row">
                       <div className="col s8">
                         <p dangerouslySetInnerHTML={{ __html: message.content }} />
-                        <p className="muted">{message.created}</p>
+                        <p className="muted">{message.created} <span></span></p>
                       </div>
                       <div className="col s4">
                         <img className="responsive-img sender-message-img circle" src={this.state.userImg} alt="avatar" />
