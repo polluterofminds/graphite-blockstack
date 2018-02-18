@@ -152,7 +152,7 @@ shareModal() {
 sharedInfo(){
   const user = this.state.receiverID;
   const userShort = user.slice(0, -3);
-  const fileName = 'shareddocs.json'
+  const fileName = 'sharedsheets.json'
   const file = userShort + fileName;
   const options = { username: user, zoneFileLookupURL: "https://core.blockstack.org/v1/names"}
 
@@ -165,7 +165,7 @@ sharedInfo(){
         this.loadMyFile();
       })
       .catch(error => {
-        console.log(error);
+        console.log("No key: " + error);
         Materialize.toast(this.state.receiverID + " has not logged into Graphite yet. Ask them to log in before you share.", 4000);
         this.setState({ shareModal: "hide", loading: "hide", show: "" });
       });
@@ -181,7 +181,6 @@ loadMyFile() {
   getFile(file, {decrypt: true})
    .then((fileContents) => {
       this.setState({ shareFile: JSON.parse(fileContents || '{}') })
-      console.log("Step Two: Loaded share file");
       this.setState({ loading: "", show: "hide" });
       const today = new Date();
       const day = today.getDate();
@@ -194,12 +193,10 @@ loadMyFile() {
       object.receiverID = this.state.receiverID;
       object.shared = month + "/" + day + "/" + year;
       this.setState({ shareFile: [...this.state.shareFile, object] });
-      console.log("Read this!: " + this.state.shareFile);
       setTimeout(this.shareSheet, 700);
    })
     .catch(error => {
       console.log(error);
-      console.log("Step Two: No share file yet, moving on");
       this.setState({ loading: "", show: "hide" });
       const today = new Date();
       const day = today.getDate();
@@ -229,21 +226,19 @@ shareSheet() {
   const file = userShort + fileName;
   putFile(file, JSON.stringify(this.state.shareFile), {encrypt: true})
     .then(() => {
-      console.log("Step Three: File Shared: " + file);
       this.setState({ shareModal: "hide", loading: "hide", show: "" });
       Materialize.toast('Sheet shared with ' + this.state.receiverID, 4000);
     })
     .catch(e => {
-      console.log("e");
       console.log(e);
     });
     const publicKey = this.state.pubKey;
-    const data = this.state;
+    const data = this.state.shareFile;
     const encryptedData = JSON.stringify(encryptECIES(publicKey, JSON.stringify(data)));
     const directory = '/shared/' + file;
     putFile(directory, encryptedData)
       .then(() => {
-        console.log("Shared encrypted file " + directory);
+        console.log("Shared encrypted file");
       })
       .catch(e => {
         console.log(e);

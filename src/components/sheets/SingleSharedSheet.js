@@ -102,15 +102,14 @@ getOther() {
     this.setState({ shareFile: JSON.parse(decryptECIES(privateKey, JSON.parse(fileContents))) })
     console.log("loaded");
     let allSheets = this.state.shareFile;
-    let sheets = allSheets.shareFile;
-    console.log("Check: " + sheets);
-    const thisSheet = sheets.find((sheet) => { return sheet.id == this.props.match.params.id});
+    // let sheets = allSheets.shareFile;
+    const thisSheet = allSheets.find((sheet) => { return sheet.id == this.props.match.params.id});
     let index = thisSheet && thisSheet.id;
     console.log(index);
     function findObjectIndex(sheet) {
         return sheet.id == index;
     }
-    this.setState({ grid: thisSheet && thisSheet.content, title: thisSheet && thisSheet.title, index: sheets.findIndex(findObjectIndex) })
+    this.setState({ grid: thisSheet && thisSheet.content, title: thisSheet && thisSheet.title, index: allSheets.findIndex(findObjectIndex) })
   })
   .catch(error => {
     console.log(error);
@@ -173,9 +172,6 @@ getOther() {
 
   renderView() {
     let allSheets = this.state.shareFile;
-    let sheets = allSheets.shareFile;
-    console.log(sheets)
-    const words = wordcount(this.state.content);
     const loading = this.state.loading;
     const save = this.state.save;
     const autoSave = this.state.autoSave;

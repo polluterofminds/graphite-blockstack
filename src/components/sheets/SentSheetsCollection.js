@@ -13,7 +13,7 @@ import {
   lookupProfile,
   signUserOut,
 } from 'blockstack';
-
+import update from 'immutability-helper';
 const blockstack = require("blockstack");
 const { encryptECIES, decryptECIES } = require('blockstack/lib/encryption');
 const { getPublicKeyFromPrivate } = require('blockstack');
@@ -40,7 +40,9 @@ export default class SharedSheetsCollection extends Component {
       loading: "",
       user: "",
       filteredValue: [],
-      img: avatarFallbackImage
+      img: avatarFallbackImage,
+      deleteId: "",
+      pubKey: ""
     }
 
 
@@ -55,15 +57,27 @@ export default class SharedSheetsCollection extends Component {
   }
 
   componentDidMount() {
+    this.setState({user: this.props.match.params.id});
+    const user = this.props.match.params.id;
+    const userShort = user.slice(0, -3);
+    const fileName = 'sharedsheets.json'
+    const file = userShort + fileName;
+    const options = { username: user, zoneFileLookupURL: "https://core.blockstack.org/v1/names"}
+
+    getFile('key.json', options)
+      .then((file) => {
+        this.setState({ pubKey: JSON.parse(file)})
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
     getFile("spread.json", {decrypt: true})
      .then((fileContents) => {
        if(fileContents) {
-         console.log("Loaded");
          this.setState({ sheets: JSON.parse(fileContents || '{}').sheets });
-         // this.setState({filteredValue: this.state.value})
          this.setState({ loading: "hide" });
        } else {
-         console.log("No sheets");
          this.setState({ loading: "hide" });
        }
      })
@@ -71,59 +85,105 @@ export default class SharedSheetsCollection extends Component {
         console.log(error);
       });
 
-    let fileID = loadUserData().username;
-    let fileString = 'sharedsheets.json'
-    let file = fileID.slice(0, -3) + fileString;
-    this.setState({ user: this.props.match.params.id });
-    const directory = '/shared/' + file;
-    const options = { username: this.props.match.params.id, zoneFileLookupURL: "https://core.blockstack.org/v1/names"}
-    const privateKey = loadUserData().appPrivateKey;
-    getFile(directory, options)
+    let fileID = this.props.match.params.id;
+    let fileOne = fileID.slice(0, -3) + fileName;
+    getFile(fileOne, {decrypt: true})
      .then((fileContents) => {
-       lookupProfile(this.state.user, "https://core.blockstack.org/v1/names")
-         .then((profile) => {
-           let image = profile.image;
-           console.log(profile);
-           if(profile.image){
-             this.setState({img: image[0].contentUrl})
-           } else {
-             this.setState({ img: avatarFallbackImage })
-           }
-         })
-         .catch((error) => {
-           console.log('could not resolve profile')
-         })
-        this.setState({ shareFile: JSON.parse(decryptECIES(privateKey, JSON.parse(fileContents))) })
-        console.log("loaded");
-        this.save();
+       if(fileContents) {
+         console.log("loaded");
+         this.setState({ sharedSheets: JSON.parse(fileContents || '{}') });
+       } else {
+         console.log("Nothing shared");
+       }
      })
       .catch(error => {
         console.log(error);
       });
-  }
 
-  save() {
-    putFile("spread.json", JSON.stringify(this.state), {encrypt: true})
-      .then(() => {
-        console.log("saved");
-      })
-      .catch(e => {
-        console.log(e);
-      });
-  }
+    // let fileID = loadUserData().username;
+    // let fileString = 'sharedsheets.json'
+    // let file = fileID.slice(0, -3) + fileString;
+    // this.setState({ user: this.props.match.params.id });
+    // const directory = '/shared/' + file;
+    //
+    // const privateKey = loadUserData().appPrivateKey;
+    // getFile(directory, options)
+    //  .then((fileContents) => {
+    //    lookupProfile(this.state.user, "https://core.blockstack.org/v1/names")
+    //      .then((profile) => {
+    //        let image = profile.image;
+    //        if(profile.image){
+    //          this.setState({img: image[0].contentUrl})
+    //        } else {
+    //          this.setState({ img: avatarFallbackImage })
+    //        }
+    //      })
+    //      .catch((error) => {
+    //        console.log('could not resolve profile')
+    //      })
+    //     this.setState({ shareFile: JSON.parse(decryptECIES(privateKey, JSON.parse(fileContents))) })
+    //  })
+    //   .catch(error => {
+    //     console.log(error);
+    //   });
+      this.deleteShareDoc = () => {
+        this.setState({deleteId: ""})
+        let sharedSheets = this.state.sharedSheets;
+        const thisSheet = sharedSheets.find((sheet) => { return sheet.id == this.state.deleteId});
+        let index = thisSheet && thisSheet.id;
+        function findObjectIndex(sheet) {
+          return sheet.id == index;
+        }
+        let deleteIndex = sharedSheets.findIndex(findObjectIndex)
+        let updatedSheet = update(this.state.sharedSheets, {$splice: [[deleteIndex, 1, ]]})
+        this.setState({sharedSheets: updatedSheet})
+        setTimeout(this.saveEncrypted, 1000);
+      }
+
+      this.saveEncrypted = () => {
+        const user = this.props.match.params.id;
+        const userShort = user.slice(0, -3);
+        const fileName = 'sharedsheets.json'
+        const file = userShort + fileName;
+        const publicKey = this.state.pubKey;
+        const data = this.state.sharedSheets;
+        const encryptedData = JSON.stringify(encryptECIES(publicKey, JSON.stringify(data)));
+        const directory = '/shared/' + file;
+        putFile(directory, encryptedData)
+          .then(() => {
+            const user = this.props.match.params.id;
+            const userShort = user.slice(0, -3);
+            const fileName = 'sharedsheets.json'
+            const file = userShort + fileName;
+            putFile(file, JSON.stringify(this.state.sharedSheets), {encrypt: true})
+              .then(() => {
+                Materialize.toast('Sheet no longer shared', 3000);
+              })
+              .catch(e => {
+                console.log(e);
+              });
+          })
+          .catch(e => {
+            console.log(e);
+          });
+      }
+}
 
   handleSignOut(e) {
     e.preventDefault();
     signUserOut(window.location.origin);
   }
 
-  renderView() {
-    let sheets = this.state.shareFile;
-    const loading = this.state.loading;
 
+  renderView() {
+    let sheets = this.state.sharedSheets;
+    const loading = this.state.loading;
     const userData = blockstack.loadUserData();
     const person = new blockstack.Person(userData.profile);
     const img = this.state.img;
+    if(this.state.deleteId != "") {
+      this.deleteShareDoc();
+    }
     if (sheets.length > 0) {
       return (
         <div>
@@ -131,12 +191,6 @@ export default class SharedSheetsCollection extends Component {
             <nav className="toolbar-nav">
               <div className="nav-wrapper">
                 <a href="/sheets" className="brand-logo"><i className="material-icons">arrow_back</i></a>
-
-
-                  <ul className="left toolbar-menu">
-                    <li><a>Sheets shared by {this.state.user}</a></li>
-                  </ul>
-
               </div>
             </nav>
           </div>
@@ -145,7 +199,7 @@ export default class SharedSheetsCollection extends Component {
             <div className="center-align">
               <img className="shared-img responsive-img circle" src={img} alt="profile" />
             </div>
-            <h3 className="center-align">Sheets {this.state.user} shared with you</h3>
+            <h3 className="center-align">Sheets you shared with {this.state.user}</h3>
           {sheets.slice(0).reverse().map(sheet => {
               return (
                 <div key={sheet.id} className="col s6 m3">
@@ -157,7 +211,12 @@ export default class SharedSheetsCollection extends Component {
                     </div>
                     </Link>
                     <div className="card-action">
-                      <Link to={'/sheets/single/shared/'+ sheet.id}><a className="black-text">{sheet.title.length > 17 ? sheet.title.substring(0,17)+"..." :  sheet.title}</a></Link>
+                      <a className="black-text">{sheet.title.length > 17 ? sheet.title.substring(0,17)+"..." :  sheet.title}</a>
+                      <a onClick={() => this.setState({ deleteId: sheet.id})}>
+
+                          <i className="modal-trigger material-icons red-text delete-button">delete</i>
+
+                      </a>
                       <div className="muted">
                         <p>Shared on: {sheet.shared}</p>
                       </div>

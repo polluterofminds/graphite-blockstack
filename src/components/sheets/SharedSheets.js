@@ -53,7 +53,8 @@ export default class SharedSheets extends Component {
       senderID: "",
       show: "",
       hide: "",
-      hideButton: ""
+      hideButton: "",
+      sharedWithMe: true
     }
 
     this.fetchData = this.fetchData.bind(this);
@@ -150,7 +151,7 @@ export default class SharedSheets extends Component {
           Materialize.toast('Could not find user', 2000);
           setTimeout(this.windowRefresh, 2000);
         })
-      //TODO Figure out multi-player decryption
+
       const options = { username: this.state.senderID, zoneFileLookupURL: "https://core.blockstack.org/v1/names"}
 
       getFile('sharedsheet.json', options)
@@ -206,6 +207,84 @@ export default class SharedSheets extends Component {
     this.setState({ hideButton: "hide", loading: "" });
   }
 
+  renderView() {
+    const show = this.state.show;
+    const hideButton = this.state.hideButton;
+    let value = this.state.value;
+    console.log(loadUserData().username);
+    const loading = this.state.loading;
+    let contacts = this.state.filteredContacts;
+    let link = '/sheets/shared/';
+    let user = this.state.senderID;
+    let fullLink = link + user;
+    const userData = blockstack.loadUserData();
+    const person = new blockstack.Person(userData.profile);
+
+    if(this.state.sharedWithMe == true) {
+      return(
+      <div className={show}>
+        <div className="container center-align">
+          <h3>Documents Shared With Me</h3>
+          <h5>Select the contact who shared with you</h5>
+        </div>
+
+        <div className="shared-contacts row">
+        {contacts.slice(0).reverse().map(contact => {
+            return (
+              <div key={contact.contact} className="col s6 m3">
+
+                <div className="card small renderedDocs">
+                <Link to={'/sheets/shared/'+ contact.contact} className="black-text">
+                  <div className="center-align card-content">
+                    <p><img className="responsive-img circle profile-img" src={contact.img} alt="profile" /></p>
+                  </div>
+                </Link>
+                  <div className="card-action">
+
+                    <Link className="black-text" to={'/sheets/shared/'+ contact.contact}>{contact.contact}</Link>
+                  </div>
+                </div>
+              </div>
+            )
+          })
+        }
+        </div>
+      </div>
+    );
+    } else {
+      return (
+      <div className={show}>
+        <div className="container center-align">
+          <h3>Documents I Shared</h3>
+          <h5 >Select the contact you shared with</h5>
+        </div>
+
+        <div className="shared-contacts row">
+        {contacts.slice(0).reverse().map(contact => {
+            return (
+              <div key={contact.contact} className="col s6 m3">
+
+                <div className="card small renderedDocs">
+                <Link to={'/sheets/sent/'+ contact.contact} className="black-text">
+                  <div className="center-align card-content">
+                    <p><img className="responsive-img circle profile-img" src={contact.img} alt="profile" /></p>
+                  </div>
+                </Link>
+                  <div className="card-action">
+
+                    <Link className="black-text" to={'/sheets/sent/'+ contact.contact}>{contact.contact}</Link>
+                  </div>
+                </div>
+              </div>
+            )
+          })
+        }
+        </div>
+      </div>
+    );
+    }
+  }
+
 
   render() {
       const show = this.state.show;
@@ -247,54 +326,12 @@ export default class SharedSheets extends Component {
             </div>
           </nav>
         </div>
-        <div className={show}>
-          <div className="container">
-            <h3 className="center-align">Shared Sheets</h3>
-            <div className="card center-align shared">
-              <h6>Enter the Blockstack user ID of the person who shared the file(s) with you</h6>
-              <input className="" placeholder="Ex: JohnnyCash.id" type="text" onChange={this.handleIDChange} />
-              <div className={hideButton}>
-                <Link to={fullLink}><button className="btn black">Find Files</button></Link>
-              </div>
-              <div className={loading}>
-                <div className="preloader-wrapper small active">
-                    <div className="spinner-layer spinner-green-only">
-                      <div className="circle-clipper left">
-                        <div className="circle"></div>
-                      </div><div className="gap-patch">
-                        <div className="circle"></div>
-                      </div><div className="circle-clipper right">
-                        <div className="circle"></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-            </div>
-          </div>
-          <h5 className="center-align">Or select from your contacts</h5>
-          <div className="shared-contacts row">
-          {contacts.slice(0).reverse().map(contact => {
-              return (
-                <div key={contact.contact} className="col s6 m3">
-
-                  <div className="card small renderedDocs">
-                  <Link to={'/sheets/shared/'+ contact.contact} className="black-text">
-                    <div className="center-align card-content">
-                      <p><img className="responsive-img circle profile-img" src={contact.img} alt="profile" /></p>
-                    </div>
-                  </Link>
-                    <div className="card-action">
-
-                      <Link to={'/sheets/shared/'+ contact.contact}><a className="black-text">{contact.contact}</a></Link>
-                    </div>
-                  </div>
-                </div>
-              )
-            })
-          }
-          </div>
+        <div className="share-buttons center-align">
+          <button onClick={() => this.setState({ sharedWithMe: true })} className="btn black">Shared with me</button>
+          <button onClick={() => this.setState({ sharedWithMe: false })} className="btn black">Shared with others</button>
         </div>
-        </div>
+        {this.renderView()}
+      </div>
       );
     }
 

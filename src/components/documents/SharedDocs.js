@@ -58,7 +58,8 @@ export default class SharedDocs extends Component {
       senderID: "",
       show: "",
       hide: "",
-      hideButton: ""
+      hideButton: "",
+      sharedWithMe: true
     }
 
     this.fetchData = this.fetchData.bind(this);
@@ -219,56 +220,8 @@ export default class SharedDocs extends Component {
   }
 
   renderView() {
-    SharedDocs.modules = {
-      toolbar: [
-        [{ 'header': '1'}, {'header': '2'}, { 'font': Font.whitelist }],,
-        [{size: []}],
-        ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-        [{'list': 'ordered'}, {'list': 'bullet'},
-         {'indent': '-1'}, {'indent': '+1'}],
-        ['link', 'image', 'video'],
-        ['clean']
-      ],
-      clipboard: {
-        // toggle to add extra line breaks when pasting HTML:
-        matchVisual: false,
-      }
-    }
-    /*
-     * Quill editor formats
-     * See https://quilljs.com/docs/formats/
-     */
-    SharedDocs.formats = [
-      'header', 'font', 'size',
-      'bold', 'italic', 'underline', 'strike', 'blockquote',
-      'list', 'bullet', 'indent',
-      'link', 'image', 'video'
-    ]
-
-    const words = wordcount(this.state.content);
-    const loading = this.state.loading;
-    const save = this.state.save;
-    const hide = this.state.hide;
-    const autoSave = this.state.autoSave;
-    const shareModal = this.state.shareModal;
-    const hideButton = this.state.hideButton;
-    var content = "<p style='text-align: center;'>" + this.state.textvalue + "</p>" + "<div style='text-indent: 30px;'>" + this.state.test + "</div>";
-
-    var htmlString = $('<html xmlns:office="urn:schemas-microsoft-com:office:office" xmlns:word="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">').html('<body>' +
-
-    content +
-
-    '</body>'
-
-    ).get().outerHTML;
-
-    var htmlDocument = '<html xmlns:office="urn:schemas-microsoft-com:office:office" xmlns:word="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><xml><word:WordDocument><word:View>Print</word:View><word:Zoom>90</word:Zoom><word:DoNotOptimizeForBrowser/></word:WordDocument></xml></head><body>' + content + '</body></html>';
-    var dataUri = 'data:text/html,' + encodeURIComponent(htmlDocument);
-
-  }
-
-
-  render() {
+    const userData = blockstack.loadUserData();
+    const person = new blockstack.Person(userData.profile);
     const show = this.state.show;
     const hideButton = this.state.hideButton;
     let value = this.state.value;
@@ -278,34 +231,14 @@ export default class SharedDocs extends Component {
     let link = '/documents/shared/';
     let user = this.state.senderID;
     let fullLink = link + user;
-
-    return (
-      <div>
+    if(this.state.sharedWithMe == true) {
+      return(
       <div className={show}>
-        <div className="container">
-          <h3 className="center-align">Shared Documents</h3>
-          <div className="card center-align shared">
-            <h6>Enter the Blockstack user ID of the person who shared the file(s) with you</h6>
-            <input className="" placeholder="Ex: JohnnyCash.id" type="text" onChange={this.handleIDChange} />
-            <div className={hideButton}>
-              <Link to={fullLink}><button className="btn black">Find Files</button></Link>
-            </div>
-            <div className={loading}>
-              <div className="preloader-wrapper small active">
-                  <div className="spinner-layer spinner-green-only">
-                    <div className="circle-clipper left">
-                      <div className="circle"></div>
-                    </div><div className="gap-patch">
-                      <div className="circle"></div>
-                    </div><div className="circle-clipper right">
-                      <div className="circle"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-          </div>
+        <div className="container center-align">
+          <h3>Documents Shared With Me</h3>
+          <h5>Select the contact who shared with you</h5>
         </div>
-        <h5 className="center-align">Or select from your contacts</h5>
+
         <div className="shared-contacts row">
         {contacts.slice(0).reverse().map(contact => {
             return (
@@ -319,7 +252,7 @@ export default class SharedDocs extends Component {
                 </Link>
                   <div className="card-action">
 
-                    <Link to={'/documents/shared/'+ contact.contact}><a className="black-text">{contact.contact}</a></Link>
+                    <Link className="black-text" to={'/documents/shared/'+ contact.contact}>{contact.contact}</Link>
                   </div>
                 </div>
               </div>
@@ -328,6 +261,87 @@ export default class SharedDocs extends Component {
         }
         </div>
       </div>
+    );
+    } else {
+      return (
+      <div className={show}>
+        <div className="container center-align">
+          <h3>Documents I Shared</h3>
+          <h5 >Select the contact you shared with</h5>
+        </div>
+
+        <div className="shared-contacts row">
+        {contacts.slice(0).reverse().map(contact => {
+            return (
+              <div key={contact.contact} className="col s6 m3">
+
+                <div className="card small renderedDocs">
+                <Link to={'/documents/sent/'+ contact.contact} className="black-text">
+                  <div className="center-align card-content">
+                    <p><img className="responsive-img circle profile-img" src={contact.img} alt="profile" /></p>
+                  </div>
+                </Link>
+                  <div className="card-action">
+
+                    <Link className="black-text" to={'/documents/sent/'+ contact.contact}>{contact.contact}</Link>
+                  </div>
+                </div>
+              </div>
+            )
+          })
+        }
+        </div>
+      </div>
+    );
+    }
+  }
+
+
+  render() {
+    const userData = blockstack.loadUserData();
+    const person = new blockstack.Person(userData.profile);
+    const show = this.state.show;
+    const hideButton = this.state.hideButton;
+    let value = this.state.value;
+    console.log(loadUserData().username);
+    const loading = this.state.loading;
+    let contacts = this.state.filteredContacts;
+    let link = '/documents/shared/';
+    let user = this.state.senderID;
+    let fullLink = link + user;
+
+    return (
+      <div>
+      <div className="navbar-fixed toolbar">
+        <nav className="toolbar-nav">
+          <div className="nav-wrapper">
+            <a href="/" className="brand-logo">Graphite.<img className="pencil" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Black_pencil.svg/1000px-Black_pencil.svg.png" alt="pencil" /></a>
+
+            <ul id="nav-mobile" className="right">
+            <ul id="dropdown1" className="dropdown-content">
+              <li><a href="/profile">Profile</a></li>
+              <li><a href="/shared-docs">Shared Files</a></li>
+              <li><a href="/export">Export All Data</a></li>
+              <li className="divider"></li>
+              <li><a href="#" onClick={ this.handleSignOut }>Sign out</a></li>
+            </ul>
+            <ul id="dropdown2" className="dropdown-content">
+              <li><a href="/documents"><i className="material-icons blue-text text-darken-2">description</i><br />Documents</a></li>
+              <li><a href="/sheets"><i className="material-icons green-text text-lighten-1">grid_on</i><br />Sheets</a></li>
+              <li><a href="/contacts"><i className="material-icons purple-text lighten-3">contacts</i><br />Contacts</a></li>
+              <li><a href="/conversations"><i className="material-icons orange-text accent-2">chat</i><br />Conversations</a></li>
+            </ul>
+              <li><a className="dropdown-button" href="#!" data-activates="dropdown2"><i className="material-icons apps">apps</i></a></li>
+              <li><a className="dropdown-button" href="#!" data-activates="dropdown1"><img src={ person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage } className="img-rounded avatar" id="avatar-image" /><i className="material-icons right">arrow_drop_down</i></a></li>
+            </ul>
+          </div>
+        </nav>
+        </div>
+        <div className="share-buttons center-align">
+          <button onClick={() => this.setState({ sharedWithMe: true })} className="btn black">Shared with me</button>
+          <button onClick={() => this.setState({ sharedWithMe: false })} className="btn black">Shared with others</button>
+        </div>
+        {this.renderView()}
       </div>
     );
   }
@@ -340,3 +354,24 @@ export default class SharedDocs extends Component {
     }
   }
 }
+//TODO add this back when you enable public sharing
+// <div className="card center-align shared">
+//   <h6>Enter the Blockstack user ID of the person who shared the file(s) with you</h6>
+//   <input className="" placeholder="Ex: JohnnyCash.id" type="text" onChange={this.handleIDChange} />
+//   <div className={hideButton}>
+//     <Link to={fullLink}><button className="btn black">Find Files</button></Link>
+//   </div>
+//   <div className={loading}>
+//     <div className="preloader-wrapper small active">
+//         <div className="spinner-layer spinner-green-only">
+//           <div className="circle-clipper left">
+//             <div className="circle"></div>
+//           </div><div className="gap-patch">
+//             <div className="circle"></div>
+//           </div><div className="circle-clipper right">
+//             <div className="circle"></div>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+// </div>

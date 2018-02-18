@@ -10,6 +10,7 @@ import TestDoc from './documents/TestDoc';
 import SingleDoc from './documents/SingleDoc';
 import DeleteDoc from './documents/DeleteDoc';
 import SharedCollection from './documents/SharedCollection';
+import SentCollection from './documents/SentCollection';
 import SingleSharedDoc from './documents/SingleSharedDoc';
 import Admin from './documents/Admin';
 import SharedDocs from './documents/SharedDocs';
@@ -19,6 +20,7 @@ import SingleSheet from './sheets/SingleSheet';
 import TestSheet from './sheets/TestSheet';
 import DeleteSheet from './sheets/DeleteSheet';
 import SharedSheetsCollection from './sheets/SharedSheetsCollection';
+import SentSheetsCollection from './sheets/SentSheetsCollection';
 import SingleSharedSheet from './sheets/SingleSharedSheet';
 import MainContacts from './messages/MainContacts';
 import Contacts from './messages/Contacts';
@@ -64,6 +66,7 @@ export default class App extends Component {
             <Route exact path="/documents/doc/:id" component={SingleDoc} />
             <Route exact path="/documents/doc/delete/:id" component={DeleteDoc} />
             <Route exact path="/documents/shared/:id" component={SharedCollection} />
+            <Route exact path="/documents/sent/:id" component={SentCollection} />
             <Route exact path="/documents/single/shared/:id" component={SingleSharedDoc} />
             <Route exact path="/admin-docs" component={Admin} />
             <Route exact path="/profile" component={Profile} />
@@ -72,6 +75,7 @@ export default class App extends Component {
             <Route exact path="/sheets/sheet/:id" component={SingleSheet} />
             <Route exact path="/sheets/sheet/delete/:id" component={DeleteSheet} />
             <Route exact path="/sheets/shared/:id" component={SharedSheetsCollection} />
+            <Route exact path="/sheets/sent/:id" component={SentSheetsCollection} />
             <Route exact path="/sheets/single/shared/:id" component={SingleSharedSheet} />
             <Route exact path="/testsheet" component={TestSheet} />
             <Route exact path="/shared-sheets" component={SharedSheets} />
@@ -80,7 +84,6 @@ export default class App extends Component {
             <Route exact path="/conversations" component={Conversations} />
             <Route exact path="/contacts/profile/:id" component={ContactsProfile} />
             <Route exact path="/contacts/conversations/:id" component={SingleConversation} />
-            <Route exact path="/contacts/delete/:id" component={DeleteContact} />
           </div>
         </BrowserRouter>
       </div>

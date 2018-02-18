@@ -795,6 +795,16 @@ input:focus {
   padding: 25px;
 }
 
+.share-buttons {
+  margin-top: 45px;
+  margin-bottom: 45px;
+}
+
+.share-buttons button {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
 .addButton {
   margin-top: 25px;
 }

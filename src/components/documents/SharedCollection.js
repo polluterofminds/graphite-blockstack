@@ -74,27 +74,26 @@ export default class SharedCollection extends Component {
     this.setState({ user: this.props.match.params.id });
     const user = this.props.match.params.id;
     const options = { username: user, zoneFileLookupURL: "https://core.blockstack.org/v1/names"}
-
+    lookupProfile(this.state.user, "https://core.blockstack.org/v1/names")
+      .then((profile) => {
+        let image = profile.image;
+        console.log(profile);
+        if(profile.image){
+          this.setState({img: image[0].contentUrl})
+        } else {
+          this.setState({ img: avatarFallbackImage })
+        }
+      })
+      .catch((error) => {
+        console.log('could not resolve profile')
+      })
     getFile(directory, options)
      .then((fileContents) => {
-       lookupProfile(this.state.user, "https://core.blockstack.org/v1/names")
-         .then((profile) => {
-           let image = profile.image;
-           console.log(profile);
-           if(profile.image){
-             this.setState({img: image[0].contentUrl})
-           } else {
-             this.setState({ img: avatarFallbackImage })
-           }
-         })
-         .catch((error) => {
-           console.log('could not resolve profile')
-         })
-        console.log(fileContents);
-        let privateKey = loadUserData().appPrivateKey;
-        this.setState({ docs: JSON.parse(decryptECIES(privateKey, JSON.parse(fileContents))) })
-        console.log("loaded");
-        this.save();
+       let privateKey = loadUserData().appPrivateKey;
+       console.log(JSON.parse(decryptECIES(privateKey, JSON.parse(fileContents))));
+       this.setState({ docs: JSON.parse(decryptECIES(privateKey, JSON.parse(fileContents))) })
+       console.log("loaded");
+       this.save();
      })
       .catch(error => {
         console.log(error);
@@ -162,7 +161,7 @@ export default class SharedCollection extends Component {
           <div className="navbar-fixed toolbar">
             <nav className="toolbar-nav">
               <div className="nav-wrapper">
-                <a href="/documents" className="brand-logo"><i className="material-icons">arrow_back</i></a>
+                <a href="/shared-docs" className="brand-logo"><i className="material-icons">arrow_back</i></a>
 
 
                   <ul className="left toolbar-menu">

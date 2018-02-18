@@ -66,7 +66,8 @@ export default class Conversations extends Component {
       scroll: true,
       newContactImg: avatarFallbackImage,
       audio: false,
-      deleteShow: "hide"
+      deleteMessageId: "",
+      index: ""
     }
     this.handleaddItem = this.handleaddItem.bind(this);
     this.saveNewFile = this.saveNewFile.bind(this);
@@ -75,6 +76,7 @@ export default class Conversations extends Component {
     this.filterList = this.filterList.bind(this);
     this.handleMessage = this.handleMessage.bind(this);
     this.noScroll = this.noScroll.bind(this);
+    // this.deleteMessage = this.deleteMessage.bind(this);
   }
 
   componentWillMount() {
@@ -123,7 +125,24 @@ export default class Conversations extends Component {
 
       this.refresh = setInterval(() => this.fetchData(), 2000);
 
+      // this.deleteMessage = () => {
+      //   let message = this.state.myMessages;
+      //   const thisMessage = message.find((a) => { return a.id == this.state.deleteMessageId});
+      //   let index = thisMessage && thisMessage.id;
+      //   function findObjectIndex(a) {
+      //       return a.id == index;
+      //   }
+      //   this.setState({index: message.findIndex(findObjectIndex)})
+      //   this.confirmDelete();
+      // }
 
+      this.confirmDelete = () => {
+        // this.setState({ messages: [...this.state.myMessages, this.state.myMessages.splice(this.state.index, 1)]})
+        //
+        // this.setState({deleteMessageId: ""});
+        //
+        // setTimeout(this.saveNewFile, 500);
+      }
 
   }
 
@@ -149,7 +168,6 @@ export default class Conversations extends Component {
     getFile('key.json', options)
       .then((file) => {
         this.setState({ pubKey: JSON.parse(file)})
-        console.log("Step One: PubKey Loaded");
       })
         .catch(error => {
           console.log(error);
@@ -169,22 +187,22 @@ export default class Conversations extends Component {
           })
         })
         .catch((error) => {
-          console.log('could not resolve profile')
+          console.log(error)
         })
       const fileName = loadUserData().username.slice(0, -3) + '.json';
       const privateKey = loadUserData().appPrivateKey;
       const directory = '/shared/messages/' + fileName;
       getFile(directory, options)
         .then((file) => {
-          console.log("fetched!");
           this.setState({ tempMessages: JSON.parse(decryptECIES(privateKey, JSON.parse(file))) });
           let temp = this.state.tempMessages;
-          this.setState({ sharedMessages: temp.messages});
           if(this.state.newCount < 1) {
             this.setState({ newCount: temp.messages.length })
+            this.setState({ sharedMessages: temp.messages});
           } else {
             if(this.state.newCount < temp.messages.length) {
               let newMessageCount = temp.messages.length - this.state.newCount;
+              this.setState({ sharedMessages: temp.messages});
               this.setState({ newCount: this.state.newCount + newMessageCount })
               var audio = new Audio('https://notificationsounds.com/soundfiles/0fcbc61acd0479dc77e3cccc0f5ffca7/file-sounds-1078-case-closed.mp3');
               audio.play();
@@ -202,7 +220,7 @@ export default class Conversations extends Component {
           this.setState({ loading: "hide", show: "" });
         })
         .catch((error) => {
-          console.log('could not fetch shared messages: ' + error);
+          console.log(error);
         })
   }
 
@@ -247,7 +265,6 @@ export default class Conversations extends Component {
     const fileName = this.state.conversationUser.slice(0, -3) + '.json';
     putFile(fileName, JSON.stringify(this.state), {encrypt: true})
       .then(() => {
-        console.log("Saved!");
         this.setState({deleteShow: "hide"});
         this.saveShared();
       })
@@ -264,7 +281,6 @@ export default class Conversations extends Component {
     const directory = '/shared/messages/' + fileName;
     putFile(directory, encryptedData)
       .then(() => {
-        console.log("Shared encrypted file " + directory);
       })
       .catch(e => {
         console.log(e);
@@ -303,14 +319,16 @@ export default class Conversations extends Component {
   }
 
 changeFavicon() {
-  document.getElementById('favicon').href = iconNew;
+  // document.getElementById('favicon').href = iconNew;
+    document.title = "(*) Graphite";
 }
 favBack() {
-  document.getElementById('favicon').href = 'http://www.graphitedocs.com/favicon.ico';
+  document.title = "Graphite";
 }
 
 
   renderView() {
+
     if(this.state.newCount > 0 && this.state.scroll == true) {
       this.scrollToBottom();
     }
@@ -384,7 +402,7 @@ favBack() {
                     <div className="bubble sender container row">
                       <div className="col s8">
                         <p dangerouslySetInnerHTML={{ __html: message.content }} />
-                        <p className="muted">{message.created} <span></span></p>
+                        <p className="muted">{message.created} </p>
                       </div>
                       <div className="col s4">
                         <img className="responsive-img sender-message-img circle" src={this.state.userImg} alt="avatar" />
@@ -442,6 +460,7 @@ favBack() {
 
 
   render(){
+    console.log(this.state.combinedMessages)
     let contacts = this.state.filteredContacts;
     const userData = blockstack.loadUserData();
     const person = new blockstack.Person(userData.profile);
