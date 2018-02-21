@@ -28,6 +28,9 @@ import Conversations from './messages/Conversations';
 import ContactsProfile from './messages/ContactsProfile';
 import SingleConversation from './messages/SingleConversation';
 import DeleteContact from './messages/DeleteContact';
+import MainVault from './vault/MainVault';
+import SingleVaultFile from './vault/SingleVaultFile';
+import DeleteVaultFile from './vault/DeleteVaultFile';
 import Export from './Export';
 import {
   isSignInPending,
@@ -83,7 +86,11 @@ export default class App extends Component {
             <Route exact path="/contacts" component={MainContacts} />
             <Route exact path="/conversations" component={Conversations} />
             <Route exact path="/contacts/profile/:id" component={ContactsProfile} />
+            <Route exact path="/contacts/delete/:id" component={DeleteContact} />
             <Route exact path="/contacts/conversations/:id" component={SingleConversation} />
+            <Route exact path="/vault" component={MainVault} />
+            <Route exact path="/vault/:id" component={SingleVaultFile} />
+            <Route exact path="/vault/delete/:id" component={DeleteVaultFile} />
           </div>
         </BrowserRouter>
       </div>
