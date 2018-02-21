@@ -9,6 +9,10 @@ a {
   cursor: pointer!important;
 }
 
+strong {
+  font-weight: 600;
+}
+
 .alert-message {
   padding: 10px;
   background: #ffd54f;
@@ -793,6 +797,15 @@ input:focus {
   margin: auto;
   margin-top: 50px;
   padding: 25px;
+}
+
+.icon-image {
+  max-width: 27%;
+  margin-top: 15px;
+}
+
+.vault {
+  margin-top: 10px;
 }
 
 .share-buttons {

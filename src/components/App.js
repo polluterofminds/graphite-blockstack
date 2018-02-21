@@ -30,6 +30,7 @@ import SingleConversation from './messages/SingleConversation';
 import DeleteContact from './messages/DeleteContact';
 import MainVault from './vault/MainVault';
 import SingleVaultFile from './vault/SingleVaultFile';
+import NewVaultFile from './vault/NewVaultFile';
 import DeleteVaultFile from './vault/DeleteVaultFile';
 import Export from './Export';
 import {
@@ -89,6 +90,7 @@ export default class App extends Component {
             <Route exact path="/contacts/delete/:id" component={DeleteContact} />
             <Route exact path="/contacts/conversations/:id" component={SingleConversation} />
             <Route exact path="/vault" component={MainVault} />
+            <Route exact path="/vault/new" component={NewVaultFile} />
             <Route exact path="/vault/:id" component={SingleVaultFile} />
             <Route exact path="/vault/delete/:id" component={DeleteVaultFile} />
           </div>

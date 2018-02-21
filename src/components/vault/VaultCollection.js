@@ -27,6 +27,7 @@ export default class VaultCollection extends Component {
   	  	},
   	  },
       files: [],
+      folders: [],
   	};
   }
 
@@ -41,11 +42,9 @@ export default class VaultCollection extends Component {
   }
 
   render() {
-    let key = Date.now();
     let files = this.state.files;
-    // files.slice(0).reverse().map(file => {
-    //   return(console.log(file.name))
-    // });
+    let folders = this.state.folders;
+
     console.log(files);
     const { handleSignOut } = this.props;
     const { person } = this.state;
@@ -54,9 +53,30 @@ export default class VaultCollection extends Component {
       <div className="docs">
         <h3 className="center-align">Your Files</h3>
         <div className="row">
+          <div className="col s4 m2">
+            <div className="card-panel grey">
+              <span className="white-text center-align">
+                <p><i className="medium material-icons">create_new_folder</i></p>
+                <p>Create a folder</p>
+              </span>
+            </div>
+          </div>
+          {folders.slice(0).reverse().map(folder => {
+            return (
+              <div className="col s4 m2">
+                <div className="card-panel grey">
+                  <span className="white-text center-align">
+                    <p>{folder.name}</p>
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <div className="row">
           <div className="col s6 m3">
           <div className="card small">
-            <Link to={'/new-file'}><div className="center-align card-content">
+            <Link to={'/vault/new'}><div className="center-align card-content">
               <p><i className="addDoc large material-icons">add</i></p>
             </div></Link>
             <Link to={'/new-file'}><div className="card-action">
@@ -64,7 +84,6 @@ export default class VaultCollection extends Component {
             </div></Link>
           </div>
           </div>
-
 
           {files.slice(0).reverse().map(file => {
               return(
@@ -75,11 +94,11 @@ export default class VaultCollection extends Component {
                   <a className="black-text">
                     <div className="center-align card-content">
                       {
-                        file.type.includes("image") ? <p><i className="large material-icons">photo</i></p> :
-                        file.type.includes("pdf") ? <p><i className="large material-icons">picture_as_pdf</i></p> :
-                        file.type.includes("officedocument") ? <img className="icon-image" src="https://image.flaticon.com/icons/svg/732/732078.svg" alt="word document" /> :
-                        file.type.includes("video") ? <p><i className="large material-icons">video_library</i></p> :
-                        file.type.includes("excel") ? <img className="icon-image" src="https://image.flaticon.com/icons/svg/1/1396.svg" alt="excel file" /> :
+                        file.type.includes("image") ? <p><i className="vault large material-icons">photo</i></p> :
+                        file.type.includes("pdf") ? <p><i className="vault large material-icons">picture_as_pdf</i></p> :
+                        file.type.includes("word") ? <img className="icon-image" src="https://image.flaticon.com/icons/svg/732/732078.svg" alt="word document" /> :
+                        file.type.includes("video") ? <p><i className="vault large material-icons">video_library</i></p> :
+                        file.type.includes("spreadsheet") ? <img className="icon-image" src="https://image.flaticon.com/icons/svg/1/1396.svg" alt="excel file" /> :
                         <div />
                       }
                     </div>

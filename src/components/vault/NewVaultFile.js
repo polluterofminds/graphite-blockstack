@@ -107,9 +107,23 @@ export default class NewVaultFile extends Component {
     const { person } = this.state;
     return (
       !isSignInPending() ?
+      <div>
+      <div className="navbar-fixed toolbar">
+        <nav className="toolbar-nav">
+          <div className="nav-wrapper">
+            <a href="/vault" className="brand-logo"><i className="material-icons">arrow_back</i></a>
+
+
+              <ul className="left toolbar-menu">
+                <li><a href="/vault">Back to Vault</a></li>
+              </ul>
+
+          </div>
+        </nav>
+      </div>
       <div className="center-align container">
-      <h1>Upload a new file</h1>
-      <h3>File size limit: 1mb</h3>
+      <h3>Upload a new file</h3>
+      <h5>File size limit: 1mb</h5>
       <div className="card hoverable">
         <Dropzone
           style={dropzoneStyle}
@@ -122,6 +136,7 @@ export default class NewVaultFile extends Component {
         </Dropzone>
 
         </div>
+      </div>
       </div> : null
     );
   }
