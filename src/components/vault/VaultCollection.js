@@ -28,28 +28,95 @@ export default class VaultCollection extends Component {
   	  },
       files: [],
       folders: [],
+      docs: [],
+      sheets: [],
+      combined: []
   	};
   }
 
   componentDidMount() {
-  getFile("files.json", {decrypt: true})
-   .then((fileContents) => {
-     this.setState({ files: JSON.parse(fileContents || '{}') });
-   })
-    .catch(error => {
-      console.log(error);
-    });
+    getFile("documents.json", {decrypt: true})
+     .then((fileContents) => {
+       if(fileContents) {
+         this.setState({ docs: JSON.parse(fileContents || '{}').value });
+       } else {
+         console.log("No saved docs");
+       }
+     })
+      .catch(error => {
+        console.log(error);
+      });
+
+    getFile("spread.json", {decrypt: true})
+     .then((fileContents) => {
+       if(fileContents) {
+         console.log("Files are here");
+         this.setState({ sheets: JSON.parse(fileContents || '{}').sheets });
+       } else {
+         console.log("Nothing to see here");
+         // this.setState({ value: {} });
+         // this.setState({ filteredValue: {} })
+         // console.log(this.state.value);
+         this.setState({ loading: "hide" });
+       }
+     })
+      .catch(error => {
+        console.log(error);
+      });
+
+    getFile("uploads.json", {decrypt: true})
+     .then((fileContents) => {
+       this.setState({ files: JSON.parse(fileContents || '{}') });
+       this.merge();
+     })
+      .catch(error => {
+        console.log(error);
+      });
+
+  }
+
+  merge() {
+    this.setState({ combinedFiles: this.state.files });
+    console.log("Combined: " + this.state.combinedFiles);
   }
 
   render() {
     let files = this.state.files;
     let folders = this.state.folders;
+    let docs = this.state.docs;
+    let sheets = this.state.sheets;
 
     console.log(files);
     const { handleSignOut } = this.props;
     const { person } = this.state;
     return (
       !isSignInPending() ?
+      <div>
+      <div className="navbar-fixed toolbar">
+        <nav className="toolbar-nav">
+          <div className="nav-wrapper">
+            <a href="/" className="brand-logo">Graphite.<img className="calculator" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik0zIDBjLTEuMSAwLTIgLjktMiAydjFoLTF2NGg2di00aC0xdi0xYzAtMS4xLS45LTItMi0yem0wIDFjLjU2IDAgMSAuNDQgMSAxdjFoLTJ2LTFjMC0uNTYuNDQtMSAxLTF6IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxKSIgLz4KPC9zdmc+" alt="calculator" /></a>
+
+            <ul id="nav-mobile" className="right">
+            <ul id="dropdown1" className="dropdown-content">
+              <li><a href="/profile">Profile</a></li>
+              <li><a href="/shared-sheets">Shared Files</a></li>
+              <li><a href="/export">Export All Data</a></li>
+              <li className="divider"></li>
+              <li><a href="#" onClick={ this.handleSignOut }>Sign out</a></li>
+            </ul>
+            <ul id="dropdown2" className="dropdown-content">
+            <li><a href="/documents"><i className="material-icons blue-text text-darken-2">description</i><br />Documents</a></li>
+            <li><a href="/sheets"><i className="material-icons green-text text-lighten-1">grid_on</i><br />Sheets</a></li>
+            <li><a href="/contacts"><i className="material-icons purple-text lighten-3">contacts</i><br />Contacts</a></li>
+            <li><a href="/conversations"><i className="material-icons orange-text accent-2">chat</i><br />Conversations</a></li>
+            </ul>
+              <li><a className="dropdown-button" href="#!" data-activates="dropdown2"><i className="material-icons apps">apps</i></a></li>
+              <li><a className="dropdown-button" href="#!" data-activates="dropdown1"><img src={ person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage } className="img-rounded avatar" id="avatar-image" /><i className="material-icons right">arrow_drop_down</i></a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
       <div className="docs">
         <h3 className="center-align">Your Files</h3>
         <div className="row">
@@ -76,10 +143,10 @@ export default class VaultCollection extends Component {
         <div className="row">
           <div className="col s6 m3">
           <div className="card small">
-            <Link to={'/vault/new'}><div className="center-align card-content">
+            <Link to={'/vault/new/file'}><div className="center-align card-content">
               <p><i className="addDoc large material-icons">add</i></p>
             </div></Link>
-            <Link to={'/new-file'}><div className="card-action">
+            <Link to={'/vault/new/file'}><div className="card-action">
               <a className="black-text">Upload File</a>
             </div></Link>
           </div>
@@ -87,40 +154,41 @@ export default class VaultCollection extends Component {
 
           {files.slice(0).reverse().map(file => {
               return(
-
-              <Link key={file.id} to={'/files/' + file.id}><div className="col s6 m3">
+                <div key={file.id} className="col s6 m3">
 
                   <div className="card small renderedDocs">
-                  <a className="black-text">
+                  <Link to={'/vault/' + file.id} className="black-text">
                     <div className="center-align card-content">
-                      {
-                        file.type.includes("image") ? <p><i className="vault large material-icons">photo</i></p> :
-                        file.type.includes("pdf") ? <p><i className="vault large material-icons">picture_as_pdf</i></p> :
-                        file.type.includes("word") ? <img className="icon-image" src="https://image.flaticon.com/icons/svg/732/732078.svg" alt="word document" /> :
-                        file.type.includes("video") ? <p><i className="vault large material-icons">video_library</i></p> :
-                        file.type.includes("spreadsheet") ? <img className="icon-image" src="https://image.flaticon.com/icons/svg/1/1396.svg" alt="excel file" /> :
-                        <div />
-                      }
+                    {
+                      file.type.includes("image") ? <p><i className="vault large material-icons">photo</i></p> :
+                      file.type.includes("pdf") ? <p><i className="vault large material-icons">picture_as_pdf</i></p> :
+                      file.type.includes("word") ? <img className="icon-image" src="https://image.flaticon.com/icons/svg/732/732078.svg" alt="word document" /> :
+                      file.type.includes("video") ? <p><i className="vault large material-icons">video_library</i></p> :
+                      file.type.includes("spreadsheet") ? <img className="icon-image" src="https://image.flaticon.com/icons/svg/1/1396.svg" alt="excel file" /> :
+                      <div />
+                    }
                     </div>
-                    </a>
+                    </Link>
                     <div className="card-action">
-                      <a href="#"><a className="black-text">{file.name}</a></a>
-                      <Link to={'/files/delete/' + file.id}>
+                      <Link to={'/vault/' + file.id}><a className="black-text">{file.name.length > 14 ? file.name.substring(0,17)+"..." :  file.name}</a></Link>
+                      <Link to={'/vault/delete/' + file.id}>
 
                           <i className="modal-trigger material-icons red-text delete-button">delete</i>
 
                       </Link>
                       <div className="muted">
-                        <p>{file.lastModifiedDate}</p>
+                        <p>Last updated: {file.lastModifiedDate}</p>
                       </div>
                     </div>
                   </div>
-                </div></Link>
+                </div>
+
               )
               })
             }
 
         </div>
+      </div>
       </div> : null
     );
   }

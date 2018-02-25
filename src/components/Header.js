@@ -49,13 +49,19 @@ export default class Header extends Component {
       const person = new blockstack.Person(userData.profile);
       console.log('person', person);
       return (
-        ""
+        <ul id="nav-mobile" className="right">
+        <ul id="dropdown1" className="dropdown-content">
+          <li><a href="/export">Export All Data</a></li>
+          <li className="divider"></li>
+          <li><a href="#" onClick={ this.handleSignOut }>Sign out</a></li>
+        </ul>
+          <li><a className="dropdown-button" href="#!" data-activates="dropdown1"><img src={ person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage } className="img-rounded avatar" id="avatar-image" /><i className="material-icons right">arrow_drop_down</i></a></li>
+        </ul>
       );
     } else {
       return(
         <ul id="nav-mobile" className="right">
-          <li><a href="#" onClick={ handleSignIn.bind(this) }>Sign in</a></li>
-          <li><a href="http://graphitedocs.com" target="_blank">About</a></li>
+          <li><a href="http://graphitedocs.com" target="_blank">About Graphite</a></li>
         </ul>
       );
     }
@@ -65,7 +71,7 @@ export default class Header extends Component {
     return (
       <nav>
         <div className="nav-wrapper">
-          <a href="/" className="brand-logo">Graphite.<img className="pencil" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Black_pencil.svg/1000px-Black_pencil.svg.png" alt="pencil" /></a>
+          <a href="/" className="brand-logo text-white">Graphite.<img className="pencil" src="http://www.iconsplace.com/icons/preview/white/pencil-256.png" alt="pencil" /></a>
           {this.renderHeader()}
         </div>
       </nav>

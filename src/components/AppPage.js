@@ -8,10 +8,14 @@ import {
   isUserSignedIn,
   redirectToSignIn,
   handlePendingSignIn,
-  signUserOut,
+  loadUserData,
+  Person,
+  getFile,
   putFile,
-  loadUserData
+  lookupProfile,
+  signUserOut,
 } from 'blockstack';
+const blockstack = require("blockstack");
 
 
 export default class AppPage extends Component {
@@ -32,6 +36,7 @@ export default class AppPage extends Component {
   }
 
   render() {
+
 
     return (
       <div>

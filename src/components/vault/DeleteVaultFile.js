@@ -28,6 +28,7 @@ export default class DeleteVaultFile extends Component {
   	  	},
   	  },
       files: [],
+      singleFile: {},
       name: "",
       link: "",
       lastModified: "",
@@ -41,25 +42,35 @@ export default class DeleteVaultFile extends Component {
       show: ""
   	};
     this.save = this.save.bind(this);
+    this.saveTwo = this.saveTwo.bind(this);
     this.handleDeleteItem = this.handleDeleteItem.bind(this);
   }
 
   componentDidMount() {
-  getFile("files.json", {decrypt: true})
-   .then((fileContents) => {
-     this.setState({ files: JSON.parse(fileContents || '{}') });
-     let files = this.state.files;
-      const thisFile = files.find((file) => { return file.id == this.props.match.params.id});
-      let index = thisFile && thisFile.id;
-      console.log(index);
-      function findObjectIndex(file) {
-        return file.id == index;
-      }
-      this.setState({ name: thisFile && thisFile.name, type: thisFile && thisFile.type, lastModified: thisFile && thisFile.lastModified, lastModifiedDate: thisFile && thisFile.lastModifiedDate, size: thisFile && thisFile.size, link: thisFile && thisFile.link, index: files.findIndex(findObjectIndex) })
-   })
-    .catch(error => {
-      console.log(error);
-    });
+    getFile('uploads.json', {decrypt: true})
+      .then((file) => {
+        this.setState({files: JSON.parse(file || '{}') });
+        let files = this.state.files;
+        const thisFile = files.find((file) => { return file.id == this.props.match.params.id});
+        let index = thisFile && thisFile.id;
+        console.log(index);
+        function findObjectIndex(file) {
+          return file.id == index;
+        }
+        this.setState({index: files.findIndex(findObjectIndex)});
+      })
+      .catch(error => {
+        console.log(error);
+      })
+    const file = this.props.match.params.id;
+    getFile(file + '.json', {decrypt: true})
+     .then((fileContents) => {
+       this.setState({ singleFile: JSON.parse(fileContents || '{}') });
+       this.setState({ name: JSON.parse(fileContents || '{}').name })
+     })
+      .catch(error => {
+        console.log(error);
+      });
   }
 
   handleDeleteItem() {
@@ -67,6 +78,7 @@ export default class DeleteVaultFile extends Component {
     object.title = this.state.textvalue;
     object.content = this.state.test;
     object.id = parseInt(this.props.match.params.id);
+    this.setState({ singleFile: {} })
     this.setState({ files: [...this.state.files, this.state.files.splice(this.state.index, 1)]})
     this.setState({ loading: "show", save: "hide" });
     this.save();
@@ -75,10 +87,24 @@ export default class DeleteVaultFile extends Component {
   save() {
     this.setState({ loading: "show" });
     this.setState({ save: "hide"});
-    putFile("files.json", JSON.stringify(this.state.files), {encrypt:true})
+    putFile("uploads.json", JSON.stringify(this.state.files), {encrypt:true})
       .then(() => {
         console.log("Saved!");
-        window.location.replace("/");
+        this.saveTwo();
+      })
+      .catch(e => {
+        console.log("e");
+        console.log(e);
+        alert(e.message);
+      });
+  }
+
+  saveTwo() {
+    const file = this.props.match.params.id;
+    putFile(file + '.json', JSON.stringify(this.state.singleFile), {encrypt:true})
+      .then(() => {
+        console.log("Saved!");
+        window.location.replace("/vault");
       })
       .catch(e => {
         console.log("e");

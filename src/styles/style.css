@@ -1,8 +1,9 @@
-@import url('https://fonts.googleapis.com/css?family=Alfa+Slab+One|Raleway|Roboto|Ubuntu|Lato|Open+Sans|Montserrat');
+@import url('https://fonts.googleapis.com/css?family=Alfa+Slab+One|Raleway|Roboto|Ubuntu|Lato|Open+Sans|Montserrat|Muli');
 @import url('https://fonts.googleapis.com/css?family=Slabo+27px');
 
 body {
   background-color: #C4C4C4;
+  font-family: 'Open Sans', sans-serif;
 }
 
 a {
@@ -11,6 +12,10 @@ a {
 
 strong {
   font-weight: 600;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: 'Muli', sans-serif;
 }
 
 .alert-message {
@@ -54,6 +59,11 @@ strong {
 
 .export-card {
   padding: 30px;
+}
+
+.single-file-doc {
+  padding: 50px;
+  margin-top: 40px;
 }
 
 #doccontainer a, #sheetcontainer a {
@@ -350,10 +360,6 @@ button:active, button:focus {
   height: 250px!important;
 }
 
-.main-container {
-  margin-bottom: 50px;
-}
-
 .indent {
   text-indent: 2em;
 }
@@ -396,15 +402,16 @@ select {
 
 /*//Header design*/
 .nav-wrapper {
-  background-color: #fff;
+  /* background-color: #fff; */
+  background: #222223;
 }
 
 nav .brand-logo {
-  color: #000;
+  color: #fff;
 }
 
 nav ul a {
-  color: #000;
+  color: #fff;
 }
 
 .brand-logo {
@@ -424,6 +431,11 @@ nav ul a {
   width: 20px;
   margin-bottom: 8px;
   margin-right: 3px;
+}
+
+.log-in {
+  border-radius: 5px!important;
+  background: #15081C!important;
 }
 
 .calculator {
@@ -831,8 +843,34 @@ input:focus {
   margin-top: 20px;
 }
 
+.intro-text {
+  max-width: 50%;
+  margin: auto;
+  font-size: 18px;
+  margin-bottom: 40px;
+}
+
 .sheets-loader {
   margin-top: 200px;
+}
+
+.file-view {
+  height: 100%;
+  background-color:rgba(0, 0, 0, 0.5);
+  padding-bottom: 50px;
+}
+
+.left-align div button {
+  margin-top: 25px;
+}
+
+.single-file-button {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.single-file-div {
+  padding-top: 80px;
 }
 
 /*Media Queires*/
