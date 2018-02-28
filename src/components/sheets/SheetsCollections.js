@@ -153,7 +153,7 @@ export default class SheetsCollections extends Component {
       <div className="navbar-fixed toolbar">
         <nav className="toolbar-nav">
           <div className="nav-wrapper">
-            <a href="/" className="brand-logo">Graphite.<img className="calculator" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9%0D%0AIjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik0uMDkgMGMtLjA2IDAtLjA5LjA0LS4w%0D%0AOS4wOXY3LjgxYzAgLjA1LjA0LjA5LjA5LjA5aDYuODFjLjA1IDAgLjA5LS4wNC4wOS0uMDl2LTcu%0D%0AODFjMC0uMDYtLjA0LS4wOS0uMDktLjA5aC02Ljgxem0uOTEgMWg1djJoLTV2LTJ6bTAgM2gxdjFo%0D%0ALTF2LTF6bTIgMGgxdjFoLTF2LTF6bTIgMGgxdjNoLTF2LTN6bS00IDJoMXYxaC0xdi0xem0yIDBo%0D%0AMXYxaC0xdi0xeiIgLz4KPC9zdmc+" alt="calculator" /></a>
+            <a href="/" className="brand-logo left text-white">Graphite.<img className="pencil" src="http://www.iconsplace.com/icons/preview/white/pencil-256.png" alt="pencil" /></a>
 
             <ul id="nav-mobile" className="right">
             <ul id="dropdown1" className="dropdown-content">
@@ -178,10 +178,11 @@ export default class SheetsCollections extends Component {
 
 
         <div className="docs">
-        <div className="search card">
+        <h3 className="container center-align">Sheets</h3>
+        <div className="">
           <form className="searchform">
           <fieldset className="form-group searchfield">
-          <input type="text" className="form-control form-control-lg searchinput" placeholder="Search" onChange={this.filterList}/>
+          <input type="text" className="form-control form-control-lg sheetsform searchinput" placeholder="Search Sheets" onChange={this.filterList}/>
           </fieldset>
           </form>
         </div>
@@ -193,41 +194,39 @@ export default class SheetsCollections extends Component {
               </div>
             </div>
           </div>
-        <h3 className="container center-align">Your Sheets</h3>
         <div className="row">
-          <div className="col s6 m3">
-            <a onClick={this.handleaddItem}><div className="card small">
-              <div className="center-align card-content">
-                <p><i className="addDoc large material-icons">add</i></p>
-              </div>
-              <div className="card-action">
-                <a className="black-text">New Sheet</a>
-              </div>
-            </div></a>
-          </div>
+        <div className="col s12 m6 l3">
+          <a onClick={this.handleaddItem}><div className="card collections-card">
+            <div className="center-align new-doc card-content">
+              <p><i className="addDoc green-text medium material-icons">add</i></p>
+            </div>
+            <h5 className="center-align black-text">New Sheet</h5>
+          </div></a>
+        </div>
           {sheets.slice(0).reverse().map(sheet => {
               return (
-                <div key={sheet.id} className="col s6 m3">
-
-                  <div className="card small renderedDocs">
-                  <Link to={'/sheets/sheet/'+ sheet.id} className="black-text">
-                    <div className="center-align card-content">
-                      <p><i className="spreadsheet-icon large green-text text-lighten-1 material-icons">grid_on</i></p>
-                    </div>
+                <div key={sheet.id} className="col s12 m6 l3">
+                    <div className="card collections-card hoverable horizontal">
+                    <Link to={'/sheets/sheet/'+ sheet.id} className="side-card black-text sheets-side">
+                      <div className="card-image card-image-side sheets-side">
+                        <i className="material-icons medium green-text text-darken-4">grid_on</i>
+                      </div>
                     </Link>
-                    <div className="card-action">
-                      <Link to={'/sheets/sheet/'+ sheet.id}><a className="black-text">{sheet.title.length > 17 ? sheet.title.substring(0,17)+"..." :  sheet.title}</a></Link>
-                      <Link to={'/sheets/sheet/delete/'+ sheet.id}>
-
-                          <i className="modal-trigger material-icons red-text delete-button">delete</i>
-
+                      <div className="card-stacked">
+                      <Link to={'/sheets/sheet/'+ sheet.id} className="black-text">
+                        <div className="card-content">
+                          <p className="title">{sheet.title.length > 14 ? sheet.title.substring(0,14)+"..." :  sheet.title}</p>
+                        </div>
                       </Link>
-                      <div className="muted">
-                        <p>Last updated: {sheet.updated}</p>
+                        <div className="edit-card-action card-action">
+                          <p><span className="muted muted-card">Last modified: {sheet.updated}</span><Link to={'/sheets/sheet/delete/'+ sheet.id}><i className="modal-trigger material-icons red-text delete-button">delete</i></Link></p>
+                        </div>
                       </div>
                     </div>
-                  </div>
+
+
                 </div>
+
               )
             })
           }
@@ -237,3 +236,25 @@ export default class SheetsCollections extends Component {
     );
   }
 }
+
+// <div key={sheet.id} className="col s6 m3">
+//
+//   <div className="card small renderedDocs">
+//   <Link to={'/sheets/sheet/'+ sheet.id} className="black-text">
+//     <div className="center-align card-content">
+//       <p><i className="spreadsheet-icon large green-text text-lighten-1 material-icons">grid_on</i></p>
+//     </div>
+//     </Link>
+//     <div className="card-action">
+//       <Link to={'/sheets/sheet/'+ sheet.id}><a className="black-text">{sheet.title.length > 17 ? sheet.title.substring(0,17)+"..." :  sheet.title}</a></Link>
+//       <Link to={'/sheets/sheet/delete/'+ sheet.id}>
+//
+//           <i className="modal-trigger material-icons red-text delete-button">delete</i>
+//
+//       </Link>
+//       <div className="muted">
+//         <p>Last updated: {sheet.updated}</p>
+//       </div>
+//     </div>
+//   </div>
+// </div>

@@ -96,8 +96,9 @@ export default class DeleteSheet extends Component {
     const save = this.state.save;
     return (
       <div>
+        <Header />
         <div className="container docs">
-          <div className="card doc-card">
+          <div className="card doc-card delete-card">
             <div className="double-space doc-margin delete-doc center-align">
             <h5>
               Delete Sheet
@@ -108,7 +109,7 @@ export default class DeleteSheet extends Component {
             <button className="btn red" onClick={this.handleDeleteItem}>
               Delete
             </button>
-            <a href="/documents"><button className="btn grey">
+            <a href="/sheets"><button className="btn grey">
               No, go back
             </button></a>
             </div>

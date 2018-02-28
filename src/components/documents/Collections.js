@@ -146,7 +146,7 @@ export default class Collections extends Component {
       <div className="navbar-fixed toolbar">
         <nav className="toolbar-nav">
           <div className="nav-wrapper">
-            <a href="/" className="brand-logo">Graphite.<img className="pencil" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Black_pencil.svg/1000px-Black_pencil.svg.png" alt="pencil" /></a>
+            <a href="/" className="brand-logo left text-white">Graphite.<img className="pencil" src="http://www.iconsplace.com/icons/preview/white/pencil-256.png" alt="pencil" /></a>
 
             <ul id="nav-mobile" className="right">
             <ul id="dropdown1" className="dropdown-content">
@@ -170,10 +170,12 @@ export default class Collections extends Component {
         </div>
 
         <div className="docs">
-        <div className="search card">
+        <h3 className="container center-align">Documents</h3>
+        <div className="">
           <form className="searchform">
-          <fieldset className="form-group searchfield">
-          <input type="text" className="form-control form-control-lg searchinput" placeholder="Search" onChange={this.filterList}/>
+          <fieldset className=" form-group searchfield">
+
+          <input type="text" className="form-control docform form-control-lg searchinput" placeholder="Search Documents" onChange={this.filterList}/>
           </fieldset>
           </form>
         </div>
@@ -185,40 +187,37 @@ export default class Collections extends Component {
               </div>
             </div>
           </div>
-        <h3 className="container center-align">Your documents</h3>
         <div className="row">
-          <div className="col s6 m3">
-            <a onClick={this.handleaddItem}><div className="card small">
-              <div className="center-align card-content">
-                <p><i className="addDoc large material-icons">add</i></p>
+          <div className="col s12 m6 l3">
+            <a onClick={this.handleaddItem}><div className="card collections-card">
+              <div className="center-align new-doc card-content">
+                <p><i className="addDoc blue-text medium material-icons">add</i></p>
               </div>
-              <div className="card-action">
-                <a className="black-text">New Document</a>
-              </div>
+              <h5 className="center-align black-text">New Document</h5>
             </div></a>
           </div>
           {value.slice(0).reverse().map(doc => {
               return (
-                <div key={doc.id} className="col s6 m3">
-
-                  <div className="card small renderedDocs">
-                  <Link to={'/documents/doc/'+ doc.id} className="black-text">
-                    <div className="center-align card-content">
-                      <p><i className="large material-icons">short_text</i></p>
-                    </div>
+                <div key={doc.id} className="col s12 m6 l3">
+                    <div className="card collections-card hoverable horizontal">
+                    <Link to={'/documents/doc/'+ doc.id} className="side-card black-text doc-side">
+                      <div className="card-image card-image-side doc-side">
+                        <i className="material-icons medium blue-text text-darken-4">description</i>
+                      </div>
                     </Link>
-                    <div className="card-action">
-                      <Link to={'/documents/doc/'+ doc.id}><a className="black-text">{doc.title.length > 17 ? doc.title.substring(0,17)+"..." :  doc.title}</a></Link>
-                      <Link to={'/documents/doc/delete/'+ doc.id}>
-
-                          <i className="modal-trigger material-icons red-text delete-button">delete</i>
-
+                      <div className="card-stacked">
+                      <Link to={'/documents/doc/'+ doc.id} className="black-text">
+                        <div className="card-content">
+                          <p className="title">{doc.title.length > 14 ? doc.title.substring(0,14)+"..." :  doc.title}</p>
+                        </div>
                       </Link>
-                      <div className="muted">
-                        <p>Last updated: {doc.updated}</p>
+                        <div className="edit-card-action card-action">
+                          <p><span className="muted muted-card">Last modified: {doc.updated}</span><Link to={'/documents/doc/delete/'+ doc.id}><i className="modal-trigger material-icons red-text delete-button">delete</i></Link></p>
+                        </div>
                       </div>
                     </div>
-                  </div>
+
+
                 </div>
               )
             })

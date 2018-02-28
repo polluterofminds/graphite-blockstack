@@ -95,7 +95,7 @@ export default class VaultCollection extends Component {
       <div className="navbar-fixed toolbar">
         <nav className="toolbar-nav">
           <div className="nav-wrapper">
-            <a href="/" className="brand-logo">Graphite.<img className="calculator" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik0zIDBjLTEuMSAwLTIgLjktMiAydjFoLTF2NGg2di00aC0xdi0xYzAtMS4xLS45LTItMi0yem0wIDFjLjU2IDAgMSAuNDQgMSAxdjFoLTJ2LTFjMC0uNTYuNDQtMSAxLTF6IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxKSIgLz4KPC9zdmc+" alt="calculator" /></a>
+            <a href="/" className="brand-logo left text-white">Graphite.<img className="pencil" src="http://www.iconsplace.com/icons/preview/white/pencil-256.png" alt="pencil" /></a>
 
             <ul id="nav-mobile" className="right">
             <ul id="dropdown1" className="dropdown-content">

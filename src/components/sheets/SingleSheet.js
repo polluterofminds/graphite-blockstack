@@ -267,16 +267,16 @@ renderView() {
   if(this.state.initialLoad === "") {
     return (
       <div className="center-align sheets-loader">
-      <div className="navbar-fixed toolbar">
+      <div className="navbar toolbar">
         <nav className="toolbar-nav">
           <div className="nav-wrapper">
             <a href="/sheets" className="brand-logo"><i className="material-icons">arrow_back</i></a>
 
 
               <ul className="left toolbar-menu">
-                <li><input className="black-text" type="text" placeholder="Sheet Title" value={this.state.title} onChange={this.handleTitleChange} /></li>
+                <li><input className="white-text" type="text" placeholder="Sheet Title" value={this.state.title} onChange={this.handleTitleChange} /></li>
                 <li><a onClick={this.print}><i className="material-icons">local_printshop</i></a></li>
-                <li><CSVLink data={this.state.grid} filename={this.state.title + '.csv'} ><img className="csvlogo" src="https://d30y9cdsu7xlg0.cloudfront.net/png/605579-200.png" /></CSVLink></li>
+                <li><CSVLink data={this.state.grid} filename={this.state.title + '.csv'} ><img className="csvlogo" src="http://www.iconsplace.com/download/white-csv-512.png" /></CSVLink></li>
                 <li><a onClick={this.shareModal}><i className="material-icons">share</i></a></li>
               </ul>
               <ul className="right toolbar-menu auto-save">
@@ -304,20 +304,20 @@ renderView() {
   } else {
     return (
       <div>
-      <div className="navbar-fixed toolbar">
+      <div className="navbar toolbar">
         <nav className="toolbar-nav">
           <div className="nav-wrapper">
             <a href="/sheets" className="brand-logo"><i className="material-icons">arrow_back</i></a>
 
 
               <ul className="left toolbar-menu">
-                <li><input className="black-text" type="text" placeholder="Sheet Title" value={this.state.title} onChange={this.handleTitleChange} /></li>
+                <li><input className="white-text" type="text" placeholder="Sheet Title" value={this.state.title} onChange={this.handleTitleChange} /></li>
                 <li><a onClick={this.print}><i className="material-icons">local_printshop</i></a></li>
-                <li><CSVLink data={this.state.grid} filename={this.state.title + '.csv'}><img className="csvlogo" src="https://d30y9cdsu7xlg0.cloudfront.net/png/605579-200.png" /></CSVLink></li>
+                <li><CSVLink data={this.state.grid} filename={this.state.title + '.csv'}><img className="csvlogo" src="http://www.iconsplace.com/download/white-csv-512.png" /></CSVLink></li>
                 <li><a onClick={this.shareModal}><i className="material-icons">share</i></a></li>
               </ul>
               <ul className="right toolbar-menu auto-save">
-              <li><a className="muted">{autoSave}</a></li>
+              <li className="muted">{autoSave}</li>
               </ul>
 
           </div>

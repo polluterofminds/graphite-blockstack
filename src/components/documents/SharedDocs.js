@@ -242,19 +242,24 @@ export default class SharedDocs extends Component {
         <div className="shared-contacts row">
         {contacts.slice(0).reverse().map(contact => {
             return (
-              <div key={contact.contact} className="col s6 m3">
+              <div key={contact.contact} className="col s12 m6 l3">
+                  <div className="card collections-card hoverable horizontal">
+                  <Link to={'/documents/shared/'+ contact.contact} className="side-card doc-side">
+                    <div className="card-image card-image-side doc-side">
+                      <i className="material-icons medium blue-text text-darken-2">description</i>
+                    </div>
+                  </Link>
+                    <div className="card-stacked">
+                    <Link to={'/documents/shared/'+ contact.contact} className="black-text">
+                      <div className="card-content">
+                        <p className="title contacts-title">{contact.contact.length > 14 ? contact.contact.substring(0,14)+"..." :  contact.contact}</p>
+                      </div>
+                    </Link>
+                      <div className="edit-card-action card-action">
 
-                <div className="card small renderedDocs">
-                <Link to={'/documents/shared/'+ contact.contact} className="black-text">
-                  <div className="center-align card-content">
-                    <p><img className="responsive-img circle profile-img" src={contact.img} alt="profile" /></p>
+                      </div>
+                    </div>
                   </div>
-                </Link>
-                  <div className="card-action">
-
-                    <Link className="black-text" to={'/documents/shared/'+ contact.contact}>{contact.contact}</Link>
-                  </div>
-                </div>
               </div>
             )
           })
@@ -266,26 +271,31 @@ export default class SharedDocs extends Component {
       return (
       <div className={show}>
         <div className="container center-align">
-          <h3>Documents I Shared</h3>
+          <h3>Documents Shared With Others</h3>
           <h5 >Select the contact you shared with</h5>
         </div>
 
         <div className="shared-contacts row">
         {contacts.slice(0).reverse().map(contact => {
             return (
-              <div key={contact.contact} className="col s6 m3">
+              <div key={contact.contact} className="col s12 m6 l3">
+                  <div className="card collections-card hoverable horizontal">
+                  <Link to={'/documents/sent/'+ contact.contact} className="side-card doc-side">
+                    <div className="card-image card-image-side doc-side">
+                      <i className="material-icons medium blue-text text-darken-2">description</i>
+                    </div>
+                  </Link>
+                    <div className="card-stacked">
+                    <Link to={'/documents/sent/'+ contact.contact} className="black-text">
+                      <div className="card-content">
+                        <p className="title contacts-title">{contact.contact.length > 14 ? contact.contact.substring(0,14)+"..." :  contact.contact}</p>
+                      </div>
+                    </Link>
+                      <div className="edit-card-action card-action">
 
-                <div className="card small renderedDocs">
-                <Link to={'/documents/sent/'+ contact.contact} className="black-text">
-                  <div className="center-align card-content">
-                    <p><img className="responsive-img circle profile-img" src={contact.img} alt="profile" /></p>
+                      </div>
+                    </div>
                   </div>
-                </Link>
-                  <div className="card-action">
-
-                    <Link className="black-text" to={'/documents/sent/'+ contact.contact}>{contact.contact}</Link>
-                  </div>
-                </div>
               </div>
             )
           })
@@ -337,11 +347,13 @@ export default class SharedDocs extends Component {
           </div>
         </nav>
         </div>
+        <div className="shared-docs-page">
         <div className="share-buttons center-align">
           <button onClick={() => this.setState({ sharedWithMe: true })} className="btn black">Shared with me</button>
           <button onClick={() => this.setState({ sharedWithMe: false })} className="btn black">Shared with others</button>
         </div>
         {this.renderView()}
+        </div>
       </div>
     );
   }

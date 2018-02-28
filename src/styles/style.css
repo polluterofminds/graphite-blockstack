@@ -1,9 +1,10 @@
-@import url('https://fonts.googleapis.com/css?family=Alfa+Slab+One|Raleway|Roboto|Ubuntu|Lato|Open+Sans|Montserrat|Muli');
+@import url('https://fonts.googleapis.com/css?family=Alfa+Slab+One|Raleway|Roboto|Ubuntu|Lato|Open+Sans|Montserrat|Muli:200|Muli');
 @import url('https://fonts.googleapis.com/css?family=Slabo+27px');
 
 body {
-  background-color: #C4C4C4;
+  background-color: #F5F5F5;
   font-family: 'Open Sans', sans-serif;
+  color: #404040;
 }
 
 a {
@@ -14,8 +15,20 @@ strong {
   font-weight: 600;
 }
 
-h1, h2, h3, h4, h5 {
-  font-family: 'Muli', sans-serif;
+h1, h2, h3, h4 {
+  font-family: 'Muli', sans-serif!important;
+  font-weight: 200;
+}
+
+h5, h6 {
+  font-family: 'Muli', sans-serif!important;
+  font-weight: 200;
+}
+
+#nav-mobile {
+  position: absolute;
+  right: 0;
+  z-index: 100;
 }
 
 .alert-message {
@@ -24,11 +37,186 @@ h1, h2, h3, h4, h5 {
 }
 
 .app-card {
-  padding: 30px;
+  margin: -15px;
+  padding: 0;
+  height: 100vh!important;
+  /* border-right: 1px #222223 solid; */
+  /* color: #fff; */
+}
+
+.app-card p, .app-card h4, .app-card h5, .app-card button {
+  position: relative;
+  top: 33%;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.app-card button {
+  margin: auto;
+  margin-top: 75px;
+  text-transform: uppercase;
+}
+
+.docs-card h5, .docs-card button, .docs-card h3 {
+  display: none;
+}
+
+.docs-card:hover {
+  background: #1D44FF
+}
+
+.docs-card:hover p, .docs-card:hover h4, .docs-card:hover h5, .docs-card:hover button, .docs-card:hover h3{
+  top: 25%;
+  display: block;
+}
+
+.docs-card:hover p i {
+  border-radius: 50%;
+  height: 120px;
+  width: 120px;
+  border: 1px #1D44FF solid;
+  color: #fff!important;
+  background: #2282FF;
+  padding: 10px;
+}
+
+.app-button {
+  padding: 10px;
+  border-radius: 15px;
+  height: 45px;
+  width: 100px
+  border 1px solid #fff;
+  color: #fff;
+  background: transparent;
+}
+
+
+.sheets-card h5, .sheets-card button, .sheets-card h3 {
+  display: none;
+}
+
+.sheets-card:hover {
+  background: #1EBE55;
+}
+
+.sheets-card:hover p, .sheets-card:hover h4, .sheets-card:hover h5, .sheets-card:hover button, .sheets-card:hover h3 {
+  top: 25%;
+  display: block;
+}
+
+.sheets-card:hover p i {
+  border-radius: 50%;
+  height: 120px;
+  width: 120px;
+  border: 1px #1EBE55 solid;
+  color: #fff!important;
+  background: #13DF80;
+}
+
+.sheets-card.app-button {
+  border: 1px #81c784 solid;
+  padding: 5px;
+  border-radius: 10px;
+  color: #fff;
+  background: transparent;
+}
+
+.contacts-card h5, .contacts-card button, .contacts-card h3 {
+  display: none;
+}
+
+.contacts-card:hover {
+  background: #644BFF;
+}
+
+.contacts-card:hover p, .contacts-card:hover h4, .contacts-card:hover h5, .contacts-card:hover button, .contacts-card:hover h3{
+  top: 25%;
+  display: block;
+}
+
+.contacts-card:hover p i {
+  border-radius: 50%;
+  height: 120px;
+  width: 120px;
+  border: 1px #644BFF solid;
+  color: #fff!important;
+  background: #7878FF;
+  padding: 10px;
+}
+
+.contacts-card.app-button {
+  border: 1px #d1c4e9 solid;
+  padding: 5px;
+  border-radius: 10px;
+  color: #fff;
+  background: transparent;
+}
+
+.convos h5, .convos button{
+  display: none;
+}
+
+.convos:hover {
+  background: #FFB428;
+}
+
+.convos:hover p, .convos:hover h4, .convos:hover h5, .convos:hover button {
+  top: 25%;
+  display: block;
+}
+
+.convos:hover p i {
+  border-radius: 50%;
+  height: 120px;
+  width: 120px;
+  border: 1px #FFB428 solid;
+  color: #fff!important;
+  background: #FFD25A;
+  padding: 10px;
+}
+
+.convos-card.app-button {
+  border: 1px #d1c4e9 solid;
+  padding: 5px;
+  border-radius: 10px;
+  color: #fff;
+  background: transparent;
+}
+
+.share-button {
+  border: 1px solid #404040;
+  padding: 10px;
+  border-radius: 10px;
+  background: transparent;
+}
+
+.share-button:focus {
+  background: #404040!important;
+  color: #F5F5F5!important;
+}
+
+.doc-side {
+  background: #2282FF;
+}
+
+.sheets-side {
+  background: #13DF80;
+}
+
+.contacts-side {
+  background: #7878FF;
+}
+
+.addContact {
+  color: #644BFF;
+}
+
+.app-page {
+  padding: 0!important;
 }
 
 .app-list {
-  margin-top: 50px;
+  margin-top: 0px;
 }
 
 .splash {
@@ -87,6 +275,7 @@ h1, h2, h3, h4, h5 {
 .card-add {
   width: 65%;
   margin: auto;
+  border-radius: 10px!important;
 }
 
 .add-new {
@@ -98,7 +287,6 @@ h1, h2, h3, h4, h5 {
 
 .bubble {
     padding: 8px 15px 8px 15px;
-    border-radius: 20px;
     text-align: left;
     /* font-family: "Helvetica Neue"; */
     font-size: 14px;
@@ -106,19 +294,27 @@ h1, h2, h3, h4, h5 {
 }
 
 .receiver {
-  background-color: #E5E5EA;
-  color: #000;
-  margin-top: 40px;
-  max-width: 60%;
-  margin-left: 20px;
+  background-color: #F5F5F5;
+  color: #404040;
+  max-width: 100%;
+  margin-bottom: 0!important;
 }
 
 .sender {
-  background-color: #039BE3;
-  color: #fff;
-  margin-top: 40px;
-  max-width: 60%;
-  margin-right: 20px;
+  background-color: #E8E8E8;
+  color: #404040;
+  max-width: 100%;
+  margin-bottom: 0!important;
+  border-bottom: 1px solid #C4C4C4;
+}
+
+.sender h6, .receiver h6 {
+  margin-top: 25px;
+}
+
+.convo-p {
+  font-size: 12px!important;
+  line-height: 0.75!important;
 }
 
 .right-side {
@@ -132,20 +328,60 @@ h1, h2, h3, h4, h5 {
 }
 
 .profile-img {
-  max-width: 40%!important;
-  margin-top: 25px!important;
+  max-width: 30%!important;
+  margin: auto;
+  border-radius: 50%!important;
+}
+
+.contacts-title {
+  text-transform: uppercase;
+}
+
+.contact-row {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  border-top: 1px solid #C4C4C4;
+}
+
+.contact-row:hover {
+  background: #E8E8E8;
+}
+
+.no-margin {
+  margin-bottom: 0!important;
+}
+
+.contacts-img {
+  max-width: 25%!important;
+}
+
+.card-image-side-contacts {
+  max-width: 100%!important;
 }
 
 .conversations-img {
-  max-width: 18%!important;
+  max-width: 50%!important;
+  margin-top: 5px;
 }
 
 .convo-card {
   padding-top: 25px;
+  border-radius: 10px;
 }
 
 .convo-card h5{
   padding: 100px;
+}
+
+.convo-sidebar {
+  height: 70px;
+  background: #FFD25A;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.convo-sidebar i {
+  margin-top: 20px;
 }
 
 .loader {
@@ -156,8 +392,17 @@ h1, h2, h3, h4, h5 {
   cursor: pointer;
 }
 
+.conversation-click h5 {
+  text-transform: uppercase;
+  font-size: 20px;
+}
+
+.conversations-card {
+  border-radius: 10px;
+}
+
 .main-covo {
-  padding-top: 35px;
+  /* padding-top: 35px; */
 }
 
 .convo-left {
@@ -194,9 +439,18 @@ button:active, button:focus {
 
 .ql-bubble {
   box-sizing: border-box;
-  border: 1px solid #eee!important;
-  border-radius: 10px!important;
+  border: 1px solid #E8E8E8!important;
+  border-radius: 10px;
   margin-bottom: 10px!important;
+}
+
+.convo-button {
+  background: #FFD25A!important;
+  border-radius: 10px!important;
+}
+
+.convo-textarea {
+  /* padding-right: 0!important; */
 }
 
 .modal.bottom-sheet {
@@ -246,6 +500,11 @@ button:active, button:focus {
 
 
 /* Font families begin */
+
+.ql-snow .ql-picker.ql-font {
+  margin-left: 10px;
+}
+
 .ql-font span[data-label="Ubuntu"]::before {
   font-family: "Ubuntu";
   content: "Ubuntu";
@@ -403,7 +662,7 @@ select {
 /*//Header design*/
 .nav-wrapper {
   /* background-color: #fff; */
-  background: #222223;
+  background: #282828;
 }
 
 nav .brand-logo {
@@ -418,6 +677,10 @@ nav ul a {
   margin-left: 15px;
   font-family: 'Alfa Slab One', cursive;
 }
+
+/* nav {
+  line-height: 0!important;
+} */
 
 .brand-image {
   height: 25px;
@@ -475,9 +738,18 @@ nav ul a {
   padding: none!important;
 }
 
+.searchform {
+  margin-bottom: 30px;
+}
+
 .searchinput {
   border: none!important;
   margin-bottom: 0!important;
+}
+
+.searchinput::-webkit-input-placeholder {
+  font-size: 26px;
+  font-weight: 200;
 }
 
 .searchinput:active, .searchinput:focus {
@@ -526,10 +798,14 @@ nav ul a {
   margin-top: 30%;
 }
 
+.shared-docs-page {
+  margin-top: 100px;
+}
+
 .docs {
-  width: 90%;
+  width: 95%;
   margin: auto;
-  margin-top: 50px;
+  margin-top: 100px;
 }
 
 .docs h3 {
@@ -550,6 +826,18 @@ nav ul a {
 
 .doc-title {
   text-transform: capitalize!important;
+}
+
+.title {
+  font-size: 20px!important;
+  padding-bottom: 0px;
+  padding-top: 55px;
+  margin-top: 15px;
+}
+
+.side-card {
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
 }
 
 .muted {
@@ -631,7 +919,7 @@ nav ul a {
 .doc-toolbar {
   position: fixed;
   top: 0px;
-  z-index: 100;
+  z-index: 999;
   background: #fff;
   height: 100px;
   width: 100%;
@@ -659,6 +947,81 @@ nav ul a {
   cursor: pointer;
 }
 
+.muted-card {
+  font-size: 11px;
+}
+
+.searchfield {
+  max-width: 50%;
+  margin: auto;
+}
+
+.docform.searchinput {
+  border-bottom: 1.5px solid #2282FF!important;
+}
+
+.sheetsform.searchinput {
+  border-bottom: 1.5px solid #13DF80!important;
+}
+.contactsform.searchinput {
+  border-bottom: 1.5px solid #7878FF!important;
+}
+
+.docs-icon {
+  background: #fff;
+  /* border: 1.5px solid #0d47a1; */
+  border-radius: 50%;
+  padding: 15px;
+}
+.sheets-icon {
+  background: #fff;
+  /* border: 1.5px solid #1b5e20; */
+  border-radius: 50%;
+  padding: 15px;
+}
+.contacts-icon {
+  background: #fff;
+  /* border: 1.5px solid #311b92; */
+  border-radius: 50%;
+  padding: 15px;
+}
+.conversations-icon {
+  background: #fff;
+  /* border: 1.5px solid #e65100; */
+  border-radius: 50%;
+  padding: 15px;
+}
+
+
+.edit-card-action {
+  border-top: none!important;
+  padding: 0!important;
+  padding-left: 10px!important;
+  padding-right: 10px!important;
+}
+
+.collections-card {
+  height: 180px;
+  border-radius: 10px;
+}
+
+.card-image-side {
+  border-top-left-radius: 10px;
+}
+
+.card-image-side i {
+  margin-top: 65px;
+}
+
+.new-doc {
+  padding: 0!important;
+  padding-top: 15px!important;
+  text-transform: uppercase;
+  font-weight: 400;
+  color: #000;
+  margin-bottom: 15px;
+}
+
 .inputs {
   width: 65%;
   margin: auto;
@@ -683,8 +1046,10 @@ input:focus {
 }
 
 .wordlogo {
-  height: 40px;
-  margin-top: 10px;
+  height: 30px;
+  margin-top: 17px;
+  -webkit-filter: invert(100%); /* Safari 6.0 - 9.0 */
+    filter: invert(100%);
 
 }
 /*Delete item*/
@@ -741,6 +1106,10 @@ input:focus {
   padding: 25px;
 }
 
+.delete-card {
+  border-radius: 10px!important;
+}
+
 .print-view, #textarea1 {
   white-space: pre-wrap!important;
 }
@@ -758,6 +1127,10 @@ input:focus {
   position: relative!important;
 }
 
+.saved:hover {
+  background: inherit;
+}
+
 .ql-toolbar.ql-snow {
     border: none;
     box-sizing: border-box;
@@ -766,11 +1139,33 @@ input:focus {
     position: fixed;
     top: 0;
     z-index: 999;
-    width: 70%;
-    left: 200px;
-    background: white;
+    width: auto;
+    right: 150px;
+    background: #282828;
     height: 60px;
     padding: 15px!important;
+}
+
+.ql-toolbar.ql-snow .ql-picker-label {
+  background: #fff;
+  padding-bottom: 30px;
+  border-radius: 5px;
+}
+
+.ql-snow .ql-fill, .ql-snow .ql-stroke.ql-fill {
+  fill: #fff;
+}
+
+.ql-snow .ql-stroke {
+  stroke: #fff!important;
+}
+
+.ql-toolbar.ql-snow .ql-picker-label {
+  background: #fff;
+}
+
+polygon.ql-stroke {
+  stroke: #444;
 }
 
 .ql-container.ql-snow {
@@ -874,7 +1269,167 @@ input:focus {
 }
 
 /*Media Queires*/
+
+
 @media screen and (max-width: 960px) {
+
+  .app-list {
+    max-width: 85%;
+    margin: auto;
+  }
+
+  .app-headers {
+    font-size: 18px;
+    text-align: center!important;
+    margin-top: 60px!important;
+  }
+
+  .searchinput::-webkit-input-placeholder {
+    font-size: 16px;
+    font-weight: 200;
+  }
+
+  .app-card {
+    margin: -15px;
+    padding: 0;
+    width: 100%;
+    height: 25vh!important;
+    /* border-right: 1px #222223 solid; */
+    color: #404040;
+  }
+
+  . h5, .docs-card h3 {
+    display: none;
+  }
+
+  .docs-card:hover {
+    background: transparent;
+  }
+
+  .docs-card:hover p, .docs-card:hover h4, .docs-card:hover h5, .docs-card:hover button, .docs-card:hover h3{
+    /* top: 0;
+    display: none; */
+  }
+
+  .docs-card:hover p i {
+    /* border-radius: inherit;
+    height: inherit;
+    width: inherit;
+    border: none;
+    color: inherit;
+    background: inherit;
+    padding: inherit; */
+  }
+
+  .app-button {
+    display: none;
+    padding: 10px;
+    border-radius: 15px;
+    height: 45px;
+    width: 100px
+    border 1px solid #fff;
+    color: #fff;
+    background: transparent;
+  }
+
+  .app-card button {
+    margin: auto;
+    margin-top: 0px;
+    text-transform: uppercase;
+  }
+
+  .app-card h4 {
+    margin-top: 38px;
+    text-align: left;
+  }
+
+
+  .sheets-card h5, .sheets-card button, .sheets-card h3 {
+    /* display: none; */
+  }
+
+  .sheets-card:hover {
+    background: transparent;
+  }
+
+  .sheets-card:hover p, .sheets-card:hover h4, .sheets-card:hover h5, .sheets-card:hover button, .sheets-card:hover h3 {
+    /* top: 0;
+    display: none; */
+  }
+
+  .sheets-card:hover p i {
+    /* border-radius: 0;
+    height: inherit;
+    width: inherit;
+    border: none;
+    color: inherit;
+    background: inherit;
+    padding: inherit; */
+  }
+
+  .sheets-card.app-button {
+    display: none;
+    border: 1px #81c784 solid;
+    padding: 5px;
+    border-radius: 10px;
+    color: #fff;
+    background: transparent;
+  }
+
+  .contacts-card h5, .contacts-card button, .contacts-card h3 {
+    /* display: none; */
+  }
+
+  .contacts-card:hover {
+    background: transparent;
+  }
+
+  .contacts-card:hover p, .contacts-card:hover h4, .contacts-card:hover h5, .contacts-card:hover button, .contacts-card:hover h3{
+    /* top: 15%;
+    display: block; */
+  }
+
+  .contacts-card:hover p i {
+    /* border-radius: 0;
+    height: inherit;
+    width: inherit;
+    border: none;
+    color: inherit;
+    background: inherit;
+    padding: inherit; */
+  }
+
+  .contacts-card.app-button {
+    /* display: none; */
+  }
+
+  .convos h5, .convos button{
+    display: none;
+  }
+
+  .convos:hover {
+    background: transparent;
+  }
+
+  .convos:hover p, .convos:hover h4, .convos:hover h5, .convos:hover button {
+    /* top: 0;
+    display: none; */
+  }
+
+  .convos:hover p i {
+    /* border-radius: 0;
+    height: inherit;
+    width: inherit;
+    border: none;
+    color: inherit;
+    background: inherit;
+    padding: inherit; */
+  }
+
+  .convos-card.app-button {
+    /* display: inherit; */
+  }
+
   .collection-cards {
     height: 190px;
   }
@@ -898,6 +1453,14 @@ input:focus {
   }
 }
 
+@media only screen and (max-width: 992px){
+nav .brand-logo.left {
+    left: 0.5rem;
+    padding-top: 10px;
+
+  }
+}
+
 @media print {
   body {
     margin-bottom: 25mm;
@@ -910,6 +1473,10 @@ input:focus {
   .docs {
     margin-top: 0;
     width: 100%;
+  }
+
+  .card-stacked a {
+    margin-top: 25px;
   }
 
   .doc-card, .doc-margin {
@@ -937,6 +1504,7 @@ input:focus {
     /* font-size: 16px!important;
     line-height: 200% */
   }
+
   .print-title {
     font-size: 20px!important;
     border: none!important;

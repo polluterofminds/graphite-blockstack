@@ -8,9 +8,12 @@ putFile,
 lookupProfile,
 signUserOut,
 } from 'blockstack';
+import XLSX from 'xlsx';
 import { Link } from 'react-router-dom';
 import Dropzone from 'react-dropzone'
 const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
+const mammoth = require("mammoth");
+const str2ab = require('string-to-arraybuffer');
 
 export default class NewVaultFile extends Component {
   constructor(props) {
@@ -29,6 +32,7 @@ export default class NewVaultFile extends Component {
       name: "",
       type: "",
       files: [],
+      grid: [[]],
       singleFile: {},
       loading: "hide",
       show: ""
@@ -67,6 +71,13 @@ export default class NewVaultFile extends Component {
        objectTwo.name = object.name;
        objectTwo.type = object.type;
        this.setState({id: objectTwo.id, name: objectTwo.name});
+       if(object.type.inlcudes("spreadsheet")) {
+         var abuf4 = str2ab(object.link)
+          var wb = XLSX.read(abuf4, {type:'buffer'});
+          this.setState({ grid: wb.Strings })
+          console.log(this.state.grid);
+          object.grid = this.state.grid;
+       }
        if(object.size > 111048576) {
          this.handleDropRejected();
        }else {

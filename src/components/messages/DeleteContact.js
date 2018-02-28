@@ -87,8 +87,9 @@ export default class DeleteContact extends Component {
     const save = this.state.save;
     return (
       <div>
+        <Header />
         <div className="container docs">
-          <div className="card doc-card">
+          <div className="card delete-card doc-card">
             <div className="double-space doc-margin delete-doc center-align">
             <h5>
               Delete Contact

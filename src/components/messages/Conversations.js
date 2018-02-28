@@ -399,14 +399,13 @@ favBack() {
                 return (
                   <div key={message.id} className="main-covo">
 
-                    <div className="bubble sender container row">
-                      <div className="col s8">
-                        <p dangerouslySetInnerHTML={{ __html: message.content }} />
-                        <p className="muted">{message.created} </p>
+                    <div className="bubble sender row">
+                      <div className="col s12">
+                        <p className="convo-p muted">To: {this.state.conversationUser}</p>
+                        <p className="convo-p muted">{message.created} </p>
+                        <h6 dangerouslySetInnerHTML={{ __html: message.content }} />
                       </div>
-                      <div className="col s4">
-                        <img className="responsive-img sender-message-img circle" src={this.state.userImg} alt="avatar" />
-                      </div>
+
                     </div>
                   </div>
                 )
@@ -414,13 +413,12 @@ favBack() {
                 return (
                   <div key={message.id} className="">
 
-                    <div className="bubble receiver container row">
-                      <div className="col s4">
-                        <img className="responsive-img receiver-message-img circle" src={this.state.conversationUserImage} alt="avatar" />
-                      </div>
-                      <div className="col s8">
-                        <p dangerouslySetInnerHTML={{ __html: message.content }} />
-                        <p className="muted">{message.created}</p>
+                    <div className="bubble receiver row">
+
+                      <div className="col s12">
+                        <p className="convo-p muted">From: {this.state.conversationUser}</p>
+                        <p className="convo-p muted">{message.created} </p>
+                        <h6 dangerouslySetInnerHTML={{ __html: message.content }} />
                       </div>
                     </div>
                   </div>
@@ -441,7 +439,7 @@ favBack() {
           <div className="center-align message-input container white">
             <ReactQuill
               id="textarea1"
-              className="materialize-textarea print-view"
+              className="materialize-textarea convo-textarea print-view"
               placeholder="Send a message"
               theme="bubble"
               value={this.state.newMessage}
@@ -450,7 +448,7 @@ favBack() {
               formats={SingleConversation.formats}
               />
 
-            <button onClick={this.handleaddItem} className="waves-effect waves-light btn">Send</button>
+            <button onClick={this.handleaddItem} className="convo-button btn">Send</button>
           </div>
 
         </div>
@@ -471,7 +469,7 @@ favBack() {
       <div className="navbar-fixed toolbar">
         <nav className="toolbar-nav">
           <div className="nav-wrapper">
-            <a href="/" className="brand-logo">Graphite.<img className="people" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9%0D%0AIjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik0wIDB2NWwxLTFoMXYtM2gzdi0xaC01%0D%0Aem0zIDJ2NGg0bDEgMXYtNWgtNXoiIC8+Cjwvc3ZnPg==" alt="chat bubble" /></a>
+            <a href="/" className="brand-logo left text-white">Graphite.<img className="pencil" src="http://www.iconsplace.com/icons/preview/white/pencil-256.png" alt="pencil" /></a>
 
             <ul id="nav-mobile" className="right">
             <ul id="dropdown1" className="dropdown-content">
@@ -494,35 +492,33 @@ favBack() {
         <div>
             <div className="row">
               <div className="col s3 convo-left">
-                <Link to={'/contacts'}><div className="card">
-                  <div className="center-align card-content">
-                    <p><i className="medium material-icons">add</i></p>
-                  </div>
-                  <div className="card-action">
-                    <a className="black-text">New Contact</a>
-                  </div>
-                </div></Link>
+              <div className="card conversations-card">
+                <div className="convo-sidebar center-align">
+                  <i className="material-icons text-white">chat</i>
+                </div>
                 {contacts.slice(0).reverse().map(contact => {
                     return (
                       <div key={contact.contact}>
 
-                        <div className="card renderedDocs">
+                        <div className="contact-row">
                         <a onClick={() => this.setState({ scroll: true, conversationUser: contact.contact, newCount: 0, combinedMessages: [], conversationUserImage: avatarFallbackImage, myMessages: [] })} className="conversation-click black-text">
-                          <div className="card-action center-align">
-                            <a className="conversation-click" onClick={() => this.setState({ user: contact.contact, combinedMessages: [], conversationUserImage: avatarFallbackImage })}><img className="responsive-img circle conversations-img" src={contact.img} alt="profile" /></a>
+                          <div className="row no-margin">
+                            <div className="col s4 center-align">
+                              <a className="conversation-click" onClick={() => this.setState({ user: contact.contact, combinedMessages: [], conversationUserImage: avatarFallbackImage })}><img className="responsive-img circle conversations-img" src={contact.img} alt="profile" /></a>
+                            </div>
+                            <div className="col s8">
+                              <a onClick={() => this.setState({ scroll: true, conversationUser: contact.contact, newCount: 0, combinedMessages: [], conversationUserImage: avatarFallbackImage, myMessages: [] })} className="conversation-click black-text"><h5>{contact.contact}</h5></a>
+                            </div>
                           </div>
                         </a>
-                          <div className="card-action">
-
-                            <a onClick={() => this.setState({ scroll: true, conversationUser: contact.contact, newCount: 0, combinedMessages: [], conversationUserImage: avatarFallbackImage, myMessages: [] })} className="conversation-click black-text">{contact.contact}</a>
-                            <a onClick={() => this.setState({ scroll: true, conversationUser: contact.contact, newCount: 0, combinedMessages: [], conversationUserImage: avatarFallbackImage, myMessages: [] })}><i className="conversation-click modal-trigger material-icons right orange-text accent-2">chat</i></a>
-                          </div>
                         </div>
                       </div>
                     )
                   })
                 }
+                </div>
               </div>
+
               <div className="col s9 convo-right">
                 <div className="card convo-card">
                   {this.renderView()}

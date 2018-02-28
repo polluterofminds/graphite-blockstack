@@ -36,6 +36,7 @@ import Export from './Export';
 import {
   isSignInPending,
   isUserSignedIn,
+  loadUserData,
   redirectToSignIn,
   handlePendingSignIn,
   signUserOut,
@@ -58,11 +59,12 @@ export default class App extends Component {
   }
 
   render() {
+    console.log(loadUserData())
     return (
       <div>
       <BrowserRouter>
           <div className="main-container">
-            <Header handleSignOut={ this.handleSignOut } handleSignIn={ this.handleSignIn } />
+
             <Route exact path="/" component={AppPage} />
             <Route exact path="/documents" component={Main} />
             <Route exact path="/test" component={TestDoc} />

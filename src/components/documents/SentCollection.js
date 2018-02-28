@@ -176,27 +176,34 @@ export default class SentCollection extends Component {
             <h3 className="center-align">Documents you shared with {this.props.match.params.id}</h3>
           {docs.slice(0).reverse().map(doc => {
               return (
-                <div key={doc.id} className="col s6 m3">
 
-                  <div className="card small renderedDocs">
+                <div key={doc.id} className="col s12 m6 l3">
+                    <div className="card collections-card hoverable horizontal">
 
-                    <div className="center-align card-content">
-                      <p><i className="large material-icons">short_text</i></p>
-                    </div>
+                      <div className="card-image card-image-side doc-side">
+                        <i className="material-icons medium blue-text text-darken-4">description</i>
+                      </div>
 
-                    <div className="card-action">
-                      <a className="black-text">{doc.title.length > 17 ? doc.title.substring(0,17)+"..." :  doc.title}</a>
-                      <a onClick={() => this.setState({ deleteId: doc.id})}>
+                      <div className="card-stacked">
 
-                          <i className="modal-trigger material-icons red-text delete-button">delete</i>
+                        <div className="card-content">
+                          <p className="title">{doc.title.length > 14 ? doc.title.substring(0,14)+"..." :  doc.title}</p>
+                        </div>
 
-                      </a>
-                      <div className="muted">
-                        <p>Shared on: {doc.shared}</p>
+                        <div className="edit-card-action card-action">
+                          <p><span className="muted muted-card">Shared on: {doc.shared}</span><a onClick={() => this.setState({ deleteId: doc.id})}>
+
+                              <i className="modal-trigger material-icons red-text delete-button">delete</i>
+
+                          </a></p>
+                        </div>
                       </div>
                     </div>
-                  </div>
+
+
                 </div>
+
+                
               )
             })
           }

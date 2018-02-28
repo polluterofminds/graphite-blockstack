@@ -53,6 +53,7 @@ export default class SharedCollection extends Component {
   }
 
   componentDidMount() {
+    this.setState({ user: this.props.match.params.id });
     getFile("documents.json", {decrypt: true})
      .then((fileContents) => {
        if(fileContents) {
@@ -71,7 +72,6 @@ export default class SharedCollection extends Component {
     let fileString = 'shareddocs.json'
     let file = fileID.slice(0, -3) + fileString;
     const directory = '/shared/' + file;
-    this.setState({ user: this.props.match.params.id });
     const user = this.props.match.params.id;
     const options = { username: user, zoneFileLookupURL: "https://core.blockstack.org/v1/names"}
     lookupProfile(this.state.user, "https://core.blockstack.org/v1/names")
@@ -173,28 +173,32 @@ export default class SharedCollection extends Component {
           </div>
           <div className="container docs">
           <div className="row">
-            <div className="center-align">
-              <img className="shared-img responsive-img circle" src={img} alt="profile" />
-            </div>
+
             <h3 className="center-align">Documents {this.state.user} shared with you</h3>
           {docs.slice(0).reverse().map(doc => {
               return (
-                <div key={doc.id} className="col s6 m3">
-
-                  <div className="card small renderedDocs">
-                  <Link to={'/documents/single/shared/'+ doc.id} className="black-text">
-                    <div className="center-align card-content">
-                      <p><i className="large material-icons">short_text</i></p>
-                    </div>
+                <div key={doc.id} className="col s12 m6 l3">
+                    <div className="card collections-card hoverable horizontal">
+                    <Link to={'/documents/single/shared/'+ doc.id} className="side-card black-text doc-side">
+                      <div className="card-image card-image-side doc-side">
+                        <i className="material-icons medium blue-text text-darken-4">description</i>
+                      </div>
                     </Link>
-                    <div className="card-action">
-                      <Link to={'/documents/single/shared/'+ doc.id}><a className="black-text">{doc.title.length > 17 ? doc.title.substring(0,17)+"..." :  doc.title}</a></Link>
-                      <div className="muted">
-                        <p>Shared on: {doc.shared}</p>
+                      <div className="card-stacked">
+                      <Link to={'/documents/single/shared/'+ doc.id} className="black-text">
+                        <div className="card-content">
+                          <p className="title">{doc.title.length > 14 ? doc.title.substring(0,14)+"..." :  doc.title}</p>
+                        </div>
+                      </Link>
+                        <div className="edit-card-action card-action">
+                          <p><span className="muted muted-card">Shared on: {doc.shared}</span></p>
+                        </div>
                       </div>
                     </div>
-                  </div>
+
+
                 </div>
+
               )
             })
           }

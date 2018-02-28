@@ -250,45 +250,47 @@ export default class Contacts extends Component {
     return (
       <div>
         <div className="docs">
-        <div className="search card">
+        <h3 className="center-align">Contacts</h3>
+        <div className="">
           <form className="searchform">
           <fieldset className="form-group searchfield">
-          <input type="text" className="form-control form-control-lg searchinput" placeholder="Search" onChange={this.filterList}/>
+          <input type="text" className="form-control form-control-lg contactsform searchinput" placeholder="Search Contacts" onChange={this.filterList}/>
           </fieldset>
           </form>
         </div>
-          <h3 className="center-align">Your Contacts</h3>
+
           <div className="row">
-            <div className="col s6 m3">
-              <a onClick={this.newContact}><div className="card small">
-                <div className="center-align card-content">
-                  <p><i className="addDoc large material-icons">add</i></p>
-                </div>
-                <div className="card-action">
-                  <a className="black-text">New Contact</a>
-                </div>
-              </div></a>
-            </div>
+          <div className="col s12 m6 l3">
+            <a onClick={this.newContact}><div className="card collections-card">
+              <div className="center-align new-doc card-content">
+                <p><i className="addDoc addContact medium material-icons">add</i></p>
+              </div>
+              <h5 className="center-align black-text">New Contact</h5>
+            </div></a>
+          </div>
             {contacts.slice(0).reverse().map(contact => {
                 return (
-                  <div key={contact.contact} className="col s6 m3">
+                  <div key={contact.contact} className="col s12 m6 l3">
+                      <div className="card collections-card hoverable horizontal">
+                      <Link to={'/contacts/profile/'+ contact.contact} className="side-card contacts-side">
+                        <div className="card-image card-image-side contacts-side">
+                          <i className="material-icons medium deep-purple-text text-darken-4">contacts</i>
+                        </div>
+                      </Link>
+                        <div className="card-stacked">
+                        <Link to={'/contacts/profile/'+ contact.contact} className="black-text">
+                          <div className="card-content">
 
-                    <div className="card small renderedDocs">
-                    <Link to={'/contacts/Profile/'+ contact.contact} className="black-text">
-                      <div className="center-align card-content">
-                        <p><img className="responsive-img circle profile-img" src={contact.img} alt="profile" /></p>
-                      </div>
-                    </Link>
-                      <div className="card-action">
-
-                        <Link to={'/contacts/profile/'+ contact.contact}><a className="black-text">{contact.contact}</a></Link>
-                        <Link to={'/contacts/delete/'+ contact.contact}>
-
-                            <i className="modal-trigger material-icons red-text delete-button">delete</i>
-
+                            <p className="title contacts-title">{contact.contact.length > 14 ? contact.contact.substring(0,14)+"..." :  contact.contact}</p>
+                          </div>
                         </Link>
+                          <div className="edit-card-action card-action">
+                            <p><span className="muted muted-card"></span><Link to={'/contacts/delete/'+ contact.contact}><i className="modal-trigger material-icons red-text delete-button">delete</i></Link></p>
+                          </div>
+                        </div>
                       </div>
-                    </div>
+
+
                   </div>
                 )
               })
@@ -310,7 +312,7 @@ export default class Contacts extends Component {
       <div className="navbar-fixed toolbar">
         <nav className="toolbar-nav">
           <div className="nav-wrapper">
-            <a href="/" className="brand-logo">Graphite.<img className="people" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9%0D%0AIjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik01LjUgMGMtLjUxIDAtLjk1LjM1LTEu%0D%0AMjIuODguNDUuNTQuNzIgMS4yOC43MiAyLjEzIDAgLjI5LS4wMy41NS0uMDkuODEuMTkuMTEuMzgu%0D%0AMTkuNTkuMTkuODMgMCAxLjUtLjkgMS41LTJzLS42Ny0yLTEuNS0yem0tMyAxYy0uODMgMC0xLjUu%0D%0AOS0xLjUgMnMuNjcgMiAxLjUgMiAxLjUtLjkgMS41LTItLjY3LTItMS41LTJ6bTQuNzUgMy4xNmMt%0D%0ALjQzLjUxLTEuMDIuODItMS42OS44NC4yNy4zOC40NC44NC40NCAxLjM0di42Nmgydi0xLjY2YzAt%0D%0ALjUyLS4zMS0uOTctLjc1LTEuMTl6bS02LjUgMWMtLjQ0LjIyLS43NS42Ny0uNzUgMS4xOXYxLjY2%0D%0AaDV2LTEuNjZjMC0uNTItLjMxLS45Ny0uNzUtMS4xOS0uNDUuNTMtMS4wNi44NC0xLjc1Ljg0cy0x%0D%0ALjMtLjMyLTEuNzUtLjg0eiIKICAvPgo8L3N2Zz4=" alt="inbox" /></a>
+            <a href="/" className="brand-logo left text-white">Graphite.<img className="pencil" src="http://www.iconsplace.com/icons/preview/white/pencil-256.png" alt="pencil" /></a>
 
             <ul id="nav-mobile" className="right">
             <ul id="dropdown1" className="dropdown-content">
@@ -335,3 +337,6 @@ export default class Contacts extends Component {
     )
   }
 }
+// <div className="center-align">
+//   <img className="responsive-img circle profile-img" src={contact.img} alt="profile" />
+// </div>

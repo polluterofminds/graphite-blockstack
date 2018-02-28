@@ -14,6 +14,7 @@ import { Link } from 'react-router-dom';
 import Dropzone from 'react-dropzone'
 import PDF from 'react-pdf-js';
 import { Player } from 'video-react';
+import XLSX from 'xlsx';
 const Quill = ReactQuill.Quill;
 const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
 const mammoth = require("mammoth");
@@ -33,6 +34,7 @@ export default class SingleVaultFile extends Component {
   	  	},
   	  },
       files: [],
+      grid: [[]],
       value: [],
       name: "",
       link: "",

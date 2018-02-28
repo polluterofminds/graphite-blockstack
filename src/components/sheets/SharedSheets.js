@@ -224,26 +224,31 @@ export default class SharedSheets extends Component {
       return(
       <div className={show}>
         <div className="container center-align">
-          <h3>Documents Shared With Me</h3>
+          <h3>Sheets Shared With Me</h3>
           <h5>Select the contact who shared with you</h5>
         </div>
 
         <div className="shared-contacts row">
         {contacts.slice(0).reverse().map(contact => {
             return (
-              <div key={contact.contact} className="col s6 m3">
+              <div key={contact.contact} className="col s12 m6 l3">
+                  <div className="card collections-card hoverable horizontal">
+                  <Link to={'/sheets/shared/'+ contact.contact} className="side-card sheets-side">
+                    <div className="card-image card-image-side sheets-side">
+                      <i className="material-icons medium green-text text-darken-4">grid_on</i>
+                    </div>
+                  </Link>
+                    <div className="card-stacked">
+                    <Link to={'/sheets/shared/'+ contact.contact} className="black-text">
+                      <div className="card-content">
+                        <p className="title contacts-title">{contact.contact.length > 14 ? contact.contact.substring(0,14)+"..." :  contact.contact}</p>
+                      </div>
+                    </Link>
+                      <div className="edit-card-action card-action">
 
-                <div className="card small renderedDocs">
-                <Link to={'/sheets/shared/'+ contact.contact} className="black-text">
-                  <div className="center-align card-content">
-                    <p><img className="responsive-img circle profile-img" src={contact.img} alt="profile" /></p>
+                      </div>
+                    </div>
                   </div>
-                </Link>
-                  <div className="card-action">
-
-                    <Link className="black-text" to={'/sheets/shared/'+ contact.contact}>{contact.contact}</Link>
-                  </div>
-                </div>
               </div>
             )
           })
@@ -255,27 +260,33 @@ export default class SharedSheets extends Component {
       return (
       <div className={show}>
         <div className="container center-align">
-          <h3>Documents I Shared</h3>
+          <h3>Sheets Shared With Others</h3>
           <h5 >Select the contact you shared with</h5>
         </div>
 
         <div className="shared-contacts row">
         {contacts.slice(0).reverse().map(contact => {
             return (
-              <div key={contact.contact} className="col s6 m3">
+              <div key={contact.contact} className="col s12 m6 l3">
+                  <div className="card collections-card hoverable horizontal">
+                  <Link to={'/sheets/sent/'+ contact.contact} className="side-card sheets-side">
+                    <div className="card-image card-image-side sheets-side">
+                      <i className="material-icons medium green-text text-darken-4">grid_on</i>
+                    </div>
+                  </Link>
+                    <div className="card-stacked">
+                    <Link to={'/sheets/sent/'+ contact.contact} className="black-text">
+                      <div className="card-content">
+                        <p className="title contacts-title">{contact.contact.length > 14 ? contact.contact.substring(0,14)+"..." :  contact.contact}</p>
+                      </div>
+                    </Link>
+                      <div className="edit-card-action card-action">
 
-                <div className="card small renderedDocs">
-                <Link to={'/sheets/sent/'+ contact.contact} className="black-text">
-                  <div className="center-align card-content">
-                    <p><img className="responsive-img circle profile-img" src={contact.img} alt="profile" /></p>
+                      </div>
+                    </div>
                   </div>
-                </Link>
-                  <div className="card-action">
-
-                    <Link className="black-text" to={'/sheets/sent/'+ contact.contact}>{contact.contact}</Link>
-                  </div>
-                </div>
               </div>
+
             )
           })
         }
@@ -304,7 +315,7 @@ export default class SharedSheets extends Component {
         <div className="navbar-fixed toolbar">
           <nav className="toolbar-nav">
             <div className="nav-wrapper">
-              <a href="/sheets" className="brand-logo">Graphite.<img className="calculator" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9%0D%0AIjgiIHZpZXdCb3g9IjAgMCA4IDgiPgogIDxwYXRoIGQ9Ik0uMDkgMGMtLjA2IDAtLjA5LjA0LS4w%0D%0AOS4wOXY3LjgxYzAgLjA1LjA0LjA5LjA5LjA5aDYuODFjLjA1IDAgLjA5LS4wNC4wOS0uMDl2LTcu%0D%0AODFjMC0uMDYtLjA0LS4wOS0uMDktLjA5aC02Ljgxem0uOTEgMWg1djJoLTV2LTJ6bTAgM2gxdjFo%0D%0ALTF2LTF6bTIgMGgxdjFoLTF2LTF6bTIgMGgxdjNoLTF2LTN6bS00IDJoMXYxaC0xdi0xem0yIDBo%0D%0AMXYxaC0xdi0xeiIgLz4KPC9zdmc+" alt="calculator" /></a>
+              <a href="/" className="brand-logo left text-white">Graphite.<img className="pencil" src="http://www.iconsplace.com/icons/preview/white/pencil-256.png" alt="pencil" /></a>
 
               <ul id="nav-mobile" className="right">
               <ul id="dropdown1" className="dropdown-content">
@@ -326,9 +337,11 @@ export default class SharedSheets extends Component {
             </div>
           </nav>
         </div>
-        <div className="share-buttons center-align">
-          <button onClick={() => this.setState({ sharedWithMe: true })} className="btn black">Shared with me</button>
-          <button onClick={() => this.setState({ sharedWithMe: false })} className="btn black">Shared with others</button>
+        <div className="shared-docs-page">
+          <div className="share-buttons center-align">
+            <button onClick={() => this.setState({ sharedWithMe: true })} className="share-button">Shared with me</button>
+            <button onClick={() => this.setState({ sharedWithMe: false })} className="share-button">Shared with others</button>
+          </div>
         </div>
         {this.renderView()}
       </div>

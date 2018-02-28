@@ -87,8 +87,9 @@ export default class DeleteDoc extends Component {
     const save = this.state.save;
     return (
       <div>
+        <Header />
         <div className="container docs">
-          <div className="card doc-card">
+          <div className="card doc-card delete-card">
             <div className="double-space doc-margin delete-doc center-align">
             <h5>
               Delete Document

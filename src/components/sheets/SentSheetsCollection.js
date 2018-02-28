@@ -196,33 +196,36 @@ export default class SharedSheetsCollection extends Component {
           </div>
           <div className="container docs">
           <div className="row">
-            <div className="center-align">
-              <img className="shared-img responsive-img circle" src={img} alt="profile" />
-            </div>
+
             <h3 className="center-align">Sheets you shared with {this.state.user}</h3>
           {sheets.slice(0).reverse().map(sheet => {
               return (
-                <div key={sheet.id} className="col s6 m3">
+                <div key={sheet.id} className="col s12 m6 l3">
+                    <div className="card collections-card hoverable horizontal">
 
-                  <div className="card small renderedDocs">
-                  <Link to={'/sheets/single/shared/'+ sheet.id} className="black-text">
-                    <div className="center-align card-content">
-                      <p><i className="large green-text text-lighten-1 material-icons">grid_on</i></p>
-                    </div>
-                    </Link>
-                    <div className="card-action">
-                      <a className="black-text">{sheet.title.length > 17 ? sheet.title.substring(0,17)+"..." :  sheet.title}</a>
-                      <a onClick={() => this.setState({ deleteId: sheet.id})}>
+                      <div className="card-image card-image-side sheets-side">
+                        <i className="material-icons medium green-text text-darken-4">grid_on</i>
+                      </div>
 
-                          <i className="modal-trigger material-icons red-text delete-button">delete</i>
+                      <div className="card-stacked">
 
-                      </a>
-                      <div className="muted">
-                        <p>Shared on: {sheet.shared}</p>
+                        <div className="card-content">
+                          <p className="title">{sheet.title.length > 14 ? sheet.title.substring(0,14)+"..." :  sheet.title}</p>
+                        </div>
+
+                        <div className="edit-card-action card-action">
+                          <p><span className="muted muted-card">Shared on: {sheet.shared}</span><a onClick={() => this.setState({ deleteId: sheet.id})}>
+
+                              <i className="modal-trigger material-icons red-text delete-button">delete</i>
+
+                          </a></p>
+                        </div>
                       </div>
                     </div>
-                  </div>
+
+
                 </div>
+
               )
             })
           }

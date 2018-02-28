@@ -62,6 +62,7 @@
     "string-to-arraybuffer": "^1.0.0",
     "timezone": "^1.0.13",
     "video-react": "^0.9.4",
-    "wordcount": "^1.1.1"
+    "wordcount": "^1.1.1",
+    "xlsx": "^0.12.2"
   }
 }
