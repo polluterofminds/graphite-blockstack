@@ -130,7 +130,7 @@ export default class SharedSheetsCollection extends Component {
           <div className="navbar-fixed toolbar">
             <nav className="toolbar-nav">
               <div className="nav-wrapper">
-                <a href="/sheets" className="brand-logo"><i className="material-icons">arrow_back</i></a>
+                <a href="/shared-sheets" className="brand-logo"><i className="material-icons">arrow_back</i></a>
 
 
                   <ul className="left toolbar-menu">
@@ -149,13 +149,13 @@ export default class SharedSheetsCollection extends Component {
                     <div className="card collections-card hoverable horizontal">
                     <Link to={'/sheets/single/shared/'+ sheet.id} className="side-card black-text sheets-side">
                       <div className="card-image card-image-side sheets-side">
-                        <i className="material-icons medium green-text text-darken-4">grid_on</i>
+                        <img src="https://i.imgur.com/6jzdbhE.png" alt="sheets-icon" />
                       </div>
                     </Link>
                       <div className="card-stacked">
                       <Link to={'/sheets/single/shared/'+ sheet.id} className="black-text">
                         <div className="card-content">
-                          <p className="title">{sheet.title.length > 14 ? sheet.title.substring(0,14)+"..." :  sheet.title}</p>
+                          <p className="title">{sheet.title.length > 11 ? sheet.title.substring(0,11)+"..." :  sheet.title}</p>
                         </div>
                       </Link>
                         <div className="edit-card-action card-action">
@@ -178,7 +178,7 @@ export default class SharedSheetsCollection extends Component {
         <div className="navbar-fixed toolbar">
           <nav className="toolbar-nav">
             <div className="nav-wrapper">
-              <a href="/sheets" className="brand-logo"><i className="material-icons">arrow_back</i></a>
+              <a href="/shared-sheets" className="brand-logo"><i className="material-icons">arrow_back</i></a>
 
 
                 <ul className="left toolbar-menu">

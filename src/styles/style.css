@@ -70,14 +70,14 @@ h5, h6 {
   display: block;
 }
 
-.docs-card:hover p i {
+.docs-card:hover p div {
   border-radius: 50%;
-  height: 120px;
-  width: 120px;
+  height: 150px;
+  width: 150px;
   border: 1px #1D44FF solid;
   color: #fff!important;
   background: #2282FF;
-  padding: 10px;
+  padding: 25px;
 }
 
 .app-button {
@@ -90,7 +90,10 @@ h5, h6 {
   background: transparent;
 }
 
-
+.rounded-img {
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
 .sheets-card h5, .sheets-card button, .sheets-card h3 {
   display: none;
 }
@@ -104,13 +107,14 @@ h5, h6 {
   display: block;
 }
 
-.sheets-card:hover p i {
+.sheets-card:hover p div {
   border-radius: 50%;
-  height: 120px;
-  width: 120px;
+  height: 150px;
+  width: 150px;
   border: 1px #1EBE55 solid;
   color: #fff!important;
   background: #13DF80;
+  padding: 25px;
 }
 
 .sheets-card.app-button {
@@ -134,14 +138,14 @@ h5, h6 {
   display: block;
 }
 
-.contacts-card:hover p i {
+.contacts-card:hover p div {
   border-radius: 50%;
-  height: 120px;
-  width: 120px;
+  height: 150px;
+  width: 150px;
   border: 1px #644BFF solid;
   color: #fff!important;
   background: #7878FF;
-  padding: 10px;
+  padding: 25px;
 }
 
 .contacts-card.app-button {
@@ -165,14 +169,14 @@ h5, h6 {
   display: block;
 }
 
-.convos:hover p i {
+.convos:hover p div {
   border-radius: 50%;
-  height: 120px;
-  width: 120px;
+  height: 150px;
+  width: 150px;
   border: 1px #FFB428 solid;
   color: #fff!important;
   background: #FFD25A;
-  padding: 10px;
+  padding: 25px;
 }
 
 .convos-card.app-button {
@@ -199,12 +203,27 @@ h5, h6 {
   background: #2282FF;
 }
 
-.sheets-side {
-  background: #13DF80;
-}
-
 .contacts-side {
   background: #7878FF;
+}
+
+.card.horizontal .card-image {
+    max-width: 75%!important;
+    margin: auto!important;
+    margin-top: 65%!important;
+}
+
+.card.horizontal .card-image.sheets-side {
+    margin-top: 55%!important;
+}
+
+.card.horizontal .card-image.profile-image {
+    margin-top: 0px!important;
+}
+
+.sheets-side {
+  background: #13DF80;
+
 }
 
 .addContact {
@@ -213,6 +232,20 @@ h5, h6 {
 
 .app-page {
   padding: 0!important;
+}
+
+.conversations-icon-image {
+  max-height: 45px;
+  margin: auto;
+  margin-top: 10px;
+}
+
+.dropdown-icon {
+  max-width: 20px;
+}
+
+.dropdown-icon-bigger {
+  max-width: 25px;
 }
 
 .app-list {
@@ -225,6 +258,11 @@ h5, h6 {
 .hero-image {
   background: #fff;
   padding-top: 50px;
+}
+
+.modal.bottom-sheet {
+  background: #E8E8E8;
+  height: 100vh!important;
 }
 
 .copy img {
@@ -420,7 +458,7 @@ h5, h6 {
   right: 0;
   background-color: #fafafa;
   padding: 0;
-  height: 75%!important;
+  height: 100vh!important;
   width: 55%;
   margin: auto;
   overflow-y: auto;
@@ -458,7 +496,7 @@ button:active, button:focus {
     bottom: 0!important;
     margin: 0;
     width: 100%;
-    max-height: 75%!important;
+    max-height: 100vh!important;
     border-radius: 0;
     will-change: bottom, opacity;
     z-index: 999!important;
@@ -937,6 +975,7 @@ nav ul a {
 .toolbar {
   position: fixed;
   top: 0;
+  width: 100%;
 }
 
 .toolbar-menu {
@@ -981,9 +1020,6 @@ nav ul a {
 }
 .contacts-icon {
   background: #fff;
-  /* border: 1.5px solid #311b92; */
-  border-radius: 50%;
-  padding: 15px;
 }
 .conversations-icon {
   background: #fff;
@@ -1110,6 +1146,10 @@ input:focus {
   border-radius: 10px!important;
 }
 
+.contact-profile-card {
+  border-radius: 10px!important;
+}
+
 .print-view, #textarea1 {
   white-space: pre-wrap!important;
 }
@@ -1117,6 +1157,14 @@ input:focus {
 .print-view ul li {
   list-style-type: disc;
   margin-left: 20px;
+}
+
+.icon {
+  border-radius: 50%;
+  padding: 25px;
+  height: 150px;
+  width: 150px;
+  margin: auto;
 }
 
 #hot-display-license-info {
@@ -1236,6 +1284,10 @@ polygon.ql-stroke {
 
 .spreadsheet-icon {
   margin-top: 20px;
+}
+
+.spreadsheet-table {
+  margin-top: 65px;
 }
 
 .intro-text {

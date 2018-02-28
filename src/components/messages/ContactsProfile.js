@@ -132,12 +132,12 @@ render() {
         </div>
       </nav>
     </div>
-    <div className="container contact-page">
+    <div className="container docs contact-page">
 
     <div className="col s12 m7">
-    <div className="card medium horizontal">
-      <div className="card-image">
-        <img className="responsive-img" src={this.state.img} />
+    <div className="card medium contact-profile-card horizontal">
+      <div className="card-image profile-image">
+        <img className="rounded-img responsive-img" src={this.state.img} />
       </div>
       <div className="card-stacked">
         <div className="card-content">
@@ -146,9 +146,9 @@ render() {
           <p>{this.state.description}</p>
         </div>
         <div className="card-action">
-          <a href='/conversations'><i className="material-icons orange-text accent-2 small">chat</i></a>
-          <Link to={'/documents/shared/' + this.state.username}><i className="material-icons blue-text text-darken-2 small">description</i></Link>
-          <Link to={'/sheets/shared/' + this.state.username}><i className="material-icons green-text text-lighten-1 small">grid_on</i></Link>
+          <Link to={'/documents/shared/' + this.state.username}><img src="https://i.imgur.com/C71m2Zs.png" alt="documents-icon" className="dropdown-icon" /></Link>
+          <Link to={'/sheets/shared/' + this.state.username}><img src="https://i.imgur.com/6jzdbhE.png" alt="sheets-icon" className="dropdown-icon-bigger" /></Link>
+          <a href='/conversations'><img src="https://i.imgur.com/cuXF1V5.png" alt="conversations-icon" className="dropdown-icon-bigger" /></a>
         </div>
       </div>
     </div>

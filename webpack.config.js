@@ -8,7 +8,7 @@ const ManifestAssetPlugin = new CopyWebpackPlugin([ { from: 'src/assets/manifest
 const IconAssetPlugin = new CopyWebpackPlugin([ { from: 'src/images/icon-192x192.png', to: 'icon-192x192.png' } ]);
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-// const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
   template: './src/index.html',
   filename: 'index.html',
@@ -38,12 +38,19 @@ module.exports = {
       { test: /\.jsx$/, loader: 'babel-loader', exclude: /node_modules/ },
       {
         test: /\.(eot|woff|woff2|ttf|svg|png|jpe?g|gif)(\?\S*)?$/,
-        loader: 'file-loader!url-loader',
+        loader: 'file-loader!url-loader'
       },
       { test: /\.css$/, loader: 'style-loader!css-loader' }
     ],
     loaders: [
-      { test: /\.(png|jpg)$/, loader: 'url-loader?limit=8192' }
+      {
+        test: /\.(eot|woff|woff2|ttf|svg|png|jpe?g|gif)$/,
+        loader: 'url-loader?limit=8192'
+      },
+      {
+        test: /\.(eot|woff|woff2|ttf|svg|png|jpe?g|gif)(\?\S*)?$/,
+        loader: 'file-loader'
+      },
     ]
   },
   resolve: {

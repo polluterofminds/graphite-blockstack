@@ -190,7 +190,7 @@ export default class SharedSheetsCollection extends Component {
           <div className="navbar-fixed toolbar">
             <nav className="toolbar-nav">
               <div className="nav-wrapper">
-                <a href="/sheets" className="brand-logo"><i className="material-icons">arrow_back</i></a>
+                <a href="/shared-sheets" className="brand-logo"><i className="material-icons">arrow_back</i></a>
               </div>
             </nav>
           </div>
@@ -202,29 +202,28 @@ export default class SharedSheetsCollection extends Component {
               return (
                 <div key={sheet.id} className="col s12 m6 l3">
                     <div className="card collections-card hoverable horizontal">
-
+                    <div className="side-card black-text sheets-side">
                       <div className="card-image card-image-side sheets-side">
-                        <i className="material-icons medium green-text text-darken-4">grid_on</i>
+                        <img src="https://i.imgur.com/6jzdbhE.png" alt="sheets-icon" />
                       </div>
-
+                    </div>
                       <div className="card-stacked">
-
+                      <div className="black-text">
                         <div className="card-content">
-                          <p className="title">{sheet.title.length > 14 ? sheet.title.substring(0,14)+"..." :  sheet.title}</p>
+                          <p className="title">{sheet.title.length > 11 ? sheet.title.substring(0,11)+"..." :  sheet.title}</p>
                         </div>
-
+                      </div>
                         <div className="edit-card-action card-action">
-                          <p><span className="muted muted-card">Shared on: {sheet.shared}</span><a onClick={() => this.setState({ deleteId: sheet.id})}>
+                        <p><span className="muted muted-card">Shared on: {sheet.shared}</span><a onClick={() => this.setState({ deleteId: sheet.id})}>
 
-                              <i className="modal-trigger material-icons red-text delete-button">delete</i>
+                            <i className="modal-trigger material-icons red-text delete-button">delete</i>
 
-                          </a></p>
+                        </a></p>
                         </div>
                       </div>
                     </div>
-
-
                 </div>
+
 
               )
             })
@@ -239,7 +238,7 @@ export default class SharedSheetsCollection extends Component {
         <div className="navbar-fixed toolbar">
           <nav className="toolbar-nav">
             <div className="nav-wrapper">
-              <a href="/sheets" className="brand-logo"><i className="material-icons">arrow_back</i></a>
+              <a href="/shared-sheets" className="brand-logo"><i className="material-icons">arrow_back</i></a>
 
 
                 <ul className="left toolbar-menu">

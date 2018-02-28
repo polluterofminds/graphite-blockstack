@@ -157,17 +157,16 @@ export default class SheetsCollections extends Component {
 
             <ul id="nav-mobile" className="right">
             <ul id="dropdown1" className="dropdown-content">
-              <li><a href="/profile">Profile</a></li>
               <li><a href="/shared-sheets">Shared Files</a></li>
               <li><a href="/export">Export All Data</a></li>
               <li className="divider"></li>
               <li><a href="#" onClick={ this.handleSignOut }>Sign out</a></li>
             </ul>
             <ul id="dropdown2" className="dropdown-content">
-            <li><a href="/documents"><i className="material-icons blue-text text-darken-2">description</i><br />Documents</a></li>
-            <li><a href="/sheets"><i className="material-icons green-text text-lighten-1">grid_on</i><br />Sheets</a></li>
-            <li><a href="/contacts"><i className="material-icons purple-text lighten-3">contacts</i><br />Contacts</a></li>
-            <li><a href="/conversations"><i className="material-icons orange-text accent-2">chat</i><br />Conversations</a></li>
+            <li><a href="/documents"><img src="https://i.imgur.com/C71m2Zs.png" alt="documents-icon" className="dropdown-icon" /><br />Documents</a></li>
+            <li><a href="/sheets"><img src="https://i.imgur.com/6jzdbhE.png" alt="sheets-icon" className="dropdown-icon-bigger" /><br />Sheets</a></li>
+            <li><a href="/contacts"><img src="https://i.imgur.com/st3JArl.png" alt="contacts-icon" className="dropdown-icon" /><br />Contacts</a></li>
+            <li><a href="/conversations"><img src="https://i.imgur.com/cuXF1V5.png" alt="conversations-icon" className="dropdown-icon-bigger" /><br />Conversations</a></li>
             </ul>
               <li><a className="dropdown-button" href="#!" data-activates="dropdown2"><i className="material-icons apps">apps</i></a></li>
               <li><a className="dropdown-button" href="#!" data-activates="dropdown1"><img src={ person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage } className="img-rounded avatar" id="avatar-image" /><i className="material-icons right">arrow_drop_down</i></a></li>
@@ -209,13 +208,13 @@ export default class SheetsCollections extends Component {
                     <div className="card collections-card hoverable horizontal">
                     <Link to={'/sheets/sheet/'+ sheet.id} className="side-card black-text sheets-side">
                       <div className="card-image card-image-side sheets-side">
-                        <i className="material-icons medium green-text text-darken-4">grid_on</i>
+                        <img src="https://i.imgur.com/6jzdbhE.png" alt="sheets-icon" />
                       </div>
                     </Link>
                       <div className="card-stacked">
                       <Link to={'/sheets/sheet/'+ sheet.id} className="black-text">
                         <div className="card-content">
-                          <p className="title">{sheet.title.length > 14 ? sheet.title.substring(0,14)+"..." :  sheet.title}</p>
+                          <p className="title">{sheet.title.length > 11 ? sheet.title.substring(0,11)+"..." :  sheet.title}</p>
                         </div>
                       </Link>
                         <div className="edit-card-action card-action">
@@ -223,8 +222,6 @@ export default class SheetsCollections extends Component {
                         </div>
                       </div>
                     </div>
-
-
                 </div>
 
               )

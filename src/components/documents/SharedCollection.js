@@ -177,11 +177,12 @@ export default class SharedCollection extends Component {
             <h3 className="center-align">Documents {this.state.user} shared with you</h3>
           {docs.slice(0).reverse().map(doc => {
               return (
+
                 <div key={doc.id} className="col s12 m6 l3">
                     <div className="card collections-card hoverable horizontal">
                     <Link to={'/documents/single/shared/'+ doc.id} className="side-card black-text doc-side">
                       <div className="card-image card-image-side doc-side">
-                        <i className="material-icons medium blue-text text-darken-4">description</i>
+                        <img src="https://i.imgur.com/C71m2Zs.png" alt="documents-icon" />
                       </div>
                     </Link>
                       <div className="card-stacked">

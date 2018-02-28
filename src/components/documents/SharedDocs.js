@@ -246,7 +246,7 @@ export default class SharedDocs extends Component {
                   <div className="card collections-card hoverable horizontal">
                   <Link to={'/documents/shared/'+ contact.contact} className="side-card doc-side">
                     <div className="card-image card-image-side doc-side">
-                      <i className="material-icons medium blue-text text-darken-2">description</i>
+                      <img src="https://i.imgur.com/C71m2Zs.png" alt="documents-icon" />
                     </div>
                   </Link>
                     <div className="card-stacked">
@@ -282,7 +282,7 @@ export default class SharedDocs extends Component {
                   <div className="card collections-card hoverable horizontal">
                   <Link to={'/documents/sent/'+ contact.contact} className="side-card doc-side">
                     <div className="card-image card-image-side doc-side">
-                      <i className="material-icons medium blue-text text-darken-2">description</i>
+                      <img src="https://i.imgur.com/C71m2Zs.png" alt="documents-icon" />
                     </div>
                   </Link>
                     <div className="card-stacked">
@@ -325,7 +325,7 @@ export default class SharedDocs extends Component {
       <div className="navbar-fixed toolbar">
         <nav className="toolbar-nav">
           <div className="nav-wrapper">
-            <a href="/" className="brand-logo">Graphite.<img className="pencil" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Black_pencil.svg/1000px-Black_pencil.svg.png" alt="pencil" /></a>
+            <a href="/" className="brand-logo left text-white">Graphite.<img className="pencil" src="http://www.iconsplace.com/icons/preview/white/pencil-256.png" alt="pencil" /></a>
 
             <ul id="nav-mobile" className="right">
             <ul id="dropdown1" className="dropdown-content">
@@ -336,10 +336,10 @@ export default class SharedDocs extends Component {
               <li><a href="#" onClick={ this.handleSignOut }>Sign out</a></li>
             </ul>
             <ul id="dropdown2" className="dropdown-content">
-              <li><a href="/documents"><i className="material-icons blue-text text-darken-2">description</i><br />Documents</a></li>
-              <li><a href="/sheets"><i className="material-icons green-text text-lighten-1">grid_on</i><br />Sheets</a></li>
-              <li><a href="/contacts"><i className="material-icons purple-text lighten-3">contacts</i><br />Contacts</a></li>
-              <li><a href="/conversations"><i className="material-icons orange-text accent-2">chat</i><br />Conversations</a></li>
+            <li><a href="/documents"><img src="https://i.imgur.com/C71m2Zs.png" alt="documents-icon" className="dropdown-icon" /><br />Documents</a></li>
+            <li><a href="/sheets"><img src="https://i.imgur.com/6jzdbhE.png" alt="sheets-icon" className="dropdown-icon-bigger" /><br />Sheets</a></li>
+            <li><a href="/contacts"><img src="https://i.imgur.com/st3JArl.png" alt="contacts-icon" className="dropdown-icon" /><br />Contacts</a></li>
+            <li><a href="/conversations"><img src="https://i.imgur.com/cuXF1V5.png" alt="conversations-icon" className="dropdown-icon-bigger" /><br />Conversations</a></li>
             </ul>
               <li><a className="dropdown-button" href="#!" data-activates="dropdown2"><i className="material-icons apps">apps</i></a></li>
               <li><a className="dropdown-button" href="#!" data-activates="dropdown1"><img src={ person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage } className="img-rounded avatar" id="avatar-image" /><i className="material-icons right">arrow_drop_down</i></a></li>
@@ -349,8 +349,8 @@ export default class SharedDocs extends Component {
         </div>
         <div className="shared-docs-page">
         <div className="share-buttons center-align">
-          <button onClick={() => this.setState({ sharedWithMe: true })} className="btn black">Shared with me</button>
-          <button onClick={() => this.setState({ sharedWithMe: false })} className="btn black">Shared with others</button>
+          <button onClick={() => this.setState({ sharedWithMe: true })} className="share-button">Shared with me</button>
+          <button onClick={() => this.setState({ sharedWithMe: false })} className="share-button">Shared with others</button>
         </div>
         {this.renderView()}
         </div>
