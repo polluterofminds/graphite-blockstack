@@ -198,7 +198,7 @@ getFile(directory, options)
     </div>
     <div className="container docs">
       <div className={hideButton}>
-        <button onClick={this.handleaddItem} className="btn black center-align">Add to Your Documents</button>
+        <button onClick={this.handleaddItem} className="share-button center-align">Add to Your Documents</button>
       </div>
       <div className={loading}>
         <div className="preloader-wrapper small active">

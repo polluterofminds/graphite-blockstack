@@ -199,10 +199,6 @@ h5, h6 {
   color: #F5F5F5!important;
 }
 
-.doc-side {
-  background: #2282FF;
-}
-
 .contacts-side {
   background: #7878FF;
 }
@@ -210,11 +206,15 @@ h5, h6 {
 .card.horizontal .card-image {
     max-width: 75%!important;
     margin: auto!important;
-    margin-top: 65%!important;
+    margin-top: 65px!important;
+}
+
+.doc-side {
+  background: #2282FF;
 }
 
 .card.horizontal .card-image.sheets-side {
-    margin-top: 55%!important;
+    margin-top: 70px!important;
 }
 
 .card.horizontal .card-image.profile-image {
@@ -876,6 +876,7 @@ nav ul a {
 .side-card {
   border-top-left-radius: 10px;
   border-bottom-left-radius: 10px;
+  max-width: 55px!important;
 }
 
 .muted {
@@ -1028,6 +1029,9 @@ nav ul a {
   padding: 15px;
 }
 
+.rounded-img {
+  border-radius: 10px 0 0 10px!important;
+}
 
 .edit-card-action {
   border-top: none!important;
@@ -1321,7 +1325,23 @@ polygon.ql-stroke {
 }
 
 /*Media Queires*/
+@media screen and (max-width: 1200px) {
+  .title {
+    font-size: 16px!important;
+  }
 
+  .muted-card {
+    font-size: 10px!important;
+  }
+
+  .delete-button {
+    font-size: 18px;
+  }
+
+  .conversation-contact {
+    font-size: 18px!important;
+  }
+}
 
 @media screen and (max-width: 960px) {
 

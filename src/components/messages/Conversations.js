@@ -507,7 +507,7 @@ favBack() {
                               <a className="conversation-click" onClick={() => this.setState({ user: contact.contact, combinedMessages: [], conversationUserImage: avatarFallbackImage })}><img className="responsive-img circle conversations-img" src={contact.img} alt="profile" /></a>
                             </div>
                             <div className="col s8">
-                              <a onClick={() => this.setState({ scroll: true, conversationUser: contact.contact, newCount: 0, combinedMessages: [], conversationUserImage: avatarFallbackImage, myMessages: [] })} className="conversation-click black-text"><h5>{contact.contact}</h5></a>
+                              <a onClick={() => this.setState({ scroll: true, conversationUser: contact.contact, newCount: 0, combinedMessages: [], conversationUserImage: avatarFallbackImage, myMessages: [] })} className="conversation-click black-text"><h5 className="conversation-contact">{contact.contact.length > 14 ? contact.contact.substring(0,14)+"..." :  contact.contact}</h5></a>
                             </div>
                           </div>
                         </a>
