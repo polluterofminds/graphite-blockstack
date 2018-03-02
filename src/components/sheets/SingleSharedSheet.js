@@ -188,26 +188,14 @@ getOther() {
           <a href="/shared-sheets" className="brand-logo"><i className="material-icons">arrow_back</i></a>
           <ul className="left toolbar-menu">
 
-            <li className={hideButton}><button className="share-button" onClick={this.handleaddItem}>Add to Sheets</button></li>
+            <li><a onClick={this.handleaddItem}>Add to Sheets</a></li>
           </ul>
         </div>
       </nav>
     </div>
     <div className="">
-      <div className={loading}>
-        <div className="preloader-wrapper small active">
-            <div className="spinner-layer spinner-green-only">
-              <div className="circle-clipper left">
-                <div className="circle"></div>
-              </div><div className="gap-patch">
-                <div className="circle"></div>
-              </div><div className="circle-clipper right">
-                <div className="circle"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div>
+
+        <div className="spreadsheet-table">
         <HotTable root="hot" settings={{
           data: this.state.grid,
           stretchH: 'all',
@@ -247,3 +235,17 @@ getOther() {
     );
   }
 }
+
+// <div className={loading}>
+//   <div className="preloader-wrapper small active">
+//       <div className="spinner-layer spinner-green-only">
+//         <div className="circle-clipper left">
+//           <div className="circle"></div>
+//         </div><div className="gap-patch">
+//           <div className="circle"></div>
+//         </div><div className="circle-clipper right">
+//           <div className="circle"></div>
+//         </div>
+//       </div>
+//     </div>
+//   </div>

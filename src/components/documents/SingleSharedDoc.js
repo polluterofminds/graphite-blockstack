@@ -192,14 +192,15 @@ getFile(directory, options)
       <nav className="toolbar-nav">
         <div className="nav-wrapper">
           <a href="/documents" className="brand-logo"><i className="material-icons">arrow_back</i></a>
+          <ul className="left toolbar-menu">
 
+            <li className={hideButton}><a onClick={this.handleaddItem}>Add to Documents</a></li>
+          </ul>
         </div>
       </nav>
     </div>
     <div className="container docs">
-      <div className={hideButton}>
-        <button onClick={this.handleaddItem} className="share-button center-align">Add to Your Documents</button>
-      </div>
+
       <div className={loading}>
         <div className="preloader-wrapper small active">
             <div className="spinner-layer spinner-green-only">
