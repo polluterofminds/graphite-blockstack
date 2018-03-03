@@ -1,3 +1,6 @@
+**Note: this is the old repository. Please see the official [Graphite repository](https://github.com/Graphite-Docs/graphite) for the most recent code.
+
+
 ## Graphite
 
 Graphite is a decentralized writing app build on [Blockstack](http://blockstack.org). The app never stores your identity or any of your data. You own your files, you choose what to share (Blockstack [multireader](link) storage coming soon for collaboration).
